@@ -14,3 +14,15 @@ export interface Member {
     id: string,
     email: string,
 }
+
+export interface Backlog {
+    id: number,
+    name: string
+    category: Category
+    priority: number
+}
+
+export interface Category {
+    key: string
+    text: string
+}

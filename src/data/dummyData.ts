@@ -1,4 +1,4 @@
-import { Member, Project } from "../models/models"
+import { Member, Project, Backlog, Category } from "../models/models"
 
 export const personsDummy: Member[] = [
     {
@@ -91,4 +91,52 @@ export const projectsDummy: Project[] = [
         backlogItems: 10,
         progress: 0
     },
+]
+
+export const categories: Category[] = [
+    { 
+        key: 'SEBA',
+        text: 'SEBA Master',
+    },
+    { 
+        key: 'FBL',
+        text: 'Future Business Labs',
+    },
+    { 
+        key: 'DB',
+        text: 'Databases',
+    },
+]
+
+export const backlogDummy: Backlog[] = [
+    {
+        id: 1,
+        name: "Create Overview Page",
+        category: categories[1],
+        priority: 1
+    },
+    {
+        id: 2,
+        name: "Implement Filter Function",
+        category: categories[0],
+        priority: 2
+    },
+    {
+        id: 3,
+        name: "Homework Sheet 5",
+        category: categories[2],
+        priority: 3
+    },
+    {
+        id: 4,
+        name: "Visit Tutorial 5",
+        category: categories[2],
+        priority: 1
+    },
+    {
+        id: 5,
+        name: "Pitch Presentation",
+        category: categories[1],
+        priority: 2
+    }
 ]
