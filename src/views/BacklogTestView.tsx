@@ -30,18 +30,18 @@ export const ButtonSplitExample: React.FunctionComponent<IButtonExampleProps> = 
       {
         key: 'priority',
         text: types.priority,
-        onClick: () => { setSortType(types.priority); sort(isUp, sortType); console.log(sortType) }
+        onClick: () => { setSortTypeAsync(types.priority).then((sortType) => { sort(isUp, sortType) }) }
       },
       {
         key: 'deadline',
         text: types.deadline,
-        onClick: () => { setSortType(types.deadline); sort(isUp, sortType); console.log(sortType) }
+        onClick: () => { setSortTypeAsync(types.deadline).then((sortType) => { sort(isUp, sortType) }) }
       }
     ],
   };
 
   const [isUp, setIsUp] = React.useState(false);
-  const [sortType, setSortType] = React.useState("Priority") //default sort type
+  const [sortType, setSortType] = React.useState(types.priority) //default sort type
 
   const setSortTypeAsync = async (sortType: string) => {
     setSortType(sortType)
@@ -69,10 +69,6 @@ export const ButtonSplitExample: React.FunctionComponent<IButtonExampleProps> = 
       iconProps={getOrderIcon()}
     />
   );
-
-
-
-
 };
 
 export interface IButtonExampleProps {
@@ -84,6 +80,8 @@ interface BacklogState {
   displayedBacklog: Backlog[];
   selectedKeys: string[];
   searchInput: string;
+  sortIsUp: boolean;
+  sortType: string
 }
 
 export default class BacklogScreen extends Component<{}, BacklogState> {
@@ -95,6 +93,8 @@ export default class BacklogScreen extends Component<{}, BacklogState> {
       displayedBacklog: backlogDummy,
       selectedKeys: [],
       searchInput: "",
+      sortIsUp: false,
+      sortType: types.priority,
     }
   }
 
@@ -112,6 +112,14 @@ export default class BacklogScreen extends Component<{}, BacklogState> {
 
   setSearchInput = (searchInput: string) => {
     this.setState({ searchInput: searchInput })
+  }
+
+  setSortIsUp = (isUp: boolean) => {
+    this.setState({sortIsUp: isUp})
+  }
+
+  setSortType = (sortType: string) => {
+    this.setState({sortType: sortType})
   }
 
   filter = async (option?: IDropdownOption): Promise<void> => {
@@ -132,14 +140,16 @@ export default class BacklogScreen extends Component<{}, BacklogState> {
       })
     }
     this.setDisplayedBacklog(temp)
+    //TODO sort after changing filter (when removing filter, the backlog can be out of order!)
   }
 
   sort = (isUp: boolean, sortType: string) => {
+    var temp
     if (sortType === types.priority) {
-      this.setDisplayedBacklog(isUp ? (this.state.displayedBacklog.sort(function (a, b) { return a.priority - b.priority })) : (this.state.displayedBacklog.sort(function (a, b) { return b.priority - a.priority })))
+      temp = isUp ? (this.state.displayedBacklog.sort(function (a, b) { return b.priority - a.priority })) : (this.state.displayedBacklog.sort(function (a, b) { return a.priority - b.priority }))
     }
     else if (sortType === types.alphabetical) {
-      var temp =
+      temp =
         isUp ? (this.state.displayedBacklog.sort(
           function (a, b) {
             if (a.name > b.name) { return -1; }
@@ -153,8 +163,12 @@ export default class BacklogScreen extends Component<{}, BacklogState> {
             return 0;
           }
         ))
+    }
+    if (temp) {
       this.setDisplayedBacklog(temp)
     }
+    this.setSortIsUp(isUp)
+    this.setSortType(sortType)
   }
 
   search = async (input?: string) => {
@@ -181,8 +195,8 @@ export default class BacklogScreen extends Component<{}, BacklogState> {
       })
     })
     this.setDisplayedBacklog(temp)
-    console.log(this.state.displayedBacklog)
-    console.log(this.state.searchInput)
+    //sort after search
+    this.sort(this.state.sortIsUp, this.state.sortType)
   }
 
   render() {
