@@ -98,6 +98,10 @@ export default class BacklogScreen extends Component<{}, BacklogState> {
     }
   }
 
+  componentDidMount = () => {
+    this.sort(this.state.sortIsUp, this.state.sortType)
+  }
+
   setBacklog = (backlog: Backlog[]) => {
     this.setState({ backlog: backlog })
   }

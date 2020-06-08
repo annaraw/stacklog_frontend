@@ -138,5 +138,23 @@ export const backlogDummy: Backlog[] = [
         name: "Pitch Presentation",
         category: categories[1],
         priority: 2
+    },
+    {
+        id: 6,
+        name: "Develop Backend",
+        category: categories[0],
+        priority: 3
+    },
+    {
+        id: 7,
+        name: "Develop Authentification",
+        category: categories[0],
+        priority: 1
+    },
+    {
+        id: 8,
+        name: "Summarize Lecture",
+        category: categories[2],
+        priority: 3
     }
 ]
