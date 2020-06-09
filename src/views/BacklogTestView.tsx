@@ -9,70 +9,10 @@ import { Dropdown, IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
 import { SearchBox } from 'office-ui-fabric-react/lib/SearchBox';
 import { DefaultButton, IContextualMenuProps, IIconProps } from 'office-ui-fabric-react';
 
-var orderIcon: IIconProps = { iconName: 'Down' };
-
-const types = {
+const sortTypes = {
   alphabetical: "Alphabetical",
   priority: "Priority",
   deadline: "Deadline"
-}
-
-export const ButtonSplitExample: React.FunctionComponent<IButtonExampleProps> = props => {
-  const { sort } = props;
-
-  const menuProps: IContextualMenuProps = {
-    items: [
-      {
-        key: 'alphabet',
-        text: types.alphabetical,
-        onClick: () => { setSortTypeAsync(types.alphabetical).then((sortType) => { sort(isUp, sortType) }) }
-      },
-      {
-        key: 'priority',
-        text: types.priority,
-        onClick: () => { setSortTypeAsync(types.priority).then((sortType) => { sort(isUp, sortType) }) }
-      },
-      {
-        key: 'deadline',
-        text: types.deadline,
-        onClick: () => { setSortTypeAsync(types.deadline).then((sortType) => { sort(isUp, sortType) }) }
-      }
-    ],
-  };
-
-  const [isUp, setIsUp] = React.useState(false);
-  const [sortType, setSortType] = React.useState(types.priority) //default sort type
-
-  const setSortTypeAsync = async (sortType: string) => {
-    setSortType(sortType)
-    return sortType
-  }
-
-  const changeOrder = async () => {
-    const upTemp = (!isUp)
-    setIsUp(upTemp)
-    return upTemp
-  }
-
-  function getOrderIcon() {
-    return (isUp ? orderIcon = { iconName: 'Up' } : orderIcon = { iconName: 'Down' })
-  }
-
-  return (
-    <DefaultButton
-      text={sortType}
-      split
-      splitButtonAriaLabel="See 2 options"
-      aria-roledescription="split button"
-      menuProps={menuProps}
-      onClick={() => { changeOrder().then((isUp) => sort(isUp, sortType)) }}
-      iconProps={getOrderIcon()}
-    />
-  );
-};
-
-export interface IButtonExampleProps {
-  sort: (isUp: boolean, sortType: string) => void;
 }
 
 interface BacklogState {
@@ -86,6 +26,8 @@ interface BacklogState {
 
 export default class BacklogScreen extends Component<{}, BacklogState> {
 
+  orderIcon: IIconProps = {};
+
   constructor(props: any) {
     super(props)
     this.state = {
@@ -94,12 +36,12 @@ export default class BacklogScreen extends Component<{}, BacklogState> {
       selectedKeys: [],
       searchInput: "",
       sortIsUp: false,
-      sortType: types.priority,
+      sortType: sortTypes.priority,
     }
   }
 
   componentDidMount = () => {
-    this.sort(this.state.sortIsUp, this.state.sortType)
+    this.sort()
   }
 
   setBacklog = (backlog: Backlog[]) => {
@@ -122,7 +64,7 @@ export default class BacklogScreen extends Component<{}, BacklogState> {
     this.setState({sortIsUp: isUp})
   }
 
-  setSortType = (sortType: string) => {
+  setSortType = async (sortType: string) => {
     this.setState({sortType: sortType})
   }
 
@@ -144,17 +86,16 @@ export default class BacklogScreen extends Component<{}, BacklogState> {
       })
     }
     this.setDisplayedBacklog(temp)
-    //TODO sort after changing filter (when removing filter, the backlog can be out of order!)
   }
 
-  sort = (isUp: boolean, sortType: string) => {
+  sort = () => {
     var temp
-    if (sortType === types.priority) {
-      temp = isUp ? (this.state.displayedBacklog.sort(function (a, b) { return b.priority - a.priority })) : (this.state.displayedBacklog.sort(function (a, b) { return a.priority - b.priority }))
+    if (this.state.sortType === sortTypes.priority) {
+      temp = this.state.sortIsUp ? (this.state.displayedBacklog.sort(function (a, b) { return b.priority - a.priority })) : (this.state.displayedBacklog.sort(function (a, b) { return a.priority - b.priority }))
     }
-    else if (sortType === types.alphabetical) {
+    else if (this.state.sortType === sortTypes.alphabetical) {
       temp =
-        isUp ? (this.state.displayedBacklog.sort(
+      this.state.sortIsUp ? (this.state.displayedBacklog.sort(
           function (a, b) {
             if (a.name > b.name) { return -1; }
             if (a.name < b.name) { return 1; }
@@ -171,8 +112,6 @@ export default class BacklogScreen extends Component<{}, BacklogState> {
     if (temp) {
       this.setDisplayedBacklog(temp)
     }
-    this.setSortIsUp(isUp)
-    this.setSortType(sortType)
   }
 
   search = async (input?: string) => {
@@ -199,17 +138,52 @@ export default class BacklogScreen extends Component<{}, BacklogState> {
       })
     })
     this.setDisplayedBacklog(temp)
-    //sort after search
-    this.sort(this.state.sortIsUp, this.state.sortType)
+    //sort after search (important when deleting characters and backlog items are added to displayed items again)
+    this.sort()
   }
+
+  changeOrder = async () => {
+    await this.setSortIsUp(!this.state.sortIsUp)
+    this.sort()
+  }
+
+  getOrderIcon() {
+    return (this.state.sortIsUp ? this.orderIcon = { iconName: 'Up' } : this.orderIcon = { iconName: 'Down' })
+  }
+
+  menuProps: IContextualMenuProps = {
+    items: [
+      {
+        key: 'alphabet',
+        text: sortTypes.alphabetical,
+        onClick: () => { this.setSortType(sortTypes.alphabetical).then(() => this.sort()) }
+      },
+      {
+        key: 'priority',
+        text: sortTypes.priority,
+        onClick: () => { this.setSortType(sortTypes.priority).then(() => this.sort()) }
+      },
+      {
+        key: 'deadline',
+        text: sortTypes.deadline,
+        onClick: () => { this.setSortType(sortTypes.deadline).then(() => this.sort()) }
+      }
+    ],
+  };
 
   render() {
     return (
       <React.Fragment>
         <div style={{ width: "500px", margin: "20px auto" }}>
           <div style={{ width: "100px", float: "left" }}>
-            <ButtonSplitExample
-              sort={(isUp, sortType) => { this.sort(isUp, sortType) }}
+            <DefaultButton
+              text={this.state.sortType}
+              split
+              splitButtonAriaLabel="See 2 options"
+              aria-roledescription="split button"
+              menuProps={this.menuProps}
+              onClick={this.changeOrder}
+              iconProps={this.getOrderIcon()}
             />
           </div>
           <div style={{ width: "200px", float: "right" }}>
