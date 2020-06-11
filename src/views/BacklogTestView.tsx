@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Component } from 'react';
 
+import './BacklogTestView.css'
 import { Backlog } from '../models/models'
 import { backlogDummy, categories } from '../data/dummyData'
 import BacklogItem from '../components/BacklogItem';
@@ -8,11 +9,13 @@ import BacklogItem from '../components/BacklogItem';
 import { Dropdown, IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
 import { SearchBox } from 'office-ui-fabric-react/lib/SearchBox';
 import { DefaultButton, IContextualMenuProps, IIconProps } from 'office-ui-fabric-react';
+import Scrollbar from 'react-scrollbars-custom';
 
 const sortTypes = {
   alphabetical: "Alphabetical",
   priority: "Priority",
-  deadline: "Deadline"
+  deadline: "Deadline",
+  category: "Category"
 }
 
 interface BacklogState {
@@ -97,14 +100,14 @@ export default class BacklogScreen extends Component<{}, BacklogState> {
       temp =
       this.state.sortIsUp ? (this.state.displayedBacklog.sort(
           function (a, b) {
-            if (a.name > b.name) { return -1; }
-            if (a.name < b.name) { return 1; }
+            if (a.title > b.title) { return -1; }
+            if (a.title < b.title) { return 1; }
             return 0;
           }
         )) : (this.state.displayedBacklog.sort(
           function (a, b) {
-            if (a.name < b.name) { return -1; }
-            if (a.name > b.name) { return 1; }
+            if (a.title < b.title) { return -1; }
+            if (a.title > b.title) { return 1; }
             return 0;
           }
         ))
@@ -129,7 +132,7 @@ export default class BacklogScreen extends Component<{}, BacklogState> {
     var temp: Backlog[] = []
     searchInput.map(keyword => {
       this.state.backlog.map(backlogItem => {
-        if (backlogItem.name.toLowerCase().includes(keyword.toLowerCase())) {
+        if (backlogItem.title.toLowerCase().includes(keyword.toLowerCase())) {
           //item not already in the list AND (check applied filters OR no filter applied)
           if (!temp.includes(backlogItem) && (this.state.selectedKeys.includes(backlogItem.category.key) || this.state.selectedKeys.length === 0)) {
             temp.push(backlogItem)
@@ -138,8 +141,6 @@ export default class BacklogScreen extends Component<{}, BacklogState> {
       })
     })
     this.setDisplayedBacklog(temp)
-    //sort after search (important when deleting characters and backlog items are added to displayed items again)
-    this.sort()
   }
 
   changeOrder = async () => {
@@ -167,6 +168,11 @@ export default class BacklogScreen extends Component<{}, BacklogState> {
         key: 'deadline',
         text: sortTypes.deadline,
         onClick: () => { this.setSortType(sortTypes.deadline).then(() => this.sort()) }
+      },
+      {
+        key: 'category',
+        text: sortTypes.category,
+        onClick: () => { this.setSortType(sortTypes.category).then(() => this.sort()) }
       }
     ],
   };
@@ -174,42 +180,46 @@ export default class BacklogScreen extends Component<{}, BacklogState> {
   render() {
     return (
       <React.Fragment>
-        <div style={{ width: "500px", margin: "20px auto" }}>
-          <div style={{ width: "100px", float: "left" }}>
-            <DefaultButton
-              text={this.state.sortType}
-              split
-              splitButtonAriaLabel="See 2 options"
-              aria-roledescription="split button"
-              menuProps={this.menuProps}
-              onClick={this.changeOrder}
-              iconProps={this.getOrderIcon()}
-            />
-          </div>
-          <div style={{ width: "200px", float: "right" }}>
-            <Dropdown
-              placeholder="No Filter applied"
-              selectedKeys={this.state.selectedKeys}
-              multiSelect
-              onChange={async (_, option) => { await this.filter(option); this.search() }}
-              options={categories}
-            />
+        {/* <div className="menuBar"></div> */}
+        <div className = "backlogContainer">
+          <div className = "containerTitle">Backlog</div>
+          <div className = "containerControls">
+            <div style={{float:"left", margin:"5px", display: "inline-block"}}>
+              <DefaultButton
+                text={this.state.sortType}
+                split
+                splitButtonAriaLabel="See 2 options"
+                aria-roledescription="split button"
+                menuProps={this.menuProps}
+                onClick={this.changeOrder}
+                iconProps={this.getOrderIcon()}
+              />
+              </div>
+            <div style={{ width: "200px", float: "left", margin: "5px", display: "inline-block" }}>
+              <Dropdown
+                placeholder="No Filter applied"
+                selectedKeys={this.state.selectedKeys}
+                multiSelect
+                onChange={async (_, option) => { await this.filter(option); this.search(); this.sort() }}
+                options={categories}
+              />
+            </div>
           </div>
           <div style={{ width: "100%", float: "right", paddingTop: "15px" }}>
             <SearchBox
               placeholder="Search Backlog"
               underlined={true}
-              onChange={async (_, value) => { await this.filter(); this.search(String(value)) }}
+              onChange={async (_, value) => { await this.filter(); this.search(String(value)); this.sort() }}
               onClear={async (_) => { await this.setSearchInput(""); this.filter() }}
             />
           </div>
-          <div style={{ width: "100%", float: "left" }}>
+          <Scrollbar style={{ width: "100%", float: "left", height: "500px"}}>
             {this.state.displayedBacklog.map(backlogItem => {
               return (
-                <BacklogItem key={backlogItem.id} name={backlogItem.name} category={backlogItem.category.text} priority={backlogItem.priority} />
+                <BacklogItem key={backlogItem.id} title={backlogItem.title} description={backlogItem.description} category={backlogItem.category} priority={backlogItem.priority} />
               )
             })}
-          </div>
+          </Scrollbar>
         </div>
       </React.Fragment>
     );

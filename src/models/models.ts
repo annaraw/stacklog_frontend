@@ -17,12 +17,21 @@ export interface Member {
 
 export interface Backlog {
     id: number,
-    name: string
-    category: Category
-    priority: number
+    author: string,
+    assignee: string,
+    title: string,
+    description: string,
+    priority: number,
+    reminder: number,
+    completed: boolean,
+    startDate: Date,
+    dueDate: Date,
+    category: Category,
+    team: string
 }
 
 export interface Category {
-    key: string
-    text: string
+    key: string,
+    text: string,
+    color: string,
 }

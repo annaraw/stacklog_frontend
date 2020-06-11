@@ -1,18 +1,23 @@
 import * as React from 'react';
 
-import './ProjectCard.css'
+import './BacklogItem.css'
 import { FunctionComponent } from 'react';
+import { Category } from '../models/models';
 
 
-const BacklogItem: FunctionComponent<{ name: String, category: String, priority: number }> = props => {
+const BacklogItem: FunctionComponent<{ title: String, description: string, category: Category, priority: number }> = props => {
 
-    const { name, category, priority } = props;
+    const { title, description, category, priority } = props;
+
+    const colorStyle = {
+        backgroundColor: category.color
+    }
 
     return (
-        <div className="card">
-            <div className="header">
-                <div className="header-title">{name} ({category}) - Prio: {priority}</div>
-                <div className="header-menu"></div>
+        <div className="backlogItem">
+            <div className="header" style={colorStyle}>
+                <div className="header-title" >{title} ({category.text})<span style={{float:"right"}}>Prio: {priority}</span></div>
+                <div className="description">{description}</div>
             </div>
         </div>
     );
