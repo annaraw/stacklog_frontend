@@ -1,5 +1,5 @@
 import React from 'react';
-import MenuBar from '../components/MenuBar'
+import LoginComponent from '../components/LoginView/LoginForm';
 
 interface LoginProps {
 }
@@ -7,8 +7,7 @@ interface LoginProps {
 function LoginScreen(props: LoginProps) {
     return (
         <React.Fragment>
-            <MenuBar title="Login" />
-            <h1>Login</h1>
+            <LoginComponent />
         </React.Fragment>
     )
 }
