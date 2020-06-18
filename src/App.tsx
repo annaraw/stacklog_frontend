@@ -7,6 +7,7 @@ import LoginScreen from './views/LoginView';
 import HomeScreen from './views/HomeScreenView';
 import NotFound from './views/NotFoundView';
 import ProjectScreen from './views/ProjectsView';
+import RegisterScreen from './views/RegisterView';
 
 interface AppState {
   title: string,
@@ -25,6 +26,7 @@ export default class App extends React.Component<AppProps, AppState> {
       routes: [
         { component: HomeScreen, path: '/', exact: true },
         { component: LoginScreen, path: '/login' },
+        { component: RegisterScreen, path: '/register' },
         { component: ProjectScreen, path: '/projects' },
         //route if view is not found
         { component: NotFound}

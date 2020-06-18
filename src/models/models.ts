@@ -14,3 +14,15 @@ export interface Member {
     id: string,
     email: string,
 }
+
+export interface BacklogItem {
+    id: string,
+    name: string,
+    category: Category,
+    priority: number,
+    complete: boolean
+}
+
+export interface Category {
+    name: string
+}
