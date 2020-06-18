@@ -6,8 +6,9 @@ interface NotFoundProps {
 function NotFound(props: NotFoundProps) {
     return (
         <React.Fragment>
-            <h1>404 Sorry Site not found</h1>
-            <p>go to <a href="/">Home</a></p>
+            <img src="./assets/logo_black.png" alt="Stacklog Logo" onClick={() => window.location.href = "/"}></img>
+            <h1>Sorry, the page you're looking for isn’t here anymore</h1>
+            <p>If you reached this page from another part of stacklog.com, please let us know so we can correct our mistake.</p>
         </React.Fragment>
 
     )
