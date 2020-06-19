@@ -6,9 +6,14 @@ import {
     Panel,
     PanelType,
     TextField,
-} from 'office-ui-fabric-react';
-import { initializeIcons } from 'office-ui-fabric-react/lib/Icons';
-import { Checkbox, ICheckboxStyles } from 'office-ui-fabric-react/lib/Checkbox';
+} from '@fluentui/react';
+import { initializeIcons } from '@fluentui/react/lib/Icons';
+import { Label } from '@fluentui/react/lib/Label';
+import { Checkbox, ICheckboxStyles } from '@fluentui/react/lib/Checkbox';
+import { CommandBar } from '@fluentui/react/lib/CommandBar';
+import { keytipMap } from 'office-ui-fabric-react/lib/components/Keytip/examples/KeytipSetup';
+import { MessageBar, MessageBarType } from '@fluentui/react/lib/MessageBar';
+import { useBoolean, useConst } from '@uifabric/react-hooks';
 
 initializeIcons();
 
@@ -17,9 +22,13 @@ const AddCalendarForm: FunctionComponent<any> = props => {
     const formTitle = "Import Calendar";
     //Hooks
     const [isOpen, setIsOpen] = useState(false);
+    const [showSync, setShowSync] = useState(false);
     const [isChecked, setIsChecked] = useState(true);
     const [calendarTitle, setCalendarTitle] = useState("");
     const [calendarUrl, setCalendarUrl] = useState("");
+    const [showMessageBar, { toggle: toggleShowMessageBar }] = useBoolean(false);
+
+
 
     const buttonStyles = { root: { marginRight: 8 } };
     const checkboxStyle: ICheckboxStyles = {
@@ -32,6 +41,10 @@ const AddCalendarForm: FunctionComponent<any> = props => {
         checkmark: {
         }
     };
+
+    const buttonStyle = {
+        outline: "transparent none medium"
+    }
 
     const openPanel = (() => setIsOpen(true));
     const dismissPanel = (() => {
@@ -85,6 +98,61 @@ const AddCalendarForm: FunctionComponent<any> = props => {
         </div>
     );
 
+    const commandBarItems = useConst(() => [
+        {
+            key: 'commandBarItem1',
+            text: 'Sync from URL',
+            iconProps: {
+                iconName: 'Sync',
+            },
+            onClick: () => { setShowSync(true) },
+            keytipProps: keytipMap.CommandButton1Keytip,
+        },
+        {
+            key: 'commandBarItem2',
+            text: 'Upload ical File',
+            iconProps: {
+                iconName: 'Upload',
+            },
+            onClick: () => { setShowSync(false) },
+            keytipProps: keytipMap.CommandButton2Keytip,
+        },
+    ]);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files) {
+            var reader = new FileReader();
+        var output
+            reader.onload = function () {
+                //ical format (string)
+                //console.log(reader.result);
+
+                //parse
+                const ical = require('ical');
+                const data = ical.parseICS(reader.result)
+
+                //parser format
+                //console.log(data)
+                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                const weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+                output = "IMPORTED CALENDAR ITEMS:\n\n"
+                for (let k in data) {
+                    if (data.hasOwnProperty(k)) {
+                        var ev = data[k];
+                        if (data[k].type === 'VEVENT') {
+                            output = output+`SUMMARY: ${ev.summary} (LOCATION: ${ev.location}) - DATE: ${weekDays[ev.start.getDay()]}, ${ev.start.getDate()} of ${months[ev.start.getMonth()]} at ${ev.start.toLocaleTimeString('en-GB')}\n`;
+                        }
+                    }
+                }
+                alert(output)
+            };
+            var file = e.target.files[0]
+            reader.readAsText(file)
+            
+            
+        }
+    }
+
     return (
         <div>
             <DefaultButton text={formTitle} onClick={openPanel} />
@@ -99,6 +167,8 @@ const AddCalendarForm: FunctionComponent<any> = props => {
                 isFooterAtBottom={true}
                 onRenderFooterContent={onRenderFooterContent}
             >
+                
+                {showMessageBar && <MessageBar messageBarType={MessageBarType.success}>Success Uploading</MessageBar>}
                 <TextField
                     label="Title "
                     required
@@ -106,19 +176,52 @@ const AddCalendarForm: FunctionComponent<any> = props => {
                     defaultValue={calendarTitle}
                     onChange={(_, value) => { setCalendarTitle(String(value)) }}
                 />
-                <TextField
-                    label="Calendar URL "
-                    required
-                    placeholder="Enter an URL"
-                    defaultValue={calendarUrl}
-                    onChange={(_, value) => { setCalendarUrl(String(value)) }}
-                />
-                <Checkbox
-                    styles={checkboxStyle}
-                    label="Calendar is public"
-                    checked={isChecked}
-                    onChange={(_, value) => setIsChecked(Boolean(value))}
-                />
+                <div style={{marginTop:"10px"}}><CommandBar items={commandBarItems} /></div>
+                {showSync && <div>
+                    <TextField
+                        label="Calendar URL "
+                        required
+                        placeholder="Enter an URL"
+                        defaultValue={calendarUrl}
+                        onChange={(_, value) => { setCalendarUrl(String(value)) }}
+                    />
+                    <Checkbox
+                        styles={checkboxStyle}
+                        label="Calendar is public"
+                        checked={isChecked}
+                        onChange={(_, value) => setIsChecked(Boolean(value))}
+                    />
+                </div>
+                }
+                {!showSync &&
+                    <div>
+                        <Label required>Browse</Label>
+                        <div>
+                            <input
+                                accept=".ics"
+                                multiple
+                                type="file"
+                                onChange={(e) => handleChange(e)}
+                            />
+                            {/* <DefaultButton text="Choose File" /> */}
+                            {/* 
+                            https://github.com/microsoft/fluentui/issues/4733
+                            
+                            <input
+                                accept="image/*"
+                                id="contained-button-file"
+                                multiple
+                                type="file"
+                                style={{ display: "none" }}
+                            />
+                            <label htmlFor="contained-button-file">
+                                <Button variant="contained" color="primary" component="span">
+                                    Choose File
+                                </Button>
+                            </label> */}
+                        </div>
+                    </div>
+                }
             </Panel>
         </div>
     );
