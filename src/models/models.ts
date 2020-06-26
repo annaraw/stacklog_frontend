@@ -15,19 +15,19 @@ export interface Member {
     email: string,
 }
 
-export interface Backlog {
+export interface BacklogItem {
     id: number,
     author: string,
     assignee: string,
     title: string,
     description: string,
     priority: number,
-    reminder: number,
+    reminder?: number,
     completed: boolean,
-    startDate: Date,
-    dueDate: Date,
-    category: Category,
-    team: string
+    startDate?: Date,
+    dueDate?: Date,
+    category?: string,
+    team?: string
 }
 
 export interface Category {
