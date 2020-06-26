@@ -15,7 +15,7 @@ export interface Member {
     email: string,
 }
 
-export interface BacklogItem {
+export interface IBacklogItem {
     id: number,
     author: string,
     assignee: string,
@@ -26,7 +26,7 @@ export interface BacklogItem {
     completed: boolean,
     startDate?: Date,
     dueDate?: Date,
-    category?: string,
+    category: string,
     team?: string
 }
 

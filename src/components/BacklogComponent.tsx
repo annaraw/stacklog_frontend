@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Component } from 'react';
 
-import './BacklogTestView.css'
-import { Backlog } from '../models/models'
+import './BacklogComponent.css'
+import { IBacklogItem } from '../models/models'
 import { backlogDummy, categories } from '../data/dummyData'
-import BacklogItem from '../components/BacklogItem';
+import BacklogItem from './BacklogItem';
 
 import { Dropdown, IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
 import { SearchBox } from 'office-ui-fabric-react/lib/SearchBox';
@@ -19,15 +19,15 @@ const sortTypes = {
 }
 
 interface BacklogState {
-  backlog: Backlog[];
-  displayedBacklog: Backlog[];
+  backlog: IBacklogItem[];
+  displayedBacklog: IBacklogItem[];
   selectedKeys: string[];
   searchInput: string;
   sortIsUp: boolean;
   sortType: string
 }
 
-export default class BacklogScreen extends Component<{}, BacklogState> {
+export default class BacklogComponent extends Component<{}, BacklogState> {
 
   orderIcon: IIconProps = {};
 
@@ -47,11 +47,11 @@ export default class BacklogScreen extends Component<{}, BacklogState> {
     this.sort()
   }
 
-  setBacklog = (backlog: Backlog[]) => {
+  setBacklog = (backlog: IBacklogItem[]) => {
     this.setState({ backlog: backlog })
   }
 
-  setDisplayedBacklog = (displayedBacklog: Backlog[]) => {
+  setDisplayedBacklog = (displayedBacklog: IBacklogItem[]) => {
     this.setState({ displayedBacklog: displayedBacklog })
   }
 
@@ -77,13 +77,13 @@ export default class BacklogScreen extends Component<{}, BacklogState> {
       await this.setSelectedKeys(option)
     }
     //create list of filtered backlog
-    var temp: Backlog[] = []
+    var temp: IBacklogItem[] = []
     if (this.state.selectedKeys.length === 0) {
       //show all items if no category is selected
       temp = this.state.backlog
     } else {
       this.state.backlog.map(backlogItem => {
-        if (this.state.selectedKeys.includes(backlogItem.category.key)) {
+        if (this.state.selectedKeys.includes(backlogItem.category)) {
           temp.push(backlogItem)
         }
       })
@@ -129,12 +129,12 @@ export default class BacklogScreen extends Component<{}, BacklogState> {
       searchInput = searchInput.filter(function (element) { return element !== ""; })
     }
     //select all backlog items that contain one of the keywords
-    var temp: Backlog[] = []
+    var temp: IBacklogItem[] = []
     searchInput.map(keyword => {
       this.state.backlog.map(backlogItem => {
         if (backlogItem.title.toLowerCase().includes(keyword.toLowerCase())) {
           //item not already in the list AND (check applied filters OR no filter applied)
-          if (!temp.includes(backlogItem) && (this.state.selectedKeys.includes(backlogItem.category.key) || this.state.selectedKeys.length === 0)) {
+          if (!temp.includes(backlogItem) && (this.state.selectedKeys.includes(backlogItem.category) || this.state.selectedKeys.length === 0)) {
             temp.push(backlogItem)
           }
         }

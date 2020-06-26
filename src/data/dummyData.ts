@@ -1,4 +1,4 @@
-import { Member, Project, Backlog, Category } from "../models/models"
+import { Member, Project, IBacklogItem, Category } from "../models/models"
 
 export const personsDummy: Member[] = [
     {
@@ -111,7 +111,7 @@ export const categories: Category[] = [
     },
 ]
 
-export const backlogDummy: Backlog[] = [
+export const backlogDummy: IBacklogItem[] = [
     {
         id: 1,
         author: "Author",
@@ -123,7 +123,7 @@ export const backlogDummy: Backlog[] = [
         startDate: new Date("2019-06-10"),
         dueDate: new Date("2019-06-20"),
         team: "Team",
-        category: categories[1],
+        category: "FBL",
         priority: 1
     },
     {
@@ -137,7 +137,7 @@ export const backlogDummy: Backlog[] = [
         startDate: new Date("2019-06-10"),
         dueDate: new Date("2019-06-20"),
         team: "Team",
-        category: categories[0],
+        category: "SEBA",
         priority: 2
     },
     {
@@ -151,7 +151,7 @@ export const backlogDummy: Backlog[] = [
         startDate: new Date("2019-06-10"),
         dueDate: new Date("2019-06-20"),
         team: "Team",
-        category: categories[2],
+        category: "DB",
         priority: 3
     },
     {
@@ -165,7 +165,7 @@ export const backlogDummy: Backlog[] = [
         startDate: new Date("2019-06-10"),
         dueDate: new Date("2019-06-20"),
         team: "Team",
-        category: categories[2],
+        category: "DB",
         priority: 1
     },
     {
@@ -179,7 +179,7 @@ export const backlogDummy: Backlog[] = [
         startDate: new Date("2019-06-10"),
         dueDate: new Date("2019-06-20"),
         team: "Team",
-        category: categories[1],
+        category: "FBL",
         priority: 2
     },
     {
@@ -193,7 +193,7 @@ export const backlogDummy: Backlog[] = [
         startDate: new Date("2019-06-10"),
         dueDate: new Date("2019-06-20"),
         team: "Team",
-        category: categories[0],
+        category: "SEBA",
         priority: 3
     },
     {
@@ -207,7 +207,7 @@ export const backlogDummy: Backlog[] = [
         startDate: new Date("2019-06-10"),
         dueDate: new Date("2019-06-20"),
         team: "Team",
-        category: categories[0],
+        category: "SEBA",
         priority: 1
     },
     {
@@ -221,7 +221,7 @@ export const backlogDummy: Backlog[] = [
         startDate: new Date("2019-06-10"),
         dueDate: new Date("2019-06-20"),
         team: "Team",
-        category: categories[2],
+        category: "DB",
         priority: 3
     }
 ]
