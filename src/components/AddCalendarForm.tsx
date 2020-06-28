@@ -8,7 +8,7 @@ import {
 import { useBoolean } from '@uifabric/react-hooks';
 import Button from '@material-ui/core/Button';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
-import { RadioGroup, FormControl, FormControlLabel, Radio, TextField, Checkbox, Snackbar } from '@material-ui/core';
+import { RadioGroup, FormControl, FormControlLabel, Radio, TextField, Checkbox } from '@material-ui/core';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 import { initializeIcons } from '@fluentui/react/lib/Icons';
 
@@ -25,7 +25,6 @@ function Alert(props: AlertProps) {
 initializeIcons();
 
 const AddCalendarForm: FunctionComponent<any> = props => {
-    const { } = props;
     const formTitle = "Import Calendar";
     //Hooks
     const [isOpen, setIsOpen] = useState(false);
@@ -50,7 +49,7 @@ const AddCalendarForm: FunctionComponent<any> = props => {
     });
 
     const submit = () => {
-        getIcsFile();
+        syncCalendarFile();
         setIsOpen(false);
         setCalendarTitle("");
         setCalendarUrl("");
@@ -58,7 +57,7 @@ const AddCalendarForm: FunctionComponent<any> = props => {
         setShowSync(false);
     }
 
-    const getIcsFile = () => {
+    const syncCalendarFile = () => {
         //https://openbase.io/js/node-ical ics parser
         //https://stackoverflow.com/questions/54403963/http-get-request-for-ican-ics-file
         //https://github.com/mozilla-comm/ical.js/
@@ -100,7 +99,7 @@ const AddCalendarForm: FunctionComponent<any> = props => {
         </div>
     );
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const uploadCalendarFile = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
             var reader = new FileReader();
             var output
@@ -111,8 +110,8 @@ const AddCalendarForm: FunctionComponent<any> = props => {
                 const data = ical.parseICS(reader.result)
 
                 //parser format test
-                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-                const weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+                //const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                //const weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
                 output = ""
                 for (let k in data) {
                     if (data.hasOwnProperty(k)) {
@@ -128,7 +127,7 @@ const AddCalendarForm: FunctionComponent<any> = props => {
                 setCalendarFile(output)
                 setCalendarFilename(filename)
                 console.log(output)
-                if(output != "") {
+                if(output !== "") {
                     setUploadState(UploadState.Success)
                 }
                 else {
@@ -170,7 +169,7 @@ const AddCalendarForm: FunctionComponent<any> = props => {
                 <div style={{ margin: "10px" }}><TextField id="outlined-basic" label="Calendar Title" variant="outlined" required fullWidth value={calendarTitle} onChange={(e) => { setCalendarTitle(e.target.value) }} /></div>
                 <div style={{ margin: "10px" }}>
                     <FormControl component="fieldset">
-                        <RadioGroup aria-label="gender" name="gender1" onChange={handleChange}>
+                        <RadioGroup aria-label="gender" name="gender1" onChange={uploadCalendarFile}>
                             <FormControlLabel value="female" control={<Radio color="default" />} label="Sync from URL" onChange={(e) => { setShowSync(true); setShowFileUpload(false) }} />
                             <FormControlLabel value="male" control={<Radio color="default" />} label="Upload ical File" defaultChecked={true} onChange={(e) => { setShowSync(false); setShowFileUpload(true) }} />
                         </RadioGroup>
@@ -201,7 +200,7 @@ const AddCalendarForm: FunctionComponent<any> = props => {
                                 accept=".ics"
                                 //multiple
                                 type="file"
-                                onChange={(e) => handleChange(e)}
+                                onChange={(e) => uploadCalendarFile(e)}
                                 style={{ display: "none" }}
                             />
                             <label htmlFor="contained-button-file">
@@ -219,13 +218,13 @@ const AddCalendarForm: FunctionComponent<any> = props => {
                         </div>
                         <div style={{ margin: "10px", width:"auto", overflow:"hidden"}}>
                         {
-                            (uploadState == UploadState.Success) &&
+                            (uploadState === UploadState.Success) &&
                             <Alert severity="success" onClose={handleClose} elevation={0} style={{}}>
                                 <span style={{fontWeight:"bold"}}>{calendarFilename}</span> selected. The file is a valid ical format.
                             </Alert>
                         }
                         {
-                            (uploadState == UploadState.Fail) &&
+                            (uploadState === UploadState.Fail) &&
                             <Alert severity="warning" onClose={handleClose} elevation={0}>
                                 <span style={{fontWeight:"bold"}}>{calendarFilename}</span> selected. The file is not a valid ical format.
                             </Alert>

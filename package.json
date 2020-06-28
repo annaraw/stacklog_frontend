@@ -4,8 +4,8 @@
   "description": "Stacklog Frontend React Application",
   "private": true,
   "dependencies": {
-    "@fluentui/react": "^7.117.2",
-    "@material-ui/core": "^4.10.1",
+    "@fluentui/react": "^7.121.0",
+    "@material-ui/core": "^4.9.14",
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "4.0.0-alpha.56",
     "@testing-library/jest-dom": "^4.2.4",
