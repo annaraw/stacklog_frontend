@@ -11,6 +11,9 @@ import { SearchBox } from 'office-ui-fabric-react/lib/SearchBox';
 import { DefaultButton, IContextualMenuProps, IIconProps } from 'office-ui-fabric-react';
 import Scrollbar from 'react-scrollbars-custom';
 
+import { Droppable } from 'react-beautiful-dnd'
+import styled from 'styled-components'
+
 const sortTypes = {
   alphabetical: "Alphabetical",
   priority: "Priority",
@@ -24,8 +27,19 @@ interface BacklogState {
   selectedKeys: string[];
   searchInput: string;
   sortIsUp: boolean;
-  sortType: string
+  sortType: string;
+  column: any;
+  key:string;}
+
+type BoardColumnContentStylesProps = {
+  isDraggingOver: boolean
 }
+
+const BoardColumnContent = styled.div<BoardColumnContentStylesProps>`
+  min-height: 20px;
+  background-color: ${props => props.isDraggingOver ? '#aecde0' : null};
+  border-radius: 4px;
+`
 
 export default class BacklogComponent extends Component<{}, BacklogState> {
 
@@ -40,6 +54,8 @@ export default class BacklogComponent extends Component<{}, BacklogState> {
       searchInput: "",
       sortIsUp: false,
       sortType: sortTypes.priority,
+      column: '',
+      key: '',
     }
   }
 
@@ -69,6 +85,10 @@ export default class BacklogComponent extends Component<{}, BacklogState> {
 
   setSortType = async (sortType: string) => {
     this.setState({sortType: sortType})
+  }
+
+  setColumn = (column: string) => {
+    this.setState({ column: column })
   }
 
   filter = async (option?: IDropdownOption): Promise<void> => {
@@ -214,11 +234,24 @@ export default class BacklogComponent extends Component<{}, BacklogState> {
             />
           </div>
           <Scrollbar style={{ width: "100%", float: "left", height: "500px"}}>
-            {this.state.displayedBacklog.map(backlogItem => {
-              return (
-                <BacklogItem key={backlogItem.id} title={backlogItem.title} description={backlogItem.description} category={backlogItem.category} priority={backlogItem.priority} />
-              )
-            })}
+
+            <Droppable droppableId={this.state.column}>
+              {(provided, snapshot) => (
+                <BoardColumnContent
+                  {...provided.droppableProps}
+                  ref={provided.innerRef}
+                  isDraggingOver={snapshot.isDraggingOver}
+                >
+                    {this.state.displayedBacklog.map((backlogItem: any, index: number) => 
+                      
+                        <BacklogItem index={index} id={backlogItem.id} key={backlogItem.id} title={backlogItem.title} description={backlogItem.description} category={backlogItem.category} priority={backlogItem.priority} />
+                        
+                    )}
+                    {provided.placeholder}
+                </BoardColumnContent>
+            )}
+            </Droppable>
+
           </Scrollbar>
         </div>
       </React.Fragment>

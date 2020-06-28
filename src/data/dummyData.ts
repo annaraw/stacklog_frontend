@@ -124,7 +124,8 @@ export const backlogDummy: IBacklogItem[] = [
         dueDate: new Date("2019-06-20"),
         team: "Team",
         category: "FBL",
-        priority: 1
+        priority: 1,
+        index:0,
     },
     {
         id: 2,
@@ -138,7 +139,8 @@ export const backlogDummy: IBacklogItem[] = [
         dueDate: new Date("2019-06-20"),
         team: "Team",
         category: "SEBA",
-        priority: 2
+        priority: 2,
+        index:1,
     },
     {
         id: 3,
@@ -152,7 +154,8 @@ export const backlogDummy: IBacklogItem[] = [
         dueDate: new Date("2019-06-20"),
         team: "Team",
         category: "DB",
-        priority: 3
+        priority: 3,
+        index:2,
     },
     {
         id: 4,
@@ -166,7 +169,8 @@ export const backlogDummy: IBacklogItem[] = [
         dueDate: new Date("2019-06-20"),
         team: "Team",
         category: "DB",
-        priority: 1
+        priority: 1,
+        index:3,
     },
     {
         id: 5,
@@ -180,7 +184,8 @@ export const backlogDummy: IBacklogItem[] = [
         dueDate: new Date("2019-06-20"),
         team: "Team",
         category: "FBL",
-        priority: 2
+        priority: 2,
+        index:4,
     },
     {
         id: 6,
@@ -194,7 +199,8 @@ export const backlogDummy: IBacklogItem[] = [
         dueDate: new Date("2019-06-20"),
         team: "Team",
         category: "SEBA",
-        priority: 3
+        priority: 3,
+        index:5,
     },
     {
         id: 7,
@@ -208,7 +214,8 @@ export const backlogDummy: IBacklogItem[] = [
         dueDate: new Date("2019-06-20"),
         team: "Team",
         category: "SEBA",
-        priority: 1
+        priority: 1,
+        index:6,
     },
     {
         id: 8,
@@ -222,6 +229,7 @@ export const backlogDummy: IBacklogItem[] = [
         dueDate: new Date("2019-06-20"),
         team: "Team",
         category: "DB",
-        priority: 3
+        priority: 3,
+        index:7,
     }
 ]

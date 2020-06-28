@@ -16,7 +16,7 @@ export interface Member {
 }
 
 export interface IBacklogItem {
-    id: number,
+    id: any,
     author: string,
     assignee: string,
     title: string,
@@ -27,7 +27,8 @@ export interface IBacklogItem {
     startDate?: Date,
     dueDate?: Date,
     category: string,
-    team?: string
+    team?: string,
+    index: number,
 }
 
 export interface Category {
