@@ -2,18 +2,25 @@ import * as React from 'react';
 import { useState, FunctionComponent } from 'react';
 import {
     DefaultButton,
-    PrimaryButton,
     Panel,
     PanelType,
-    TextField,
 } from '@fluentui/react';
+import { useBoolean } from '@uifabric/react-hooks';
+import Button from '@material-ui/core/Button';
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import { RadioGroup, FormControl, FormControlLabel, Radio, TextField, Checkbox, Snackbar } from '@material-ui/core';
+import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 import { initializeIcons } from '@fluentui/react/lib/Icons';
-import { Label } from '@fluentui/react/lib/Label';
-import { Checkbox, ICheckboxStyles } from '@fluentui/react/lib/Checkbox';
-import { CommandBar } from '@fluentui/react/lib/CommandBar';
-import { keytipMap } from 'office-ui-fabric-react/lib/components/Keytip/examples/KeytipSetup';
-import { MessageBar, MessageBarType } from '@fluentui/react/lib/MessageBar';
-import { useBoolean, useConst } from '@uifabric/react-hooks';
+
+export enum UploadState{
+    Empty,
+    Success,
+    Fail
+}
+
+function Alert(props: AlertProps) {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 initializeIcons();
 
@@ -23,43 +30,32 @@ const AddCalendarForm: FunctionComponent<any> = props => {
     //Hooks
     const [isOpen, setIsOpen] = useState(false);
     const [showSync, setShowSync] = useState(false);
-    const [isChecked, setIsChecked] = useState(true);
+    const [showFileUpload, setShowFileUpload] = useState(false);
+    const [isPublic, { toggle: toggleIsPublic }] = useBoolean(true);
     const [calendarTitle, setCalendarTitle] = useState("");
     const [calendarUrl, setCalendarUrl] = useState("");
-    const [showMessageBar, { toggle: toggleShowMessageBar }] = useBoolean(false);
-
-
-
-    const buttonStyles = { root: { marginRight: 8 } };
-    const checkboxStyle: ICheckboxStyles = {
-        root: {
-            marginTop: '10px',
-            paddingTop: '10px',
-            paddingBottom: '10px',
-            paddingLeft: '10px'
-        },
-        checkmark: {
-        }
-    };
-
-    const buttonStyle = {
-        outline: "transparent none medium"
-    }
+    const [calendarFile, setCalendarFile] = useState("");
+    const [calendarFilename, setCalendarFilename] = useState("");
+    const [uploadState, setUploadState] = useState(UploadState.Empty);
 
     const openPanel = (() => setIsOpen(true));
     const dismissPanel = (() => {
         setIsOpen(false);
         setCalendarTitle("");
         setCalendarUrl("");
-        setIsChecked(true)
+        setShowFileUpload(false);
+        setShowSync(false);
+        
+        console.log(calendarFile)
     });
 
     const submit = () => {
         getIcsFile();
         setIsOpen(false);
-        setIsChecked(true);
         setCalendarTitle("");
         setCalendarUrl("");
+        setShowFileUpload(false);
+        setShowSync(false);
     }
 
     const getIcsFile = () => {
@@ -85,73 +81,75 @@ const AddCalendarForm: FunctionComponent<any> = props => {
 
     const onRenderFooterContent = () => (
         <div style={{ position: "absolute", right: "20px", bottom: "20px" }}>
-            <DefaultButton
+            <Button
+                variant="contained"
+                color="default"
                 onClick={dismissPanel}
-                styles={buttonStyles}
-                text={"Cancel"}
-            />
-            <PrimaryButton
+                style={{margin:"5px"}}
+            >
+                Cancel
+            </Button>
+            <Button
+                variant="contained"
+                color="primary"
                 onClick={submit}
-                styles={buttonStyles}
-                text={"Import Calendar"}
-            />
+                style={{margin:"5px"}}
+            >
+                Import Calendar
+            </Button>
         </div>
     );
-
-    const commandBarItems = useConst(() => [
-        {
-            key: 'commandBarItem1',
-            text: 'Sync from URL',
-            iconProps: {
-                iconName: 'Sync',
-            },
-            onClick: () => { setShowSync(true) },
-            keytipProps: keytipMap.CommandButton1Keytip,
-        },
-        {
-            key: 'commandBarItem2',
-            text: 'Upload ical File',
-            iconProps: {
-                iconName: 'Upload',
-            },
-            onClick: () => { setShowSync(false) },
-            keytipProps: keytipMap.CommandButton2Keytip,
-        },
-    ]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
             var reader = new FileReader();
-        var output
+            var output
+            var filename = e.target.files[0].name
             reader.onload = function () {
-                //ical format (string)
-                //console.log(reader.result);
-
-                //parse
+                //parse ical file
                 const ical = require('ical');
                 const data = ical.parseICS(reader.result)
 
-                //parser format
-                //console.log(data)
+                //parser format test
                 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
                 const weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-                output = "IMPORTED CALENDAR ITEMS:\n\n"
+                output = ""
                 for (let k in data) {
                     if (data.hasOwnProperty(k)) {
                         var ev = data[k];
                         if (data[k].type === 'VEVENT') {
-                            output = output+`SUMMARY: ${ev.summary} (LOCATION: ${ev.location}) - DATE: ${weekDays[ev.start.getDay()]}, ${ev.start.getDate()} of ${months[ev.start.getMonth()]} at ${ev.start.toLocaleTimeString('en-GB')}\n`;
+                            //output = output + `SUMMARY: ${ev.summary} (LOCATION: ${ev.location}) - DATE: ${weekDays[ev.start.getDay()]}, ${ev.start.getDate()} of ${months[ev.start.getMonth()]} at ${ev.start.toLocaleTimeString('en-GB')}\n`;
+                            output = output + "\n" + ev.summary;
                         }
                     }
                 }
-                alert(output)
+
+                //save ical content into state
+                setCalendarFile(output)
+                setCalendarFilename(filename)
+                console.log(output)
+                if(output != "") {
+                    setUploadState(UploadState.Success)
+                }
+                else {
+                    setUploadState(UploadState.Fail)
+                }
+                
             };
             var file = e.target.files[0]
             reader.readAsText(file)
-            
-            
         }
     }
+
+    const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setUploadState(UploadState.Empty)
+        setCalendarFile("")
+        setCalendarFilename("")
+    };
 
     return (
         <div>
@@ -166,59 +164,73 @@ const AddCalendarForm: FunctionComponent<any> = props => {
                 headerText={formTitle}
                 isFooterAtBottom={true}
                 onRenderFooterContent={onRenderFooterContent}
+                style={{minWidth:"2000px"}}
             >
-                
-                {showMessageBar && <MessageBar messageBarType={MessageBarType.success}>Success Uploading</MessageBar>}
-                <TextField
-                    label="Title "
-                    required
-                    placeholder="Enter a title"
-                    defaultValue={calendarTitle}
-                    onChange={(_, value) => { setCalendarTitle(String(value)) }}
-                />
-                <div style={{marginTop:"10px"}}><CommandBar items={commandBarItems} /></div>
-                {showSync && <div>
-                    <TextField
-                        label="Calendar URL "
-                        required
-                        placeholder="Enter an URL"
-                        defaultValue={calendarUrl}
-                        onChange={(_, value) => { setCalendarUrl(String(value)) }}
-                    />
-                    <Checkbox
-                        styles={checkboxStyle}
+
+                <div style={{ margin: "10px" }}><TextField id="outlined-basic" label="Calendar Title" variant="outlined" required fullWidth value={calendarTitle} onChange={(e) => { setCalendarTitle(e.target.value) }} /></div>
+                <div style={{ margin: "10px" }}>
+                    <FormControl component="fieldset">
+                        <RadioGroup aria-label="gender" name="gender1" onChange={handleChange}>
+                            <FormControlLabel value="female" control={<Radio color="default" />} label="Sync from URL" onChange={(e) => { setShowSync(true); setShowFileUpload(false) }} />
+                            <FormControlLabel value="male" control={<Radio color="default" />} label="Upload ical File" defaultChecked={true} onChange={(e) => { setShowSync(false); setShowFileUpload(true) }} />
+                        </RadioGroup>
+                    </FormControl>
+                </div>
+
+                {showSync && <div style={{ margin: "10px", border: "1px solid #C0C0C0", padding: "10px", borderRadius: "5px" }}>
+                    <TextField id="outlined-basic" label="Calendar URL" variant="outlined" required fullWidth value={calendarUrl} onChange={(e) => { setCalendarUrl(e.target.value) }} />
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                checked={isPublic}
+                                onChange={toggleIsPublic}
+                                name="public"
+                                color="default"
+                            />
+                        }
                         label="Calendar is public"
-                        checked={isChecked}
-                        onChange={(_, value) => setIsChecked(Boolean(value))}
                     />
                 </div>
                 }
-                {!showSync &&
-                    <div>
-                        <Label required>Browse</Label>
-                        <div>
+                {showFileUpload &&
+                    <div style={{ margin: "10px", border: "1px solid #C0C0C0", padding: "10px", borderRadius: "5px"}}>
+                        <div style={{display: "inline-block", width: "100%"}}>
+                        <div style={{ margin: "10px", float:"left"}}>
                             <input
+                                id="contained-button-file"
                                 accept=".ics"
-                                multiple
+                                //multiple
                                 type="file"
                                 onChange={(e) => handleChange(e)}
-                            />
-                            {/* <DefaultButton text="Choose File" /> */}
-                            {/* 
-                            https://github.com/microsoft/fluentui/issues/4733
-                            
-                            <input
-                                accept="image/*"
-                                id="contained-button-file"
-                                multiple
-                                type="file"
                                 style={{ display: "none" }}
                             />
                             <label htmlFor="contained-button-file">
-                                <Button variant="contained" color="primary" component="span">
-                                    Choose File
+                                <Button
+                                    variant="contained"
+                                    component="span"
+                                    color="default"
+                                    startIcon={<CloudUploadIcon />}
+                                    style = {{fontWeight:"bold", height:"48.0167px"}}
+                                    disableElevation
+                                >
+                                    Select File
                                 </Button>
-                            </label> */}
+                            </label>
+                        </div>
+                        <div style={{ margin: "10px", width:"auto", overflow:"hidden"}}>
+                        {
+                            (uploadState == UploadState.Success) &&
+                            <Alert severity="success" onClose={handleClose} elevation={0} style={{}}>
+                                <span style={{fontWeight:"bold"}}>{calendarFilename}</span> selected. The file is a valid ical format.
+                            </Alert>
+                        }
+                        {
+                            (uploadState == UploadState.Fail) &&
+                            <Alert severity="warning" onClose={handleClose} elevation={0}>
+                                <span style={{fontWeight:"bold"}}>{calendarFilename}</span> selected. The file is not a valid ical format.
+                            </Alert>
+                        }
+                        </div>
                         </div>
                     </div>
                 }
