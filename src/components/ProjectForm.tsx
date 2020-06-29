@@ -3,20 +3,19 @@ import { useState, FunctionComponent } from 'react';
 import {
     DefaultButton,
     PrimaryButton,
-    Panel,
-    PanelType,
-    TextField,
-    FontIcon,
-    IComboBoxOption,
-    ComboBox,
 } from 'office-ui-fabric-react';
 import { initializeIcons } from 'office-ui-fabric-react/lib/Icons';
 
 import { Project } from '../models/models';
 import { PersonaComponent } from './persona';
 import { personsDummy } from '../data/dummyData';
+import { TextField, makeStyles, Drawer, Box, Button, Icon, IconButton } from '@material-ui/core';
+import { Autocomplete } from '@material-ui/lab';
+import AddIcon from '@material-ui/icons/Add';
+import { Colors } from '../util/constants';
 
 initializeIcons();
+
 /**
  * Project Form
  * Input Fields for Project Creation
@@ -56,101 +55,129 @@ const InputForm: FunctionComponent<{ projects: Project[]; setProjects: (projects
         setTeam([]);
     }
 
-    const onRenderFooterContent = () => (
-        <div style={{ position: "absolute", right: "20px", bottom: "20px" }}>
-            <DefaultButton
-                onClick={dismissPanel}
-                styles={buttonStyles}
-                text={"Cancel"}
-            />
-            <PrimaryButton
-                onClick={submit}
-                styles={buttonStyles}
-                text={"Create"}
-            />
-        </div>
-    );
-
-    const comboBoxBasicOptions: IComboBoxOption[] = personsDummy.map(person => {
-        return(
-            {key: person.id, text: person.name + " " + person.lastName}
+    const comboBoxBasicOptions = personsDummy.map(person => {
+        return (
+            { title: person.name + " " + person.lastName }
         )
     })
 
+    const useStyles = makeStyles((theme) => ({
+        root: {
+            '& .MuiTextField-root': {
+                margin: theme.spacing(1),
+                width: 200,
+            },
+        },
+        textField: {
+            marginTop: "10px",
+            marginBottom: "10px"
+        },
+        paperFullWidth: {
+            overflowY: 'visible'
+        },
+        dialogContentRoot: {
+            overflowY: 'visible'
+        }
+    }));
+
+    const classes = useStyles()
+
     return (
         <div>
-            <DefaultButton text={formTitle} onClick={openPanel} />
-            <Panel
-                isLightDismiss
-                isOpen={isOpen}
-                onDismiss={dismissPanel}
-                type={PanelType.customNear}
-                customWidth={"40%"}
-                closeButtonAriaLabel="Close"
-                headerText={formTitle}
-                onRenderFooterContent={onRenderFooterContent}
-                isFooterAtBottom={true}
+            <Button onClick={openPanel}>{formTitle}</Button>
+            <Drawer
+                anchor="left"
+                open={isOpen}
+                onClose={dismissPanel}
+                style={{ position: "relative" }}
             >
-                <TextField
-                    label="Title "
-                    required
-                    placeholder="Set a title"
-                    defaultValue={title}
-                    onChange={(event, value) => setTitle(String(value))}
-                />
-                <TextField
-                    label="Description "
-                    required
-                    placeholder="Set a description"
-                    defaultValue={description}
-                    multiline rows={7}
-                    onChange={(event, value) => setDescription(String(value))}
-                />
-                <div style={{ display: "grid", gridAutoFlow: "column", position: "relative" }}>
-                    {/* <TextField
-                        label="Team"
-                        placeholder="Add Team members"
-                    /> */}
-                    <ComboBox
-                        placeholder="Add Team member"
-                        label="Team"
-                        allowFreeform
-                        autoComplete="on"
-                        options={comboBoxBasicOptions}
-                        onChange={(event,value) => (value) ? setMember(value.text): setMember("")}
+                <Box width={"800px"} style={{ padding: "20px" }}>
+                    <div className="drawer-heading">
+                        <h1>{formTitle}</h1>
+                    </div>
+                    <TextField
+                        label="Title "
+                        className={classes.textField}
+                        required
+                        fullWidth
+                        variant="outlined"
+                        placeholder="Set a title"
+                        defaultValue={title}
+                        onChange={(event) => setTitle(event.target.value)}
                     />
+                    <TextField
+                        label="Description "
+                        className={classes.textField}
+                        required
+                        fullWidth
+                        variant="outlined"
+                        placeholder="Set a description"
+                        defaultValue={description}
+                        multiline rows={7}
+                        onChange={(event) => setDescription(String(event.target.value))}
+                    />
+                    <div style={{ display: "grid", gridAutoFlow: "column", position: "relative" }}>
+
+                        <Autocomplete
+                            id="combo-box-demo"
+                            className={classes.textField}
+                            options={comboBoxBasicOptions}
+                            getOptionLabel={option => option.title}
+                            onChange={(event, value) => (value) ? setMember(value.title) : setMember("")}
+                            renderInput={(params) => <TextField {...params} label="Add Team member" variant="outlined" />}
+                        />
+                        <IconButton
+                            onClick={() => {
+                                const newMember = personsDummy.find(person =>
+                                    (person.name + " " + person.lastName) === member
+                                )
+                                if (newMember) {
+                                    setTeam([...team, newMember])
+                                }
+
+                            }}
+                        >
+                            <AddIcon />
+                        </IconButton>
+                    </div>
+                    {team.map(member => {
+                        return (
+                            <PersonaComponent person={member} />
+                        )
+                    })}
                     <div
-                        style={{ width: "30px" }}
-                        onClick={() => {
-                            const newMember = personsDummy.find(person => 
-                                (person.name + " " + person.lastName) === member
-                            )
-                            if(newMember){
-                                setTeam([...team, newMember])
-                            }
-                            
+                        className="drawer-footer"
+                        style={{
+                            position: "absolute",
+                            bottom: 0,
+                            right: 0,
+                            padding: "20px"
                         }}
                     >
-                        <FontIcon
-                            iconName="CirclePlus"
+                        <Button
+                            variant="contained"
                             style={{
-                                fontSize: 30,
-                                height: 30,
-                                width: 30,
-                                bottom: 0,
-                                position: "absolute"
+                                backgroundColor: Colors.secondaryColor,
+                                margin: "5px"
                             }}
-                        />
+                            onClick={dismissPanel}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            variant="contained"
+                            style={{
+                                backgroundColor: Colors.primaryColor,
+                                margin: "5px"
+                            }}
+                            onClick={submit}
+                        >
+                            Create
+                        </Button>
                     </div>
 
-                </div>
-                {team.map(member => {
-                    return (
-                        <PersonaComponent person={member} />
-                    )
-                })}
-
-            </Panel>
+                </Box>
+            </Drawer>
         </div>
     );
 };
