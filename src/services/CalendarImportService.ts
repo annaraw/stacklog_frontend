@@ -1,5 +1,6 @@
 import HttpService from "./HttpService";
 import { backendserverURL } from "../util/constants";
+import { Calendar } from "../models/models";
 
 export default class CalendarImportService {
 
@@ -19,10 +20,10 @@ export default class CalendarImportService {
         });
     }
 
-    static addCalendar(item: String) {
+    static addCalendar(calendar: Calendar) {
         return new Promise((resolve, reject) => {
             HttpService.post(`${CalendarImportService.baseURL()}`, 
-            item,
+            calendar,
             function (data: any) {
                 if(!data){
                     reject("Error while retrieving Item");
