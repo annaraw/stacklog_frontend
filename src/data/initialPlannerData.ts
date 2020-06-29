@@ -1,5 +1,7 @@
+import { backlogDummy } from "./dummyData";
+
 export const initialPlannerData = {
-  items: {
+  items: backlogDummy/* {
     'item-1': { id: 'item-1', content: 'Content of item 1.'},
     'item-2': { id: 'item-2', content: 'Content of item 2.'},
     'item-3': { id: 'item-3', content: 'Content of item 3.'},
@@ -7,12 +9,12 @@ export const initialPlannerData = {
     'item-5': { id: 'item-5', content: 'Content of item 5.'},
     'item-6': { id: 'item-6', content: 'Content of item 6.'},
     'item-7': { id: 'item-7', content: 'Content of item 7.'}
-  },
+  } */,
   columns: {
     'backlog': {
       id: 'backlog',
       title: 'Column 1',
-      itemsIds: ['item-1', 'item-2', 'item-3', 'item-4', 'item-5', 'item-6', 'item-7']
+      itemsIds: [1,2,3,4,5,6,7,8]
     },
     'column-2': {
       id: 'column-2',

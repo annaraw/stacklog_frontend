@@ -113,7 +113,7 @@ export const categories: Category[] = [
 
 export const backlogDummy: IBacklogItem[] = [
     {
-        id: 1,
+        id: 'item-1',
         author: "Author",
         assignee: "Author",
         title: "Create Overview Page",
@@ -128,7 +128,7 @@ export const backlogDummy: IBacklogItem[] = [
         index:0,
     },
     {
-        id: 2,
+        id: 'item-2',
         author: "Author",
         assignee: "Author",
         title: "Implement Filter Function",
@@ -143,7 +143,7 @@ export const backlogDummy: IBacklogItem[] = [
         index:1,
     },
     {
-        id: 3,
+        id: 'item-3',
         author: "Author",
         assignee: "Author",
         title: "Homework Sheet 5",
@@ -158,7 +158,7 @@ export const backlogDummy: IBacklogItem[] = [
         index:2,
     },
     {
-        id: 4,
+        id: 'item-4',
         author: "Author",
         assignee: "Author",
         title: "Visit Tutorial 5",
@@ -173,7 +173,7 @@ export const backlogDummy: IBacklogItem[] = [
         index:3,
     },
     {
-        id: 5,
+        id: 'item-5',
         author: "Author",
         assignee: "Author",
         title: "Pitch Presentation",
@@ -188,7 +188,7 @@ export const backlogDummy: IBacklogItem[] = [
         index:4,
     },
     {
-        id: 6,
+        id: 'item-6',
         author: "Author",
         assignee: "Author",
         title: "Develop Backend",
@@ -203,7 +203,7 @@ export const backlogDummy: IBacklogItem[] = [
         index:5,
     },
     {
-        id: 7,
+        id: 'item-7',
         author: "Author",
         assignee: "Author",
         title: "Develop Authentification",
@@ -217,7 +217,7 @@ export const backlogDummy: IBacklogItem[] = [
         priority: 1,
         index:6,
     },
-    {
+    /* {
         id: 8,
         author: "Author",
         assignee: "Author",
@@ -231,5 +231,5 @@ export const backlogDummy: IBacklogItem[] = [
         category: "DB",
         priority: 3,
         index:7,
-    }
+    } */
 ]

@@ -13,12 +13,19 @@ import Scrollbar from 'react-scrollbars-custom';
 
 import { Droppable } from 'react-beautiful-dnd'
 import styled from 'styled-components'
+import { Item } from './Item';
 
 const sortTypes = {
   alphabetical: "Alphabetical",
   priority: "Priority",
   deadline: "Deadline",
   category: "Category"
+}
+
+type BoardColumnProps = {
+  key: string,
+  column: any,
+  items: any,
 }
 
 interface BacklogState {
@@ -28,8 +35,7 @@ interface BacklogState {
   searchInput: string;
   sortIsUp: boolean;
   sortType: string;
-  column: any;
-  key:string;}
+}
 
 type BoardColumnContentStylesProps = {
   isDraggingOver: boolean
@@ -41,21 +47,20 @@ const BoardColumnContent = styled.div<BoardColumnContentStylesProps>`
   border-radius: 4px;
 `
 
-export default class BacklogComponent extends Component<{}, BacklogState> {
+export default class BacklogComponent extends Component<BoardColumnProps, BacklogState> {
 
   orderIcon: IIconProps = {};
 
-  constructor(props: any) {
+  constructor(props: BoardColumnProps) {
     super(props)
+    const {key, column, items} = props
     this.state = {
       backlog: backlogDummy,
       displayedBacklog: backlogDummy,
       selectedKeys: [],
       searchInput: "",
       sortIsUp: false,
-      sortType: sortTypes.priority,
-      column: '',
-      key: '',
+      sortType: sortTypes.priority
     }
   }
 
@@ -80,15 +85,11 @@ export default class BacklogComponent extends Component<{}, BacklogState> {
   }
 
   setSortIsUp = (isUp: boolean) => {
-    this.setState({sortIsUp: isUp})
+    this.setState({ sortIsUp: isUp })
   }
 
   setSortType = async (sortType: string) => {
-    this.setState({sortType: sortType})
-  }
-
-  setColumn = (column: string) => {
-    this.setState({ column: column })
+    this.setState({ sortType: sortType })
   }
 
   filter = async (option?: IDropdownOption): Promise<void> => {
@@ -118,7 +119,7 @@ export default class BacklogComponent extends Component<{}, BacklogState> {
     }
     else if (this.state.sortType === sortTypes.alphabetical) {
       temp =
-      this.state.sortIsUp ? (this.state.displayedBacklog.sort(
+        this.state.sortIsUp ? (this.state.displayedBacklog.sort(
           function (a, b) {
             if (a.title > b.title) { return -1; }
             if (a.title < b.title) { return 1; }
@@ -201,10 +202,10 @@ export default class BacklogComponent extends Component<{}, BacklogState> {
     return (
       <React.Fragment>
         {/* <div className="menuBar"></div> */}
-        <div className = "backlogContainer">
-          <div className = "containerTitle">Backlog</div>
-          <div className = "containerControls">
-            <div style={{float:"left", margin:"5px", display: "inline-block"}}>
+        <div className="backlogContainer">
+          <div className="containerTitle">Backlog</div>
+          <div className="containerControls">
+            <div style={{ float: "left", margin: "5px", display: "inline-block" }}>
               <DefaultButton
                 text={this.state.sortType}
                 split
@@ -214,7 +215,7 @@ export default class BacklogComponent extends Component<{}, BacklogState> {
                 onClick={this.changeOrder}
                 iconProps={this.getOrderIcon()}
               />
-              </div>
+            </div>
             <div style={{ width: "200px", float: "left", margin: "5px", display: "inline-block" }}>
               <Dropdown
                 placeholder="No Filter applied"
@@ -233,23 +234,35 @@ export default class BacklogComponent extends Component<{}, BacklogState> {
               onClear={async (_) => { await this.setSearchInput(""); this.filter() }}
             />
           </div>
-          <Scrollbar style={{ width: "100%", float: "left", height: "500px"}}>
-
-            <Droppable droppableId={this.state.column}>
+          <Scrollbar style={{ width: "100%", float: "left", height: "500px" }}>
+            <Droppable droppableId={this.props.column.id}>
               {(provided, snapshot) => (
                 <BoardColumnContent
                   {...provided.droppableProps}
                   ref={provided.innerRef}
                   isDraggingOver={snapshot.isDraggingOver}
                 >
-                    {this.state.displayedBacklog.map((backlogItem: any, index: number) => 
+                  {console.log(this.props.items)}
+                  {this.props.items.map((backlogItem: any, index: number) => 
                       
-                        <BacklogItem index={index} id={backlogItem.id} key={backlogItem.id} title={backlogItem.title} description={backlogItem.description} category={backlogItem.category} priority={backlogItem.priority} />
+                        <BacklogItem 
+                          index={index} 
+                          id={backlogItem.id} 
+                          key={backlogItem.id} 
+                          title={backlogItem.title} 
+                          description={backlogItem.description}
+                          category={backlogItem.category} 
+                          priority={backlogItem.priority}
+                        />
                         
                     )}
                     {provided.placeholder}
+                  {/* {
+                    this.props.items.map((item: any, index: number) => <Item key={item.id} item={item} index={index} />
+                  )} */}
+                  {provided.placeholder}
                 </BoardColumnContent>
-            )}
+              )}
             </Droppable>
 
           </Scrollbar>

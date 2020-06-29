@@ -5,6 +5,7 @@ import styled from 'styled-components'
 // Import Backlog component
 import Backlog from './BacklogComponent';
 import { Item } from './Item'
+import { useState } from 'react';
 
 // Define types for board column element properties
 type BoardColumnProps = {
@@ -46,6 +47,7 @@ const BoardColumnContent = styled.div<BoardColumnContentStylesProps>`
 
 // Create and export the BoardColumn component
 export const Column: React.FC<BoardColumnProps> = (props) => {
+  const [testState, setTeststate] = useState("")
   return(
     <BoardColumnWrapper>
       {/* Title of the column */}
@@ -62,6 +64,7 @@ export const Column: React.FC<BoardColumnProps> = (props) => {
           >
             {props.items.map((item: any, index: number) => <Item key={item.id} item={item} index={index} />
               )}
+            {setTeststate("hallo")}
             {provided.placeholder}
           </BoardColumnContent>
         )}

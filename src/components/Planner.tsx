@@ -6,6 +6,7 @@ import {Column} from './Column';
 import { DragDropContext } from 'react-beautiful-dnd'
 import styled from "styled-components";
 import { initialPlannerData } from '../data/initialPlannerData'
+import BacklogComponent from './BacklogComponent';
 
 
 
@@ -19,7 +20,6 @@ export class Planner extends React.Component {
 	onDragEnd = (result: any) => {
 
 		const { source, destination, draggableId } = result
-
 		// Do nothing if item is dropped outside the list
 		if (!destination) {
       		return
@@ -28,14 +28,17 @@ export class Planner extends React.Component {
     	if (destination.droppableId === source.droppableId && destination.index === source.index) {
       		return
     	}
-    	// Find column from which the item was dragged from
+		// Find column from which the item was dragged from
+		
     	const columnStart = (this.state.columns as any)[source.droppableId]
-    	// Find column in which the item was dropped
+		// Find column in which the item was dropped
+		
     	const columnFinish = (this.state.columns as any)[destination.droppableId]
     	// Moving items in the same list
     	if (columnStart === columnFinish) {
 	      // Get all item ids in currently active list
-	      const newItemsIds = Array.from(columnStart.itemsIds)
+		  const newItemsIds = Array.from(columnStart.itemsIds)
+		  
 
 	      // Remove the id of dragged item from its original position
 	      newItemsIds.splice(source.index, 1)
@@ -66,12 +69,13 @@ export class Planner extends React.Component {
 	};
 
 	render() {
-		//console.log(this.props)
+		//console.log(this.state)
 		const column = (this.state.columns as any)['backlog']
 		const items = column.itemsIds.map((itemId: string) => (this.state.items as any)[itemId])
 		return(
 			<DragDropContext onDragEnd={this.onDragEnd}>
-						<Column key={column.id}column={column} items={items} />
+						{/* <Column key={column.id}column={column} items={items} /> */}
+						<BacklogComponent key={column.id} column={column} items={items}/>
 			</DragDropContext>
 			
 		)
