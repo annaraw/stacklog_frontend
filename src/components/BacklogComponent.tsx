@@ -13,7 +13,6 @@ import Scrollbar from 'react-scrollbars-custom';
 
 import { Droppable } from 'react-beautiful-dnd'
 import styled from 'styled-components'
-import { Item } from './Item';
 
 const sortTypes = {
   alphabetical: "Alphabetical",
@@ -23,7 +22,6 @@ const sortTypes = {
 }
 
 type BoardColumnProps = {
-  key: string,
   column: any,
   items: any,
 }
@@ -53,10 +51,10 @@ export default class BacklogComponent extends Component<BoardColumnProps, Backlo
 
   constructor(props: BoardColumnProps) {
     super(props)
-    const {key, column, items} = props
+    const {column, items} = props
     this.state = {
-      backlog: backlogDummy,
-      displayedBacklog: backlogDummy,
+      backlog: items,
+      displayedBacklog: items,
       selectedKeys: [],
       searchInput: "",
       sortIsUp: false,
@@ -242,8 +240,7 @@ export default class BacklogComponent extends Component<BoardColumnProps, Backlo
                   ref={provided.innerRef}
                   isDraggingOver={snapshot.isDraggingOver}
                 >
-                  {console.log(this.props.items)}
-                  {this.props.items.map((backlogItem: any, index: number) => 
+                  {this.state.displayedBacklog.map((backlogItem: any, index: number) => 
                       
                         <BacklogItem 
                           index={index} 

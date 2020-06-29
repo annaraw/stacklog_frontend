@@ -1,6 +1,5 @@
 import * as React from 'react'
 import Backlog from './BacklogComponent';
-import {Column} from './Column';
 //import Schedule from './Schedule'
 //import Calendar from './Calendar'
 import { DragDropContext } from 'react-beautiful-dnd'
@@ -29,7 +28,6 @@ export class Planner extends React.Component {
       		return
     	}
 		// Find column from which the item was dragged from
-		
     	const columnStart = (this.state.columns as any)[source.droppableId]
 		// Find column in which the item was dropped
 		
@@ -38,8 +36,6 @@ export class Planner extends React.Component {
     	if (columnStart === columnFinish) {
 	      // Get all item ids in currently active list
 		  const newItemsIds = Array.from(columnStart.itemsIds)
-		  
-
 	      // Remove the id of dragged item from its original position
 	      newItemsIds.splice(source.index, 1)
 
