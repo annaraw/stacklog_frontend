@@ -1,20 +1,14 @@
 import * as React from 'react';
 import { useState, FunctionComponent } from 'react';
-import {
-    DefaultButton,
-    PrimaryButton,
-} from 'office-ui-fabric-react';
-import { initializeIcons } from 'office-ui-fabric-react/lib/Icons';
+import { TextField, makeStyles, Drawer, Box, Button, Icon, IconButton } from '@material-ui/core';
+import { Autocomplete } from '@material-ui/lab';
+import AddIcon from '@material-ui/icons/Add';
+import CloseIcon from '@material-ui/icons/Close';
 
 import { Project } from '../models/models';
 import { PersonaComponent } from './persona';
 import { personsDummy } from '../data/dummyData';
-import { TextField, makeStyles, Drawer, Box, Button, Icon, IconButton } from '@material-ui/core';
-import { Autocomplete } from '@material-ui/lab';
-import AddIcon from '@material-ui/icons/Add';
 import { Colors } from '../util/constants';
-
-initializeIcons();
 
 /**
  * Project Form
@@ -93,7 +87,14 @@ const InputForm: FunctionComponent<{ projects: Project[]; setProjects: (projects
             >
                 <Box width={"800px"} style={{ padding: "20px" }}>
                     <div className="drawer-heading">
-                        <h1>{formTitle}</h1>
+                        <p><strong>{formTitle}</strong></p>
+                        <IconButton
+                            aria-label="close"
+                            style={{ position: "absolute", top: "20px", right:"10px" }}
+                            onClick={dismissPanel}
+                        >
+                            <CloseIcon fontSize="inherit" />
+                        </IconButton>
                     </div>
                     <TextField
                         label="Title "
@@ -114,7 +115,7 @@ const InputForm: FunctionComponent<{ projects: Project[]; setProjects: (projects
                         placeholder="Set a description"
                         defaultValue={description}
                         multiline rows={7}
-                        onChange={(event) => setDescription(String(event.target.value))}
+                        onChange={(event) => setDescription(event.target.value)}
                     />
                     <div style={{ display: "grid", gridAutoFlow: "column", position: "relative" }}>
 
@@ -142,7 +143,17 @@ const InputForm: FunctionComponent<{ projects: Project[]; setProjects: (projects
                     </div>
                     {team.map(member => {
                         return (
-                            <PersonaComponent person={member} />
+                            <PersonaComponent
+                                person={member}
+                                deleteItem={() => {
+                                    let newTeam = team;
+                                    const index = newTeam.indexOf(member);
+                                    if (index > -1) {
+                                        newTeam.splice(index, 1);
+                                    }
+                                    setTeam([...newTeam])
+                                }}
+                            />
                         )
                     })}
                     <div
