@@ -63,7 +63,7 @@ export default class BacklogComponent extends Component<BoardColumnProps, Backlo
   }
 
   componentDidMount = () => {
-    this.sort()
+    //this.sort()
   }
 
   setBacklog = (backlog: IBacklogItem[]) => {
@@ -240,7 +240,7 @@ export default class BacklogComponent extends Component<BoardColumnProps, Backlo
                   ref={provided.innerRef}
                   isDraggingOver={snapshot.isDraggingOver}
                 >
-                  {this.state.displayedBacklog.map((backlogItem: any, index: number) => 
+                  {this.props.items.map((backlogItem: any, index: number) => 
                       
                         <BacklogItem 
                           index={index} 

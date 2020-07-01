@@ -2,13 +2,16 @@ import { backlogDummy } from "./dummyData";
 
 var items: any = {};
 var backlogItemIds: string[] = [];
-backlogDummy.forEach(backlogItem => {
-  items[backlogItem.id] = backlogItem;
-  if (!backlogItem.startDate) {
-    backlogItemIds.push(backlogItem.id)
+var scheduleItemIds: string[] = [];
+backlogDummy.forEach(item => {
+  items[item.id] = item;
+  if (!item.startDate) {
+    backlogItemIds.push(item.id)
   } else {
-    if (backlogItem.startDate < new Date()) {
-      backlogItemIds.push(backlogItem.id)
+    if (item.startDate < new Date()) {
+      backlogItemIds.push(item.id)
+    }else {
+      scheduleItemIds.push(item.id)
     }
   }
 });
@@ -18,13 +21,13 @@ export const initialPlannerData = {
   columns: {
     'backlog': {
       id: 'backlog',
-      title: 'Column 1',
+      title: 'Backlog',
       itemsIds: backlogItemIds
     },
-    'column-2': {
-      id: 'column-2',
-      title: 'Column 2',
-      itemsIds: []
+    'schedule': {
+      id: 'schedule',
+      title: 'Schedule',
+      itemsIds: scheduleItemIds
     },
     'column-3': {
       id: 'column-3',
