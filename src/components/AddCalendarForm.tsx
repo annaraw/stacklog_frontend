@@ -8,6 +8,7 @@ import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 import { CalendarItem, Calendar } from '../models/models'
 import CalendarImportService from '../services/CalendarImportService'
 import CloseIcon from '@material-ui/icons/Close';
+import GetAppIcon from '@material-ui/icons/GetApp';
 
 export enum UploadState {
     Empty,
@@ -37,46 +38,65 @@ const AddCalendarForm: FunctionComponent<any> = props => {
         setIsOpen(false);
         setCalendarTitle("");
         setCalendarUrl("");
+        setCalendarFile([])
         setShowFileUpload(false);
         setShowSync(false);
-        
+        setUploadState(UploadState.Empty)
+
         console.log(calendarFile)
     });
 
     const submit = () => {
-        //create calendar object and send to backend
         var cal: Calendar = {
             name: calendarTitle,
             items: calendarFile
         }
-        CalendarImportService.addCalendar(cal);
-        syncCalendarFile();
-        setIsOpen(false);
-        setCalendarTitle("");
-        setCalendarUrl("");
-        setShowFileUpload(false);
-        setShowSync(false);
+        CalendarImportService.addCalendar(cal)
+        setIsOpen(false)
+        setCalendarTitle("")
+        setCalendarUrl("")
+        setShowFileUpload(false)
+        setShowSync(false)
     }
 
-    const syncCalendarFile = () => {
-        //https://openbase.io/js/node-ical ics parser
-        //https://stackoverflow.com/questions/54403963/http-get-request-for-ican-ics-file
-        //https://github.com/mozilla-comm/ical.js/
-        //https://gist.github.com/jesperorb/6ca596217c8dfba237744966c2b5ab1e
-        /*let url = "https://campus.tum.de/tumonlinej/ws/termin/ical?pStud=408917D318E7CE33&pToken=9ECCFD276B854295B32B4E20E1154FE1E741E10B7022E05CC5062FBA53D39F82"
-        let pToken = "9ECCFD276B854295B32B4E20E1154FE1E741E10B7022E05CC5062FBA53D39F82"
-        let pStud = "408917D318E7CE33"
-        let header = new Headers();
-        header.append('crossorigin', 'anonymous')
+    const convertIcal = (icalString:any) => {
+        const ical = require('ical');
+        const data = ical.parseICS(icalString)
+        var calItems = []
+        for (let k in data) {
+            if (data.hasOwnProperty(k)) {
+                var ev = data[k];
+                if (data[k].type === 'VEVENT') {
+                    const calItem: CalendarItem = {
+                        id: ev.id,
+                        uid: ev.uid,
+                        summary: ev.summary,
+                        description: ev.description,
+                        url: ev.url,
+                        dtStart: ev.start,
+                        dtEnd: ev.end,
+                        location: ev.location
+                    }
+                    calItems.push(calItem)
+                }
+            }
+        }
+        return calItems
+    }
 
-        fetch(url, {
-            method: 'GET',
-            headers: header,
-            mode: 'cors'
-        }).then((resp) => {
-            console.log(String(resp))
-            return resp;
-        })*/
+    const fetchCalendarFile = async () => {
+        var proxyUrl = 'https://cors-anywhere.herokuapp.com/'
+        //https://campus.tum.de/tumonlinej/ws/termin/ical?pStud=408917D318E7CE33&pToken=9ECCFD276B854295B32B4E20E1154FE1E741E10B7022E05CC5062FBA53D39F82
+        let resp = await fetch(proxyUrl + calendarUrl/* , {headers: {'origin': ''}} */)
+        let data = await resp.text()
+        let calItems = convertIcal(data)
+        setCalendarFile(calItems)
+        if (calItems.length !== 0) {
+            setUploadState(UploadState.Success)
+        }
+        else {
+            setUploadState(UploadState.Fail)
+        }
     }
 
     const uploadCalendarFile = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -85,36 +105,9 @@ const AddCalendarForm: FunctionComponent<any> = props => {
             var calItems: CalendarItem[] = []
             var filename = e.target.files[0].name
             reader.onload = function () {
-                //parse ical file
-                const ical = require('ical');
-                const data = ical.parseICS(reader.result)
-                
-                //convert data into CalendarItem object
-                for (let k in data) {
-                    if (data.hasOwnProperty(k)) {
-                        var ev = data[k];
-                        if (data[k].type === 'VEVENT') {
-                            const calItem: CalendarItem = {
-                                id: ev.id,
-                                uid: ev.uid,
-                                summary: ev.summary,
-                                description: ev.description,
-                                url: ev.url,
-                                dtStart: ev.start,
-                                dtEnd: ev.end,
-                                location: ev.location
-                            }
-                            calItems.push(calItem)
-                        }
-                    }
-                }
-
-                //save events into state
-                console.log(calItems)
-                console.log(data)
+                calItems = convertIcal(reader.result)
                 setCalendarFile(calItems)
                 setCalendarFilename(filename)
-                //show message if file is valid and has >0 events
                 if (calItems.length !== 0) {
                     setUploadState(UploadState.Success)
                 }
@@ -162,14 +155,44 @@ const AddCalendarForm: FunctionComponent<any> = props => {
                     <div style={{ margin: "10px" }}>
                         <FormControl component="fieldset">
                             <RadioGroup aria-label="gender" name="gender1" onChange={uploadCalendarFile}>
-                                <FormControlLabel value="female" control={<Radio color="default" disabled />} label="Sync from URL" onChange={(e) => { setShowSync(true); setShowFileUpload(false) }} />
+                                <FormControlLabel value="female" control={<Radio color="default" /* disabled */ />} label="Sync from URL" onChange={(e) => { setShowSync(true); setShowFileUpload(false) }} />
                                 <FormControlLabel value="male" control={<Radio color="default" />} label="Upload ical File" defaultChecked={true} onChange={(e) => { setShowSync(false); setShowFileUpload(true) }} />
                             </RadioGroup>
                         </FormControl>
                     </div>
 
                     {showSync && <div style={{ margin: "10px", border: "1px solid #C0C0C0", padding: "10px", borderRadius: "5px" }}>
-                        <TextField id="outlined-basic" label="Calendar URL" variant="outlined" required fullWidth value={calendarUrl} onChange={(e) => { setCalendarUrl(e.target.value) }} />
+                        <div style={{ display: "inline-block", width: "100%" }}>
+                            <div style={{ margin: "10px", float: "left", width:"80%" }}>  
+                                <TextField id="outlined-basic" label="Calendar URL" variant="outlined" required fullWidth value={calendarUrl} onChange={(e) => { setCalendarUrl(e.target.value) }} />
+                            </div>
+                            <div style={{ margin: "10px", width: "auto", overflow: "hidden" }}>
+                                <Button
+                                    variant="contained"
+                                    color="default"
+                                    startIcon={<GetAppIcon />}
+                                    style={{ fontWeight: "bold", height: "auto" }}
+                                    disableElevation
+                                    onClick={fetchCalendarFile}
+                                >
+                                    Check File
+                                </Button>
+                            </div>
+                        </div>
+                        <div style={{ margin: "10px", width: "auto", overflow: "hidden" }}>
+                        {
+                            (uploadState === UploadState.Success) &&
+                            <Alert severity="success" onClose={handleClose} elevation={0}>
+                                <span style={{ fontWeight: "bold" }}>{calendarFilename}</span> ({calendarFile.length} items) selected.
+                            </Alert>
+                        }
+                        {
+                            (uploadState === UploadState.Fail) &&
+                            <Alert severity="warning" onClose={handleClose} elevation={0}>
+                                <span style={{ fontWeight: "bold" }}>{calendarFilename}</span> selected. The file does not contain any events.
+                            </Alert>
+                        }
+                                </div>
                         <FormControlLabel
                             control={
                                 <Checkbox
@@ -177,6 +200,7 @@ const AddCalendarForm: FunctionComponent<any> = props => {
                                     onChange={toggleIsPublic}
                                     name="public"
                                     color="default"
+                                    disabled
                                 />
                             }
                             label="Calendar is public"
@@ -251,7 +275,7 @@ const AddCalendarForm: FunctionComponent<any> = props => {
                             }}
                             onClick={submit}
                         >
-                            Create
+                            Import
                         </Button>
                     </div>
                 </Box>
