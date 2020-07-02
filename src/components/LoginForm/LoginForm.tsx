@@ -19,7 +19,7 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import LockOpenIcon from '@material-ui/icons/LockOpen';
 import { loginStyles } from './LoginFormStyles';
 
-const LoginComponent: FunctionComponent<{}> = props => {
+const LoginForm: FunctionComponent<{}> = props => {
     const classes = loginStyles();
     const [loginError, setLoginError] = useState(false);
     const [username, setUsername] = useState("");
@@ -113,4 +113,4 @@ const LoginComponent: FunctionComponent<{}> = props => {
     );
 };
 
-export default LoginComponent;
+export default LoginForm;

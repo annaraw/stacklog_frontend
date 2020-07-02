@@ -6,7 +6,7 @@ import './App.css';
 import LoginScreen from './views/Login/LoginView';
 import HomeScreen from './views/HomeScreenView';
 import NotFound from './views/NotFoundView';
-import RegisterScreen from './views/RegisterView';
+import RegisterScreen from './views/Register/RegisterView';
 
 interface AppState {
   title: string,
