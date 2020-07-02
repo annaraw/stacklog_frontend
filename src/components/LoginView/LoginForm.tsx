@@ -1,19 +1,32 @@
 import * as React from 'react';
-import {
-    DefaultButton, SearchBox
-} from '@fluentui/react';
-import './LoginForm.css'
 import { FunctionComponent, useState } from 'react';
 import UserService from '../../services/UserService';
-
+import {
+    Card,
+    IconButton,
+    TextField,
+    CardContent,
+    Typography,
+    Button,
+    FormControl,
+    InputLabel,
+    OutlinedInput,
+    InputAdornment,
+} from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
+import Visibility from '@material-ui/icons/Visibility';
+import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import LockOpenIcon from '@material-ui/icons/LockOpen';
+import { loginStyles } from './LoginFormStyles';
 
 const LoginComponent: FunctionComponent<{}> = props => {
-
+    const classes = loginStyles();
     const [loginError, setLoginError] = useState(false);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false)
 
-    const login = (event:any) => {
+    const login = (event: any) => {
         event.preventDefault();
 
         let user = {
@@ -31,32 +44,71 @@ const LoginComponent: FunctionComponent<{}> = props => {
         });
     }
 
+    const handleClickShowPassword = () => {
+        setShowPassword(!showPassword)
+    };
+
+    const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
+    };
+
     return (
         <React.Fragment>
-            <div className="cardF">
-                <h1>Login</h1>
-                <SearchBox
-                    placeholder="Username/E-Mail"
-                    iconProps={{ iconName: 'Contact' }}
-                    onChange={(event, value) => setUsername(String(value))}
-                />
-                <SearchBox
-                    placeholder="Password"
-                    iconProps={{ iconName: 'Lock' }}
-                    type="password"
-                    onChange={(event, value) => setPassword(String(value))}
-                />
+            <Card className={classes.root}>
+                <CardContent>
+                    <Typography gutterBottom variant="h5" component="h2">
+                        Login
+                    </Typography>
+                    <TextField
+                        className={classes.textField}
+                        id="outlined-basic"
+                        label="Username/E-Mail"
+                        variant="outlined"
+                        fullWidth
+                        onChange={(event) => setUsername(event.target.value)}
+                    />
+                    <FormControl className={classes.textField} fullWidth variant="outlined">
+                        <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
+                        <OutlinedInput
+                            id="outlined-adornment-password"
+                            type={showPassword ? 'text' : 'password'}
+                            value={password}
+                            onChange={(event) => setPassword(event.target.value)}
+                            endAdornment={
+                                <InputAdornment position="end">
+                                    <IconButton
+                                        aria-label="toggle password visibility"
+                                        onClick={handleClickShowPassword}
+                                        onMouseDown={handleMouseDownPassword}
+                                        edge="end"
+                                    >
+                                        {showPassword ? <Visibility /> : <VisibilityOff />}
+                                    </IconButton>
+                                </InputAdornment>
+                            }
+                            labelWidth={70}
+                        />
+                    </FormControl>
+                    {(loginError ?
+                        <Alert
+                            className={classes.textField}
+                            severity="error"
+                            onClose={() => setLoginError(false)}
+                        >Email and password do not match!
+                        </Alert>
+                        : <span></span>
+                    )}
 
-                {(loginError ?
-                    <p>Email and password do not match!</p>
-                    : <span></span>
-                )}
-
-                <DefaultButton
-                    text="LOGIN"
-                    onClick={(e) => login(e)}
-                />
-            </div>
+                    <Button
+                        variant="contained"
+                        className={classes.button}
+                        startIcon={<LockOpenIcon />}
+                        onClick={(e) => login(e)}
+                    >
+                        Login
+                    </Button>
+                </CardContent>
+            </Card>
         </React.Fragment>
     );
 };

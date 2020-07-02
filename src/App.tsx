@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 //import logo from './logo.svg';
 import './App.css';
-import LoginScreen from './views/LoginView';
+import LoginScreen from './views/Login/LoginView';
 import HomeScreen from './views/HomeScreenView';
 import NotFound from './views/NotFoundView';
 import RegisterScreen from './views/RegisterView';
