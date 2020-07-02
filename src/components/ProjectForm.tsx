@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState, FunctionComponent } from 'react';
 import { TextField, makeStyles, Drawer, Box, Button, Icon, IconButton } from '@material-ui/core';
-import { Autocomplete } from '@material-ui/lab';
+import { Autocomplete, Alert } from '@material-ui/lab';
 import AddIcon from '@material-ui/icons/Add';
 import CloseIcon from '@material-ui/icons/Close';
 
@@ -9,6 +9,7 @@ import { Project } from '../models/models';
 import { PersonaComponent } from './persona';
 import { personsDummy } from '../data/dummyData';
 import { Colors } from '../util/constants';
+import './ProjectForm.css'
 
 /**
  * Project Form
@@ -25,12 +26,16 @@ const InputForm: FunctionComponent<{ projects: Project[]; setProjects: (projects
     const [description, setDescription] = useState("");
     const [member, setMember] = useState("");
     const [team, setTeam] = useState([personsDummy[0], personsDummy[1], personsDummy[2]]);
-
-    const buttonStyles = { root: { marginRight: 8 } };
+    const [error, setError] = useState(false)
+    const [alreadyInTeam, setAlreadyInTeam] = useState(false)
 
     const openPanel = (() => setIsOpen(true));
     const dismissPanel = (() => setIsOpen(false));
-    const submit = () => {
+    const submit = (): void => {
+        if (!checkInput()) {
+            setError(true)
+            return
+        }
         const newProject: Project = {
             title: title,
             description: description,
@@ -47,6 +52,14 @@ const InputForm: FunctionComponent<{ projects: Project[]; setProjects: (projects
         setDescription("");
         setMember("");
         setTeam([]);
+        setError(false)
+    }
+
+    const checkInput = (): boolean => {
+        if (!title || !description) {
+            return false
+        }
+        return true
     }
 
     const comboBoxBasicOptions = personsDummy.map(person => {
@@ -64,7 +77,7 @@ const InputForm: FunctionComponent<{ projects: Project[]; setProjects: (projects
         },
         textField: {
             marginTop: "10px",
-            marginBottom: "10px"
+            marginBottom: "10px",
         },
         paperFullWidth: {
             overflowY: 'visible'
@@ -78,19 +91,19 @@ const InputForm: FunctionComponent<{ projects: Project[]; setProjects: (projects
 
     return (
         <div>
-            <Button onClick={openPanel}>{formTitle}</Button>
+            <Button onClick={openPanel} variant="contained">{formTitle}</Button>
             <Drawer
                 anchor="left"
                 open={isOpen}
                 onClose={dismissPanel}
-                style={{ position: "relative" }}
+                className="project-drawer"
             >
-                <Box width={"800px"} style={{ padding: "20px" }}>
+                <Box className="project-box">
                     <div className="drawer-heading">
                         <p><strong>{formTitle}</strong></p>
                         <IconButton
                             aria-label="close"
-                            style={{ position: "absolute", top: "20px", right:"10px" }}
+                            style={{ position: "absolute", top: "20px", right: "10px" }}
                             onClick={dismissPanel}
                         >
                             <CloseIcon fontSize="inherit" />
@@ -100,6 +113,8 @@ const InputForm: FunctionComponent<{ projects: Project[]; setProjects: (projects
                         label="Title "
                         className={classes.textField}
                         required
+                        error={(!title) && error}
+                        helperText={(!title && error) ? "Needs to be filled out" : ""}
                         fullWidth
                         variant="outlined"
                         placeholder="Set a title"
@@ -110,6 +125,8 @@ const InputForm: FunctionComponent<{ projects: Project[]; setProjects: (projects
                         label="Description "
                         className={classes.textField}
                         required
+                        error={(!description) && error}
+                        helperText={(!description && error) ? "Needs to be filled out" : ""}
                         fullWidth
                         variant="outlined"
                         placeholder="Set a description"
@@ -117,14 +134,24 @@ const InputForm: FunctionComponent<{ projects: Project[]; setProjects: (projects
                         multiline rows={7}
                         onChange={(event) => setDescription(event.target.value)}
                     />
-                    <div style={{ display: "grid", gridAutoFlow: "column", position: "relative" }}>
+                    <div className="drawer-addPerson"
+                        style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignContent: "space-between",
+                            width: "100%",
+                        }}>
 
                         <Autocomplete
                             id="combo-box-demo"
                             className={classes.textField}
+                            fullWidth
                             options={comboBoxBasicOptions}
                             getOptionLabel={option => option.title}
-                            onChange={(event, value) => (value) ? setMember(value.title) : setMember("")}
+                            onChange={(event, value) => {
+                                setAlreadyInTeam(false);
+                                (value) ? setMember(value.title) : setMember("")
+                            }}
                             renderInput={(params) => <TextField {...params} label="Add Team member" variant="outlined" />}
                         />
                         <IconButton
@@ -132,15 +159,23 @@ const InputForm: FunctionComponent<{ projects: Project[]; setProjects: (projects
                                 const newMember = personsDummy.find(person =>
                                     (person.name + " " + person.lastName) === member
                                 )
-                                if (newMember) {
+                                if (newMember && !team.includes(newMember)) {
                                     setTeam([...team, newMember])
+                                } else {
+                                    setAlreadyInTeam(true)
                                 }
-
                             }}
+                            style={{ height: "48px", top: "15px" }}
                         >
-                            <AddIcon />
+                            <AddIcon fontSize="inherit" />
                         </IconButton>
                     </div>
+                    {(alreadyInTeam) ?
+                        <Alert variant="filled" severity="info" color="error" onClose={() => setAlreadyInTeam(false)}>
+                            {(member) ? <span><strong>{member}</strong> is already in the team</span> : <span>No person selected</span>}
+                        </Alert>
+                        : <span></span>}
+
                     {team.map(member => {
                         return (
                             <PersonaComponent
@@ -156,15 +191,9 @@ const InputForm: FunctionComponent<{ projects: Project[]; setProjects: (projects
                             />
                         )
                     })}
-                    <div
-                        className="drawer-footer"
-                        style={{
-                            position: "absolute",
-                            bottom: 0,
-                            right: 0,
-                            padding: "20px"
-                        }}
-                    >
+                </Box>
+                <div className="project-box project-drawer-footer">
+                    <div className="button-container">
                         <Button
                             variant="contained"
                             style={{
@@ -187,9 +216,9 @@ const InputForm: FunctionComponent<{ projects: Project[]; setProjects: (projects
                         </Button>
                     </div>
 
-                </Box>
+                </div>
             </Drawer>
-        </div>
+        </div >
     );
 };
 

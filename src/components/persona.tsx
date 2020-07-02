@@ -1,14 +1,13 @@
 import * as React from 'react';
 import { FunctionComponent } from 'react';
 import {
-    IPersonaSharedProps, Persona, PersonaSize
+    Persona, PersonaSize
 } from 'office-ui-fabric-react';
-
-import './persona.css'
-import { Project, Member } from '../models/models';
 import { IconButton } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 
+import './persona.css'
+import { Member } from '../models/models';
 
 export const PersonaComponent: FunctionComponent<{ person: Member, deleteItem: any }> = props => {
 

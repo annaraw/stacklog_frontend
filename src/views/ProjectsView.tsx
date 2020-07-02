@@ -6,6 +6,7 @@ import ProjectCard from '../components/ProjectCard';
 import ProjectForm from '../components/ProjectForm';
 import { Project } from '../models/models'
 import { projectsDummy } from '../data/dummyData'
+import ProjectService from '../services/ProjectService';
 
 interface ProjectState {
     projects: Project [];
@@ -18,6 +19,14 @@ export default class ProjectScreen extends Component<{}, ProjectState> {
         this.state = {
             projects: projectsDummy
         }
+    }
+
+    componentDidMount = () => {
+        ProjectService.getProjects().then((projects) => {
+            console.log(projects)
+        }).catch(error => {
+            console.log(error)
+        })
     }
 
     setProjects = (projects: Project[]) => {
