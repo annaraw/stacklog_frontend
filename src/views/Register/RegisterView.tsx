@@ -1,14 +1,18 @@
 import React from 'react';
 import RegisterForm from '../../components/RegisterForm/RegisterForm';
+import MenuBar from '../../components/MenuBar';
+import { registerViewStyle } from './RegisterViewStyles';
 
 interface RegisterProps {
 }
 
 function RegisterScreen(props: RegisterProps) {
+    const classes = registerViewStyle();
     return (
-        <React.Fragment>
+        <div className={classes.root}>
+            <MenuBar title="Sign up" />
             <RegisterForm />
-        </React.Fragment>
+        </div>
     )
 }
 
