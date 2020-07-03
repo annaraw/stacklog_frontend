@@ -12,6 +12,7 @@ import {
     InputLabel,
     OutlinedInput,
     InputAdornment,
+    CircularProgress,
 } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import Visibility from '@material-ui/icons/Visibility';
@@ -25,8 +26,10 @@ const LoginForm: FunctionComponent<{}> = props => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false)
+    const [loading, setLoading] = useState(false)
 
     const login = (event: any) => {
+        setLoading(true)
         event.preventDefault();
 
         let user = {
@@ -36,9 +39,11 @@ const LoginForm: FunctionComponent<{}> = props => {
 
         UserService.login(user.username, user.password).then((data) => {
             setLoginError(false)
+            setLoading(false)
             //redirect to home view
             window.location.href = "/";
         }).catch((e) => {
+            setLoading(false)
             setLoginError(true)
             console.error(e);
         });
@@ -61,8 +66,8 @@ const LoginForm: FunctionComponent<{}> = props => {
                     </Typography>
                     <TextField
                         className={classes.textField}
-                        id="outlined-basic"
-                        label="Username/E-Mail"
+                        id="stacklog-email-field"
+                        label="E-Mail"
                         variant="outlined"
                         fullWidth
                         onChange={(event) => setUsername(event.target.value)}
@@ -70,7 +75,7 @@ const LoginForm: FunctionComponent<{}> = props => {
                     <FormControl className={classes.textField} fullWidth variant="outlined">
                         <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
                         <OutlinedInput
-                            id="outlined-adornment-password"
+                            id="stacklog-password-field"
                             type={showPassword ? 'text' : 'password'}
                             value={password}
                             onChange={(event) => setPassword(event.target.value)}
@@ -102,7 +107,7 @@ const LoginForm: FunctionComponent<{}> = props => {
                     <Button
                         variant="contained"
                         className={classes.button}
-                        startIcon={<LockOpenIcon />}
+                        startIcon={loading ? <CircularProgress /> : <LockOpenIcon />}
                         onClick={(e) => login(e)}
                     >
                         Login

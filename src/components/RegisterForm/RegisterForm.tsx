@@ -8,8 +8,8 @@ import {
     Button,
     MobileStepper,
     useTheme,
+    CircularProgress,
 } from '@material-ui/core';
-import { Alert } from '@material-ui/lab';
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import CheckIcon from '@material-ui/icons/Check';
@@ -18,6 +18,7 @@ import LoginDataForm from './LoginDataForm/LoginDataForm';
 import { Colors } from '../../util/constants';
 import PersonalDataForm from './PersonalDataForm/PersonalDataForm';
 import PlanSelectForm from './PlanSelectForm/PlanSelectForm';
+import { IUser } from '../../models/models';
 
 const RegisterForm: FunctionComponent<{}> = props => {
     const classes = registerStyles();
@@ -26,19 +27,31 @@ const RegisterForm: FunctionComponent<{}> = props => {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [registerError, setRegisterError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("An Error occurd")
     const [firstname, setFirstname] = useState("");
     const [surname, setSurname] = useState("");
     const [email, setEmail] = useState("");
     const [role, setRole] = useState("");
-    const [subscriptionPlan, setSubscriptionPlan] = useState("Student")
+    const [subscriptionPlan, setSubscriptionPlan] = useState("Student");
+    const [companyName, setCompanyName] = useState("");
+    const [loading, setLoading] = useState(false)
     const theme = useTheme();
 
     const signup = (event: any) => {
         event.preventDefault();
 
         //TODO check if all needed fields are correctly filled
+        if (!checkValidation()) {
+            setRegisterError(true)
+            setErrorMessage("Missing input")
+            setActiveStep(0)
+            return
+        } else {
+            setRegisterError(false)
+        }
+        setLoading(true)
 
-        let user = {
+        let user: IUser = {
             username: email,
             password: password,
             email: email,
@@ -46,17 +59,27 @@ const RegisterForm: FunctionComponent<{}> = props => {
             surname: surname,
             role: role,
             subscriptionPlan: subscriptionPlan,
+            companyName: companyName,
         };
 
-        console.log(user)
-
-        //TODO send user creation
-        /* UserService.register(user.username, user.password).then(() => {
+        UserService.register(user).then(() => {
+            setLoading(false)
             window.location.href = "/";
         }).catch((e) => {
-            console.error(e);
+            setLoading(false)
+            setErrorMessage(e)
             setRegisterError(true)
-        }) */
+            setActiveStep(0)
+        })
+    }
+
+    const checkValidation = () => {
+        if (!email || !password || !firstname || !surname || !subscriptionPlan
+            || (subscriptionPlan === "corporate" && !companyName)) {
+
+            return false
+        }
+        return true
     }
 
     const getStepContent = (step: number) => {
@@ -68,6 +91,7 @@ const RegisterForm: FunctionComponent<{}> = props => {
                         password={password}
                         confirmPassword={confirmPassword}
                         registerError={registerError}
+                        errorMessage={errorMessage}
                         setEmail={setEmail}
                         setPassword={setPassword}
                         setConfirmPassword={setConfirmPassword}
@@ -91,12 +115,15 @@ const RegisterForm: FunctionComponent<{}> = props => {
                     <React.Fragment>
                         <PlanSelectForm
                             subscriptionPlan={subscriptionPlan}
+                            companyName={companyName}
+                            registerError={registerError}
                             setSubscriptionPlan={setSubscriptionPlan}
+                            setCompanyName={setCompanyName}
                         />
                         <Button
                             variant="contained"
                             className={classes.button}
-                            startIcon={<CheckIcon />}
+                            startIcon={loading ? <CircularProgress /> : <CheckIcon />}
                             onClick={(e) => signup(e)}
                         >
                             Sign up
@@ -104,7 +131,11 @@ const RegisterForm: FunctionComponent<{}> = props => {
                     </React.Fragment>
                 )
             default:
-                return 'Unknown step';
+                return (
+                    <React.Fragment>
+                        <p>Sorry, something went wrong</p>
+                    </React.Fragment>
+                )
         }
     }
 

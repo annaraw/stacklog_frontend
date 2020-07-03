@@ -5,15 +5,19 @@ import {
     InputLabel,
     Select,
     MenuItem,
+    TextField,
 } from '@material-ui/core';
 import { planSelectStyles } from './PlanSelectStyles';
 
 const PlanSelectForm: FunctionComponent<{
     subscriptionPlan: string,
-    setSubscriptionPlan: (plan: string) => void
+    companyName: string,
+    registerError: boolean,
+    setSubscriptionPlan: (plan: string) => void,
+    setCompanyName: (name: string) => void,
 }> = props => {
 
-    const { subscriptionPlan, setSubscriptionPlan } = props;
+    const { subscriptionPlan, companyName, registerError, setSubscriptionPlan, setCompanyName } = props;
     const classes = planSelectStyles();
 
     return (
@@ -33,6 +37,20 @@ const PlanSelectForm: FunctionComponent<{
                 </Select>
             </FormControl>
             {/* TODO show corporate name field if plan = corporate */}
+            {subscriptionPlan === "Corporate" ?
+                <TextField
+                    className={classes.textField}
+                    id="stacklog-company-name-field"
+                    label="Company name"
+                    variant="outlined"
+                    value={companyName}
+                    error={registerError && !companyName}
+                    helperText={(registerError && !companyName) ? "Field required" : ""}
+                    fullWidth
+                    onChange={(event) => setCompanyName(event.target.value)}
+                />
+                : <span></span>
+            }
         </React.Fragment>
     );
 };

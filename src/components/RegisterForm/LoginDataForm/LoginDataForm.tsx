@@ -19,13 +19,14 @@ const LoginDataForm: FunctionComponent<{
     password: string,
     confirmPassword: string,
     registerError: boolean,
+    errorMessage: string,
     setEmail: (email: string) => void,
     setPassword: (password: string) => void,
     setConfirmPassword: (password: string) => void
     setRegisterError: (error: boolean) => void
 }> = props => {
 
-    const { email, password, confirmPassword, registerError,
+    const { email, password, confirmPassword, registerError, errorMessage,
         setEmail, setPassword, setConfirmPassword, setRegisterError } = props;
     const classes = loginDataStyles();
     const [showPassword, setShowPassword] = useState(false);
@@ -46,6 +47,7 @@ const LoginDataForm: FunctionComponent<{
                 id="stacklog-email-field"
                 label="E-Mail"
                 variant="outlined"
+                type="email"
                 value={email}
                 error={registerError && !email}
                 helperText={(registerError && !email) ? "Field required" : ""}
@@ -109,8 +111,8 @@ const LoginDataForm: FunctionComponent<{
                     className={classes.textField}
                     severity="error"
                     onClose={() => setRegisterError(false)}
-                >Email and password do not match!
-                        </Alert>
+                >{errorMessage}
+                </Alert>
                 : <span></span>
             )}
 
