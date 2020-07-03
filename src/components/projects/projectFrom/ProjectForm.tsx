@@ -1,15 +1,15 @@
 import * as React from 'react';
 import { useState, FunctionComponent } from 'react';
-import { TextField, makeStyles, Drawer, Box, Button, Icon, IconButton } from '@material-ui/core';
+import { TextField, Drawer, Box, Button, IconButton, Tooltip } from '@material-ui/core';
 import { Autocomplete, Alert } from '@material-ui/lab';
 import AddIcon from '@material-ui/icons/Add';
 import CloseIcon from '@material-ui/icons/Close';
 
-import { Project } from '../models/models';
-import { PersonaComponent } from './persona';
-import { personsDummy } from '../data/dummyData';
-import { Colors } from '../util/constants';
-import './ProjectForm.css'
+import { Project } from '../../../models/models';
+import { PersonaComponent } from '../personaCard/Persona';
+import { personsDummy } from '../../../data/dummyData';
+import { projectFormStyles } from './ProjectFormStyles';
+
 
 /**
  * Project Form
@@ -19,8 +19,8 @@ import './ProjectForm.css'
 const InputForm: FunctionComponent<{ projects: Project[]; setProjects: (projects: Project[]) => void }> = props => {
     const { projects, setProjects } = props;
     const formTitle = "Create Project";
+    const classes = projectFormStyles()
 
-    //Hooks
     const [isOpen, setIsOpen] = useState(false);
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
@@ -68,27 +68,6 @@ const InputForm: FunctionComponent<{ projects: Project[]; setProjects: (projects
         )
     })
 
-    const useStyles = makeStyles((theme) => ({
-        root: {
-            '& .MuiTextField-root': {
-                margin: theme.spacing(1),
-                width: 200,
-            },
-        },
-        textField: {
-            marginTop: "10px",
-            marginBottom: "10px",
-        },
-        paperFullWidth: {
-            overflowY: 'visible'
-        },
-        dialogContentRoot: {
-            overflowY: 'visible'
-        }
-    }));
-
-    const classes = useStyles()
-
     return (
         <div>
             <Button onClick={openPanel} variant="contained">{formTitle}</Button>
@@ -96,18 +75,20 @@ const InputForm: FunctionComponent<{ projects: Project[]; setProjects: (projects
                 anchor="left"
                 open={isOpen}
                 onClose={dismissPanel}
-                className="project-drawer"
+                className={classes.drawer}
             >
-                <Box className="project-box">
-                    <div className="drawer-heading">
+                <Box className={classes.box}>
+                    <div className={classes.drawerHeading}>
                         <p><strong>{formTitle}</strong></p>
+                        <Tooltip title="Close">
                         <IconButton
                             aria-label="close"
-                            style={{ position: "absolute", top: "20px", right: "10px" }}
+                            className={classes.closeButton}
                             onClick={dismissPanel}
                         >
                             <CloseIcon fontSize="inherit" />
                         </IconButton>
+                        </Tooltip>
                     </div>
                     <TextField
                         label="Title "
@@ -134,16 +115,9 @@ const InputForm: FunctionComponent<{ projects: Project[]; setProjects: (projects
                         multiline rows={7}
                         onChange={(event) => setDescription(event.target.value)}
                     />
-                    <div className="drawer-addPerson"
-                        style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignContent: "space-between",
-                            width: "100%",
-                        }}>
-
+                    <div className={classes.memberContainer}>
                         <Autocomplete
-                            id="combo-box-demo"
+                            id="projects-member-textfield"
                             className={classes.textField}
                             fullWidth
                             options={comboBoxBasicOptions}
@@ -154,21 +128,23 @@ const InputForm: FunctionComponent<{ projects: Project[]; setProjects: (projects
                             }}
                             renderInput={(params) => <TextField {...params} label="Add Team member" variant="outlined" />}
                         />
-                        <IconButton
-                            onClick={() => {
-                                const newMember = personsDummy.find(person =>
-                                    (person.name + " " + person.lastName) === member
-                                )
-                                if (newMember && !team.includes(newMember)) {
-                                    setTeam([...team, newMember])
-                                } else {
-                                    setAlreadyInTeam(true)
-                                }
-                            }}
-                            style={{ height: "48px", top: "15px" }}
-                        >
-                            <AddIcon fontSize="inherit" />
-                        </IconButton>
+                        <Tooltip title="Add member">
+                            <IconButton
+                                onClick={() => {
+                                    const newMember = personsDummy.find(person =>
+                                        (person.name + " " + person.lastName) === member
+                                    )
+                                    if (newMember && !team.includes(newMember)) {
+                                        setTeam([...team, newMember])
+                                    } else {
+                                        setAlreadyInTeam(true)
+                                    }
+                                }}
+                                className={classes.iconButton}
+                            >
+                                <AddIcon fontSize="inherit" />
+                            </IconButton>
+                        </Tooltip>
                     </div>
                     {(alreadyInTeam) ?
                         <Alert variant="filled" severity="info" color="error" onClose={() => setAlreadyInTeam(false)}>
@@ -180,6 +156,7 @@ const InputForm: FunctionComponent<{ projects: Project[]; setProjects: (projects
                         return (
                             <PersonaComponent
                                 person={member}
+                                key={member.id}
                                 deleteItem={() => {
                                     let newTeam = team;
                                     const index = newTeam.indexOf(member);
@@ -192,30 +169,23 @@ const InputForm: FunctionComponent<{ projects: Project[]; setProjects: (projects
                         )
                     })}
                 </Box>
-                <div className="project-box project-drawer-footer">
-                    <div className="button-container">
+                <div className={`${classes.box} ${classes.drawerFooter}`}>
+                    <div className={classes.buttonContainer}>
                         <Button
                             variant="contained"
-                            style={{
-                                backgroundColor: Colors.secondaryColor,
-                                margin: "5px"
-                            }}
+                            className={classes.defaultButton}
                             onClick={dismissPanel}
                         >
                             Cancel
                         </Button>
                         <Button
                             variant="contained"
-                            style={{
-                                backgroundColor: Colors.primaryColor,
-                                margin: "5px"
-                            }}
+                            className={classes.primaryButton}
                             onClick={submit}
                         >
                             Create
                         </Button>
                     </div>
-
                 </div>
             </Drawer>
         </div >

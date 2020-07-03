@@ -2,14 +2,15 @@ import * as React from 'react';
 import { Component } from 'react';
 
 import './ProjectsView.css'
-import ProjectCard from '../components/ProjectCard';
-import ProjectForm from '../components/ProjectForm';
+import ProjectCard from '../components/projects/projectCard/ProjectCard';
+import ProjectForm from '../components/projects/projectFrom/ProjectForm';
 import { Project } from '../models/models'
 import { projectsDummy } from '../data/dummyData'
 import ProjectService from '../services/ProjectService';
+import MenuBar from '../components/MenuBar';
 
 interface ProjectState {
-    projects: Project [];
+    projects: Project[];
 }
 
 export default class ProjectScreen extends Component<{}, ProjectState> {
@@ -38,6 +39,7 @@ export default class ProjectScreen extends Component<{}, ProjectState> {
     render() {
         return (
             <React.Fragment>
+                <MenuBar title="Home" />
                 <div className="menuBar">
                     <ProjectForm
                         projects={this.state.projects}
@@ -47,8 +49,8 @@ export default class ProjectScreen extends Component<{}, ProjectState> {
                 <div className="projectsWrapper" style={{ width: "80%", margin: "0 auto" }}>
                     {this.state.projects.map(project => {
                         return (
-                            <div className="project" key={project.id}>
-                                <ProjectCard project={project} />
+                            <div className="project" key={project.id + Math.random()}>
+                                <ProjectCard project={project} key={project.id} />
                             </div>
                         )
                     })}

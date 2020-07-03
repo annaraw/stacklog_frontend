@@ -3,18 +3,19 @@ import { FunctionComponent } from 'react';
 import {
     Persona, PersonaSize
 } from 'office-ui-fabric-react';
-import { IconButton } from '@material-ui/core';
+import { IconButton, Tooltip } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 
-import './persona.css'
-import { Member } from '../models/models';
+import { Member } from '../../../models/models';
+import { personaStyles } from './PersonaStyles';
 
 export const PersonaComponent: FunctionComponent<{ person: Member, deleteItem: any }> = props => {
 
     const { person, deleteItem } = props;
+    const classes = personaStyles();
 
     return (
-        <div className="persona">
+        <div className={classes.persona}>
             <Persona
                 text={person.name + " " + person.lastName}
                 secondaryText={person.email}
@@ -23,16 +24,16 @@ export const PersonaComponent: FunctionComponent<{ person: Member, deleteItem: a
                 //imageUrl={}
                 imageAlt={person.name + " " + person.lastName}
             />
+            <Tooltip title="Remove">
             <IconButton
                 aria-label="delete"
                 size="small"
-                style={{
-                    position: "absolute", right: "20px", top: "20px"
-                }}
+                className={classes.iconButton}
                 onClick={deleteItem}
             >
                 <DeleteIcon />
             </IconButton>
+            </Tooltip>
         </div>
 
     );
