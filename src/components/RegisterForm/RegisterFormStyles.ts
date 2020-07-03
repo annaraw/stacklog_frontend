@@ -5,7 +5,6 @@ export const registerStyles = makeStyles({
     root: {
         maxWidth: 400,
         padding: "20px",
-        width: "40%",
         margin: "20vh auto",
     },
     textField: {
