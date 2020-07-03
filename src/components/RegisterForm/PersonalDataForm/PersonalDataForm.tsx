@@ -11,9 +11,9 @@ const PersonalDataForm: FunctionComponent<{
     surname: string,
     role: string,
     registerError: boolean,
-    setFirstname: (email: string) => void,
-    setSurname: (password: string) => void,
-    setRole: (password: string) => void
+    setFirstname: (firstname: string) => void,
+    setSurname: (surname: string) => void,
+    setRole: (role: string) => void
 }> = props => {
 
     const { firstname, surname, role, registerError,

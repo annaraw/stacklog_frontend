@@ -36,7 +36,6 @@ const PlanSelectForm: FunctionComponent<{
                     <MenuItem value={"Corporate"}>Corporate</MenuItem>
                 </Select>
             </FormControl>
-            {/* TODO show corporate name field if plan = corporate */}
             {subscriptionPlan === "Corporate" ?
                 <TextField
                     className={classes.textField}
