@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Component } from 'react';
 
-import ProjectCard from '../components/projects/projectCard/ProjectCard';
-import ProjectForm from '../components/projects/projectFrom/ProjectForm';
+import ProjectCard from '../components/Projects/ProjectCard/ProjectCard';
+import ProjectForm from '../components/Projects/ProjectFrom/ProjectForm';
 import { Project, Member } from '../models/models'
 import { projectsDummy } from '../data/dummyData'
 import ProjectService from '../services/ProjectService';

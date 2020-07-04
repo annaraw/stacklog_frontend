@@ -1,5 +1,5 @@
 import React from 'react';
-import RegisterForm from '../../components/RegisterForm/RegisterForm';
+import RegisterForm from '../../components/UserComponents/RegisterForm/RegisterForm';
 import MenuBar from '../../components/MenuBar';
 import { registerViewStyle } from './RegisterViewStyles';
 

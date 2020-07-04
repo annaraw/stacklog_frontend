@@ -5,9 +5,8 @@ import {
 } from 'office-ui-fabric-react';
 import { IconButton, Tooltip } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
-
-import { Member } from '../../../models/models';
 import { personaStyles } from './PersonaStyles';
+import { Member } from '../../../models/models';
 
 export const PersonaComponent: FunctionComponent<{ person: Member, deleteItem: any }> = props => {
 

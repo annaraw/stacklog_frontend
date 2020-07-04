@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FunctionComponent, useState } from 'react';
-import UserService from '../../services/UserService';
+import UserService from '../../../services/UserService';
 import {
     Card,
     CardContent,
@@ -15,10 +15,10 @@ import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import CheckIcon from '@material-ui/icons/Check';
 import { registerStyles } from './RegisterFormStyles';
 import LoginDataForm from './LoginDataForm/LoginDataForm';
-import { Colors } from '../../util/constants';
+import { Colors } from '../../../util/constants';
 import PersonalDataForm from './PersonalDataForm/PersonalDataForm';
 import PlanSelectForm from './PlanSelectForm/PlanSelectForm';
-import { IUser } from '../../models/models';
+import { IUser } from '../../../models/models';
 
 const RegisterForm: FunctionComponent<{}> = props => {
     const classes = registerStyles();

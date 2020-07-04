@@ -4,17 +4,21 @@ import {
 } from 'office-ui-fabric-react';
 
 import { Project } from '../../../models/models';
-import { FunctionComponent } from 'react';
-import { Card, CardHeader, IconButton, CardContent, Typography, Menu, MenuItem, ListItemText } from '@material-ui/core';
+import { FunctionComponent, useState } from 'react';
+import { Card, CardHeader, IconButton, CardContent, Typography, Menu, MenuItem, ListItemText, Snackbar } from '@material-ui/core';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { projectCardStyles } from './ProjectCardStyles';
+import ProjectService from '../../../services/ProjectService';
+import { Alert } from '@material-ui/lab';
 
 const ProjectCard: FunctionComponent<{ project: Project }> = props => {
     const classes = projectCardStyles();
     const { project } = props;
-    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const [deleteError, setdeleteError] = useState<boolean>(false);
+
     const personas: IPersonaSharedProps[] = project.team.map(member => {
         return (
             {
@@ -31,7 +35,17 @@ const ProjectCard: FunctionComponent<{ project: Project }> = props => {
 
     const handleClose = () => {
         setAnchorEl(null);
+        setdeleteError(false)
     };
+
+    const handleDelete = () => {
+        ProjectService.removeProject(project.id).then(res => {
+            console.log(res)
+            window.location.reload()
+        }).catch(err => {
+            setdeleteError(true)
+        })
+    }
 
     return (
         <Card className={classes.root} key={project.id} >
@@ -52,7 +66,7 @@ const ProjectCard: FunctionComponent<{ project: Project }> = props => {
                                 <EditIcon fontSize="small" />
                                 <ListItemText primary="Edit" style={{ paddingLeft: "10px" }} />
                             </MenuItem>
-                            <MenuItem>
+                            <MenuItem onClick={handleDelete}>
                                 <DeleteIcon fontSize="small" />
                                 <ListItemText primary="Delete" style={{ paddingLeft: "10px" }} />
                             </MenuItem>
@@ -108,6 +122,11 @@ const ProjectCard: FunctionComponent<{ project: Project }> = props => {
                     }
                 </Typography>
             </CardContent>
+            <Snackbar open={deleteError} autoHideDuration={6000} onClose={handleClose}>
+                <Alert onClose={handleClose} severity="error">
+                    Could not delete Project
+                </Alert>
+            </Snackbar>
         </Card >
     );
 };

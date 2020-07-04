@@ -1,16 +1,15 @@
 import * as React from 'react';
 import { useState, FunctionComponent } from 'react';
-import { TextField, Drawer, Box, Button, IconButton, Tooltip, Snackbar, CircularProgress } from '@material-ui/core';
+import { TextField, Button, IconButton, Tooltip, Snackbar } from '@material-ui/core';
 import { Autocomplete, Alert } from '@material-ui/lab';
 import AddIcon from '@material-ui/icons/Add';
-import CloseIcon from '@material-ui/icons/Close';
 
 import { Project, Member, IProjectRequest } from '../../../models/models';
-import { PersonaComponent } from '../personaCard/Persona';
 import { projectFormStyles } from './ProjectFormStyles';
+import { PersonaComponent } from '../PersonaCard/Persona';
 import ProjectService from '../../../services/ProjectService';
 import UserService from '../../../services/UserService';
-
+import DrawerForm from '../../Form/DrawerForm';
 
 /**
  * Project Form
@@ -79,7 +78,7 @@ const InputForm: FunctionComponent<{
         return true
     }
 
-    const comboBoxBasicOptions = collegues.map(person => {
+    const memberOptions = collegues.map(person => {
         return (
             { title: person.name + " " + person.lastName }
         )
@@ -96,131 +95,97 @@ const InputForm: FunctionComponent<{
     return (
         <div>
             <Button className={classes.createProjectBtn} onClick={openPanel} variant="contained">{formTitle}</Button>
-            <Drawer
-                anchor="left"
-                open={isOpen}
-                onClose={dismissPanel}
-                className={classes.drawer}
+            <DrawerForm
+                formTitle={formTitle}
+                isOpen={isOpen}
+                loading={loading}
+                formType="Create"
+                onSubmit={submit}
+                dismissPanel={dismissPanel}
             >
-                <Box className={classes.box}>
-                    <div className={classes.drawerHeading}>
-                        <p><strong>{formTitle}</strong></p>
-                        <Tooltip title="Close">
-                            <IconButton
-                                aria-label="close"
-                                className={classes.closeButton}
-                                onClick={dismissPanel}
-                            >
-                                <CloseIcon fontSize="inherit" />
-                            </IconButton>
-                        </Tooltip>
-                    </div>
-                    <TextField
-                        label="Title "
+                <TextField
+                    label="Title "
+                    className={classes.textField}
+                    required
+                    error={(!title) && error}
+                    helperText={(!title && error) ? "Needs to be filled out" : ""}
+                    fullWidth
+                    variant="outlined"
+                    placeholder="Set a title"
+                    defaultValue={title}
+                    onChange={(event) => setTitle(event.target.value)}
+                />
+                <TextField
+                    label="Description "
+                    className={classes.textField}
+                    required
+                    error={(!description) && error}
+                    helperText={(!description && error) ? "Needs to be filled out" : ""}
+                    fullWidth
+                    variant="outlined"
+                    placeholder="Set a description"
+                    defaultValue={description}
+                    multiline rows={7}
+                    onChange={(event) => setDescription(event.target.value)}
+                />
+                <div className={classes.memberContainer}>
+                    <Autocomplete
+                        id="projects-member-textfield"
                         className={classes.textField}
-                        required
-                        error={(!title) && error}
-                        helperText={(!title && error) ? "Needs to be filled out" : ""}
                         fullWidth
-                        variant="outlined"
-                        placeholder="Set a title"
-                        defaultValue={title}
-                        onChange={(event) => setTitle(event.target.value)}
+                        options={memberOptions}
+                        getOptionLabel={option => option.title}
+                        onChange={(event, value) => {
+                            setAlreadyInTeam(false);
+                            (value) ? setMember(value.title) : setMember("")
+                        }}
+                        renderInput={(params) => <TextField {...params} label="Add Team member" variant="outlined" />}
                     />
-                    <TextField
-                        label="Description "
-                        className={classes.textField}
-                        required
-                        error={(!description) && error}
-                        helperText={(!description && error) ? "Needs to be filled out" : ""}
-                        fullWidth
-                        variant="outlined"
-                        placeholder="Set a description"
-                        defaultValue={description}
-                        multiline rows={7}
-                        onChange={(event) => setDescription(event.target.value)}
-                    />
-                    <div className={classes.memberContainer}>
-                        <Autocomplete
-                            id="projects-member-textfield"
-                            className={classes.textField}
-                            fullWidth
-                            options={comboBoxBasicOptions}
-                            getOptionLabel={option => option.title}
-                            onChange={(event, value) => {
-                                setAlreadyInTeam(false);
-                                (value) ? setMember(value.title) : setMember("")
-                            }}
-                            renderInput={(params) => <TextField {...params} label="Add Team member" variant="outlined" />}
-                        />
-                        <Tooltip title="Add member">
-                            <IconButton
-                                onClick={() => {
-                                    const newMember = collegues.find(person =>
-                                        (person.name + " " + person.lastName) === member
-                                    )
+                    <Tooltip title="Add member">
+                        <IconButton
+                            onClick={() => {
+                                const newMember = collegues.find(person =>
+                                    (person.name + " " + person.lastName) === member
+                                )
+                                //@ts-ignore
+                                if (!team || (newMember && !team.includes(newMember))) {
                                     //@ts-ignore
-                                    if (!team || (newMember && !team.includes(newMember))) {
-                                        //@ts-ignore
-                                        setTeam([...team, newMember])
-                                    } else {
-                                        setAlreadyInTeam(true)
-                                    }
-                                }}
-                                className={classes.iconButton}
-                            >
-                                <AddIcon fontSize="inherit" />
-                            </IconButton>
-                        </Tooltip>
-                    </div>
-                    {(alreadyInTeam) ?
-                        <Alert variant="filled" severity="info" color="error" onClose={() => setAlreadyInTeam(false)}>
-                            {(member) ? <span><strong>{member}</strong> is already in the team</span> : <span>No person selected</span>}
-                        </Alert>
-                        : <span></span>}
-
-                    {team.map(member => {
-                        return (
-                            <PersonaComponent
-                                person={member}
-                                key={member.id}
-                                deleteItem={() => {
-                                    let newTeam = team;
-                                    const index = newTeam.indexOf(member);
-                                    if (index > -1) {
-                                        newTeam.splice(index, 1);
-                                    }
-                                    setTeam([...newTeam])
-                                }}
-                            />
-                        )
-                    })}
-                </Box>
-                <div className={`${classes.box} ${classes.drawerFooter}`}>
-                    {loading ?
-                        <CircularProgress />
-                        : <span></span>}
-
-                    <div className={classes.buttonContainer}>
-                        <Button
-                            variant="contained"
-                            className={classes.defaultButton}
-                            onClick={dismissPanel}
+                                    setTeam([...team, newMember])
+                                } else {
+                                    setAlreadyInTeam(true)
+                                }
+                            }}
+                            className={classes.iconButton}
                         >
-                            Cancel
-                        </Button>
-                        <Button
-                            variant="contained"
-                            className={classes.primaryButton}
-                            onClick={submit}
-                        >
-                            Create
-                        </Button>
-                    </div>
+                            <AddIcon fontSize="inherit" />
+                        </IconButton>
+                    </Tooltip>
                 </div>
-            </Drawer>
+                {(alreadyInTeam) ?
+                    <Alert variant="filled" severity="info" color="error" onClose={() => setAlreadyInTeam(false)}>
+                        {(member) ? <span><strong>{member}</strong> is already in the team</span> : <span>No person selected</span>}
+                    </Alert>
+                    : <span></span>}
+
+                {team.map(member => {
+                    return (
+                        <PersonaComponent
+                            person={member}
+                            key={member.id}
+                            deleteItem={() => {
+                                let newTeam = team;
+                                const index = newTeam.indexOf(member);
+                                if (index > -1) {
+                                    newTeam.splice(index, 1);
+                                }
+                                setTeam([...newTeam])
+                            }}
+                        />
+                    )
+                })}
+            </DrawerForm>
             <Snackbar open={showFeedback} autoHideDuration={6000} onClose={handleClose}>
-                <Alert onClose={handleClose} severity="success">
+                <Alert onClose={handleClose} severity={(error) ? "error" : "success"}>
                     {feedbackMessage}
                 </Alert>
             </Snackbar>
