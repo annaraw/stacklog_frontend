@@ -1,6 +1,6 @@
 import React from 'react';
 import MenuBar from '../components/MenuBar';
-import AddCalendarForm from '../components/AddCalendarForm';
+import AddCalendarForm from '../components/CalendarForm/AddCalendarForm';
 
 
 interface HomeScreenProps {

@@ -48,4 +48,11 @@ export default class CalendarImportService {
             });
         });
     }
+
+    static async fetchCalendarFile(calendarUrl: string) {
+        var proxyUrl = 'https://cors-anywhere.herokuapp.com/'
+        let resp = await fetch(proxyUrl + calendarUrl)
+        let data = await resp.text()
+        return data
+    }
 }
