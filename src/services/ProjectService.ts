@@ -1,6 +1,6 @@
 import HttpService from "./HttpService";
 import { backendserverURL } from "../util/constants";
-import { Project } from "../models/models";
+import { Project, IProjectRequest } from "../models/models";
 
 export default class ProjectService {
 
@@ -34,7 +34,7 @@ export default class ProjectService {
         });
     }
 
-    static addProject(item: Project) {
+    static addProject(item: IProjectRequest) {
         return new Promise((resolve, reject) => {
             HttpService.post(`${ProjectService.baseURL()}`,
                 item,

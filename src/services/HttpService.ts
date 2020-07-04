@@ -93,12 +93,12 @@ export default class HttpService {
             }
 
             if (responseJson.error) {
-                onError(responseJson.error);
+                onError(responseJson.message);
             } else {
                 if (responseJson.hasOwnProperty('token')) {
                     window.localStorage['jwtToken'] = responseJson.token;
                 }
-                onSuccess(resp);
+                onSuccess(responseJson);
             }
         } catch (error) {
             onError(error.message);

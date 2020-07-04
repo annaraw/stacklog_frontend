@@ -3,11 +3,13 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 //import logo from './logo.svg';
 import './App.css';
-import LoginScreen from './views/LoginView';
+import LoginScreen from './views/Login/LoginView';
 import HomeScreen from './views/HomeScreenView';
 import NotFound from './views/NotFoundView';
+import RegisterScreen from './views/Register/RegisterView';
 import ProjectScreen from './views/ProjectsView';
-import RegisterScreen from './views/RegisterView';
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core';
+import { Colors } from './util/constants';
 
 interface AppState {
   title: string,
@@ -29,7 +31,7 @@ export default class App extends React.Component<AppProps, AppState> {
         { component: RegisterScreen, path: '/register' },
         { component: ProjectScreen, path: '/projects' },
         //route if view is not found
-        { component: NotFound}
+        { component: NotFound }
       ]
     };
   }
@@ -41,12 +43,26 @@ export default class App extends React.Component<AppProps, AppState> {
   render() {
     return (
       <div>
-        <Router>
-          <Switch>
-            {this.state.routes.map((route: any, i: number) => (<Route key={i} {...route} />))}
-          </Switch>
-        </Router>
+        <MuiThemeProvider theme={theme}>
+          <Router>
+            <Switch>
+              {this.state.routes.map((route: any, i: number) => (<Route key={i} {...route} />))}
+            </Switch>
+          </Router>
+        </MuiThemeProvider>
       </div>
     );
   }
 }
+
+
+const theme = createMuiTheme({
+  palette: {
+    primary: {
+      main: Colors.primaryColor
+    },
+    secondary: {
+      main: Colors.secondaryColor
+    }
+  }
+});

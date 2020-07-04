@@ -60,5 +60,9 @@ export const projectFormStyles = makeStyles((theme) => ({
     defaultButton: {
         backgroundColor: Colors.secondaryColor,
         margin: "5px",
-    }
+    },
+    createProjectBtn: {
+        right: 10,
+        position: "absolute",
+    },
 }));

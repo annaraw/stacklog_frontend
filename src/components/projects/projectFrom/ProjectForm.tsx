@@ -1,14 +1,15 @@
 import * as React from 'react';
 import { useState, FunctionComponent } from 'react';
-import { TextField, Drawer, Box, Button, IconButton, Tooltip } from '@material-ui/core';
+import { TextField, Drawer, Box, Button, IconButton, Tooltip, Snackbar, CircularProgress } from '@material-ui/core';
 import { Autocomplete, Alert } from '@material-ui/lab';
 import AddIcon from '@material-ui/icons/Add';
 import CloseIcon from '@material-ui/icons/Close';
 
-import { Project } from '../../../models/models';
+import { Project, Member, IProjectRequest } from '../../../models/models';
 import { PersonaComponent } from '../personaCard/Persona';
-import { personsDummy } from '../../../data/dummyData';
 import { projectFormStyles } from './ProjectFormStyles';
+import ProjectService from '../../../services/ProjectService';
+import UserService from '../../../services/UserService';
 
 
 /**
@@ -16,8 +17,10 @@ import { projectFormStyles } from './ProjectFormStyles';
  * Input Fields for Project Creation
  * 
  */
-const InputForm: FunctionComponent<{ projects: Project[]; setProjects: (projects: Project[]) => void }> = props => {
-    const { projects, setProjects } = props;
+const InputForm: FunctionComponent<{
+    projects: Project[]; setProjects: (projects: Project[]) => void, collegues: Member[]
+}> = props => {
+    const { projects, collegues, setProjects } = props;
     const formTitle = "Create Project";
     const classes = projectFormStyles()
 
@@ -25,9 +28,12 @@ const InputForm: FunctionComponent<{ projects: Project[]; setProjects: (projects
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [member, setMember] = useState("");
-    const [team, setTeam] = useState([personsDummy[0], personsDummy[1], personsDummy[2]]);
+    const [team, setTeam] = useState<Member[]>([]);
     const [error, setError] = useState(false)
     const [alreadyInTeam, setAlreadyInTeam] = useState(false)
+    const [loading, setLoading] = useState(false)
+    const [showFeedback, setShowFeedback] = useState(false)
+    const [feedbackMessage, setFeedbackMessage] = useState("")
 
     const openPanel = (() => setIsOpen(true));
     const dismissPanel = (() => setIsOpen(false));
@@ -36,23 +42,34 @@ const InputForm: FunctionComponent<{ projects: Project[]; setProjects: (projects
             setError(true)
             return
         }
-        const newProject: Project = {
+        setLoading(true)
+        const newProject: IProjectRequest = {
             title: title,
             description: description,
-            team: team,
-            id: Math.random().toString(),
-            backlogItems: 0,
-            progress: 0,
+            team: team.map(member => member.id).concat(UserService.getCurrentUser().id),
+            leader: UserService.getCurrentUser().id
         }
-        projects.push(newProject);
-        setProjects(projects)
-        setIsOpen(false);
-        //reset input
-        setTitle("");
-        setDescription("");
-        setMember("");
-        setTeam([]);
-        setError(false)
+        ProjectService.addProject(newProject).then((res) => {
+            //@ts-ignore
+            setProjects([...projects, res.project])
+            setLoading(false)
+            setIsOpen(false);
+
+            //@ts-ignore
+            setFeedbackMessage(res.message)
+            setShowFeedback(true)
+            //reset input
+            setTitle("");
+            setDescription("");
+            setMember("");
+            setTeam([]);
+            setError(false)
+        }).catch(err => {
+            setLoading(false)
+            setFeedbackMessage(err)
+            setShowFeedback(true)
+            console.log(err)
+        })
     }
 
     const checkInput = (): boolean => {
@@ -62,15 +79,23 @@ const InputForm: FunctionComponent<{ projects: Project[]; setProjects: (projects
         return true
     }
 
-    const comboBoxBasicOptions = personsDummy.map(person => {
+    const comboBoxBasicOptions = collegues.map(person => {
         return (
             { title: person.name + " " + person.lastName }
         )
     })
 
+    const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setShowFeedback(false);
+    };
+
     return (
         <div>
-            <Button onClick={openPanel} variant="contained">{formTitle}</Button>
+            <Button className={classes.createProjectBtn} onClick={openPanel} variant="contained">{formTitle}</Button>
             <Drawer
                 anchor="left"
                 open={isOpen}
@@ -81,13 +106,13 @@ const InputForm: FunctionComponent<{ projects: Project[]; setProjects: (projects
                     <div className={classes.drawerHeading}>
                         <p><strong>{formTitle}</strong></p>
                         <Tooltip title="Close">
-                        <IconButton
-                            aria-label="close"
-                            className={classes.closeButton}
-                            onClick={dismissPanel}
-                        >
-                            <CloseIcon fontSize="inherit" />
-                        </IconButton>
+                            <IconButton
+                                aria-label="close"
+                                className={classes.closeButton}
+                                onClick={dismissPanel}
+                            >
+                                <CloseIcon fontSize="inherit" />
+                            </IconButton>
                         </Tooltip>
                     </div>
                     <TextField
@@ -131,10 +156,12 @@ const InputForm: FunctionComponent<{ projects: Project[]; setProjects: (projects
                         <Tooltip title="Add member">
                             <IconButton
                                 onClick={() => {
-                                    const newMember = personsDummy.find(person =>
+                                    const newMember = collegues.find(person =>
                                         (person.name + " " + person.lastName) === member
                                     )
-                                    if (newMember && !team.includes(newMember)) {
+                                    //@ts-ignore
+                                    if (!team || (newMember && !team.includes(newMember))) {
+                                        //@ts-ignore
                                         setTeam([...team, newMember])
                                     } else {
                                         setAlreadyInTeam(true)
@@ -170,6 +197,10 @@ const InputForm: FunctionComponent<{ projects: Project[]; setProjects: (projects
                     })}
                 </Box>
                 <div className={`${classes.box} ${classes.drawerFooter}`}>
+                    {loading ?
+                        <CircularProgress />
+                        : <span></span>}
+
                     <div className={classes.buttonContainer}>
                         <Button
                             variant="contained"
@@ -188,6 +219,11 @@ const InputForm: FunctionComponent<{ projects: Project[]; setProjects: (projects
                     </div>
                 </div>
             </Drawer>
+            <Snackbar open={showFeedback} autoHideDuration={6000} onClose={handleClose}>
+                <Alert onClose={handleClose} severity="success">
+                    {feedbackMessage}
+                </Alert>
+            </Snackbar>
         </div >
     );
 };

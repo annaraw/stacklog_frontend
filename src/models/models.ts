@@ -7,6 +7,13 @@ export interface Project {
     progress: number,
 }
 
+export interface IProjectRequest {
+    title: string,
+    description: string,
+    team: string[],
+    leader: string,
+}
+
 export interface Member {
     name: string,
     lastName: string,
@@ -15,14 +22,28 @@ export interface Member {
     email: string,
 }
 
-export interface BacklogItem {
-    id: string,
-    name: string,
-    category: Category,
-    priority: number,
-    complete: boolean
+export interface IUser {
+    username: string,
+    password: string,
+    email: string,
+    firstname: string,
+    surname: string,
+    role: string,
+    subscriptionPlan: string,
+    companyName: string,
 }
 
-export interface Category {
-    name: string
+export interface BacklogItem {
+    id: number,
+    author: string,
+    assignee: string,
+    title: string,
+    description: string,
+    priority: number,
+    reminder?: number,
+    completed: boolean,
+    startDate?: Date,
+    dueDate?: Date,
+    category?: string,
+    team?: string
 }
