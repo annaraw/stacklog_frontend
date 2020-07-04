@@ -1,15 +1,15 @@
 import HttpService from "./HttpService";
 import { backendserverURL } from "../util/constants";
+import { IUser } from "../models/models";
 
 export default class UserService {
 
     static baseURL() { return backendserverURL + "/user"; }
 
-    static register(user: string, password: string) {
+    static register(user: IUser) {
         return new Promise((resolve, reject) => {
             HttpService.post(`${UserService.baseURL()}/register`, {
-                username: user,
-                password: password
+                user: user,
             }, function (data: any) {
                 resolve(data);
             }, function (textStatus: string) {
