@@ -55,7 +55,7 @@ const AddCalendarForm: FunctionComponent<any> = props => {
 
     const submit = () => {
         var cal
-        if (calendarUrl != "") {
+        if (calendarUrl !== "") {
             cal = {
                 name: calendarTitle,
                 items: calendarItems,
