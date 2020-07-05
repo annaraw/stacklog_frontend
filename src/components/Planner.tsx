@@ -121,7 +121,7 @@ export class Planner extends React.Component {
 						{/* <Column key={column.id}column={column} items={items} /> */}
 						<BacklogComponent key={backlogColumn.id} column={backlogColumn} items={backlogItems}/>
 						<Schedule key={scheduleColumn.id} column={scheduleColumn} items={scheduleItems}/>
-						<Calendar columns={this.state.columns} items={this.state.items} />
+						<Calendar key ='calendar' columns={this.state.columns} items={this.state.items} />
 				</DragDropContext>
 			</BoardEl>		)
 	}

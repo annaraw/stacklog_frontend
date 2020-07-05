@@ -68,7 +68,8 @@ export const CalendarDay: React.FC<BoardColumnProps> = (props) => {
             >
               {props.items.map((backlogItem: any, index: number) => 
                   
-                    <CalendarItem 
+                    <CalendarItem
+                      key={backlogItem.id}
                       index={index} 
                       item={backlogItem}
                     />

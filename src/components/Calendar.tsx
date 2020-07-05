@@ -77,10 +77,10 @@ export const Calendar: React.FC<BoardColumnProps> = (props) => {
 
     return (
       <div>
-      <Week key='week' columns={weekOneColumns} items={weekOneItems}/>
-      <Week key='week' columns={weekTwoColumns} items={weekTwoItems}/>
-      <Week key='week' columns={weekThreeColumns} items={weekThreeItems}/>
-      <Week key='week' columns={weekFourColumns} items={weekFourItems}/>
+      <Week key='week1' columns={weekOneColumns} items={weekOneItems}/>
+      <Week key='week2' columns={weekTwoColumns} items={weekTwoItems}/>
+      <Week key='week3' columns={weekThreeColumns} items={weekThreeItems}/>
+      <Week key='week4' columns={weekFourColumns} items={weekFourItems}/>
       </div>
       
       
