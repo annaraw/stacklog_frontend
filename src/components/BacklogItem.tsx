@@ -43,9 +43,9 @@ const BacklogItem: FunctionComponent<{ title: String, description: string, categ
                    ref={provided.innerRef}
                    isDragging={snapshot.isDragging}
                 >
-                    <div className="header" /* style={colorStyle} */>
-                        <div className="header-title" >{title} ({category})<span style={{float:"right"}}>Prio: {priority}</span></div>
-                        <div className="description">{description}</div>
+                    <div className="header">
+                        <div className="header-title">{title} ({category})<span style={{float:"right"}}>Prio: {priority}</span></div>
+                        <div className="description"  >{description}</div>
                     </div>
                 </BoardItemEl>
             )}

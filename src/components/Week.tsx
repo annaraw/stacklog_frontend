@@ -11,12 +11,12 @@ import styled from 'styled-components'
 
 import Scrollbar from 'react-scrollbars-custom';
 
-import {Day} from './Day';
+import {CalendarDay} from './CalendarDay';
 
 
 
 type BoardColumnProps = {
-  column: any,
+  columns: any,
   items: any,
 }
 
@@ -28,6 +28,11 @@ type BoardColumnContentStylesProps = {
   isDraggingOver: boolean
 }
 
+const BoardEl = styled.div`
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+`
 
 const BoardColumnContent = styled.div<BoardColumnContentStylesProps>`
   min-height: 20px;
@@ -35,10 +40,16 @@ const BoardColumnContent = styled.div<BoardColumnContentStylesProps>`
   border-radius: 4px;
 `
 
-export const Schedule: React.FC<BoardColumnProps> = (props) => {
+export const Week: React.FC<BoardColumnProps> = (props) => {
 
     return (
-      <Day key={props.column.id} column={props.column} items={props.items}/>
+      
+      <BoardEl>
+        {props.columns.map((c:any,index:number) => <CalendarDay key={c.id} column={c} items={props.items[index]}/>
+          )}
+      </BoardEl>
+      
+      
     );
 
 };

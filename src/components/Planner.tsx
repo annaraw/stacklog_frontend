@@ -7,6 +7,7 @@ import styled from "styled-components";
 import { initialPlannerData } from '../data/initialPlannerData'
 import BacklogComponent from './BacklogComponent';
 import {Schedule} from './Schedule';
+import {Calendar} from './Calendar';
 
 const BoardEl = styled.div`
   display: flex;
@@ -109,16 +110,18 @@ export class Planner extends React.Component {
 
 	render() {
 		//console.log(this.state)
-		const backlog = (this.state.columns as any)['backlog']
-		const schedule = (this.state.columns as any)['schedule']
-		const backlogItems = backlog.itemsIds.map((itemId: string) => (this.state.items as any)[itemId])
-		const scheduleItems = schedule.itemsIds.map((itemId: string) => (this.state.items as any)[itemId])
+		const today = '2020-07-06'
+		const backlogColumn = (this.state.columns as any)['backlog']
+		const scheduleColumn = (this.state.columns as any)[today]
+		const backlogItems = backlogColumn.itemsIds.map((itemId: string) => (this.state.items as any)[itemId])
+		const scheduleItems = scheduleColumn.itemsIds.map((itemId: string) => (this.state.items as any)[itemId])
 		return(
 			<BoardEl>
 				<DragDropContext onDragEnd={this.onDragEnd}>
 						{/* <Column key={column.id}column={column} items={items} /> */}
-						<BacklogComponent key={backlog.id} column={backlog} items={backlogItems}/>
-						<Schedule key={schedule.id} column={schedule} items={scheduleItems}/>
+						<BacklogComponent key={backlogColumn.id} column={backlogColumn} items={backlogItems}/>
+						<Schedule key={scheduleColumn.id} column={scheduleColumn} items={scheduleItems}/>
+						<Calendar columns={this.state.columns} items={this.state.items} />
 				</DragDropContext>
 			</BoardEl>		)
 	}

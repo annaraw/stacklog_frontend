@@ -24,7 +24,7 @@ export interface IBacklogItem {
     priority: number,
     reminder?: number,
     completed: boolean,
-    startDate?: Date,
+    startDate?: Date | null,
     dueDate?: Date,
     category: string,
     team?: string,
