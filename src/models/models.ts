@@ -14,6 +14,12 @@ export interface IProjectRequest {
     leader: string,
 }
 
+export interface IProjectUpdateProps {
+    title?: string,
+    description?: string,
+    team?: string[],
+}
+
 export interface Member {
     name: string,
     lastName: string,

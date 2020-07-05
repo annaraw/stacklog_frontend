@@ -3,7 +3,7 @@ import {
     IPersonaSharedProps, Persona, PersonaSize
 } from 'office-ui-fabric-react';
 
-import { Project } from '../../../models/models';
+import { Project, Member } from '../../../models/models';
 import { FunctionComponent, useState } from 'react';
 import { Card, CardHeader, IconButton, CardContent, Typography, Menu, MenuItem, ListItemText, Snackbar } from '@material-ui/core';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
@@ -12,12 +12,19 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import { projectCardStyles } from './ProjectCardStyles';
 import ProjectService from '../../../services/ProjectService';
 import { Alert } from '@material-ui/lab';
+import ProjectForm from '../ProjectFrom/ProjectForm';
 
-const ProjectCard: FunctionComponent<{ project: Project }> = props => {
+const ProjectCard: FunctionComponent<{
+    project: Project,
+    projects: Project[],
+    collegues: Member[],
+    setProjects: (projects: Project[]) => void,
+}> = props => {
     const classes = projectCardStyles();
-    const { project } = props;
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const [deleteError, setdeleteError] = useState<boolean>(false);
+    const { project, projects, collegues, setProjects } = props;
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+    const [deleteError, setdeleteError] = useState<boolean>(false)
+    const [isOpen, setIsOpen] = useState<boolean>(false)
 
     const personas: IPersonaSharedProps[] = project.team.map(member => {
         return (
@@ -62,7 +69,7 @@ const ProjectCard: FunctionComponent<{ project: Project }> = props => {
                             open={Boolean(anchorEl)}
                             onClose={handleClose}
                         >
-                            <MenuItem>
+                            <MenuItem onClick={() => setIsOpen(true)}>
                                 <EditIcon fontSize="small" />
                                 <ListItemText primary="Edit" style={{ paddingLeft: "10px" }} />
                             </MenuItem>
@@ -127,6 +134,16 @@ const ProjectCard: FunctionComponent<{ project: Project }> = props => {
                     Could not delete Project
                 </Alert>
             </Snackbar>
+            <ProjectForm
+                isOpen={isOpen}
+                setIsOpen={setIsOpen}
+                formTitle={`Edit Project "${project.title}"`}
+                projects={projects}
+                setProjects={setProjects}
+                collegues={collegues}
+                project={project}
+                formType={"Update"}
+            />
         </Card >
     );
 };

@@ -22,5 +22,9 @@ export const projectViewStyles = () => ({
     },
     project: {
         display: "grid",
-    }
+    },
+    createProjectBtn: {
+        right: 10,
+        position: "absolute",
+    },
 });

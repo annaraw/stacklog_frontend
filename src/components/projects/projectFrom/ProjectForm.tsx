@@ -1,74 +1,126 @@
 import * as React from 'react';
 import { useState, FunctionComponent } from 'react';
-import { TextField, Button, IconButton, Tooltip, Snackbar } from '@material-ui/core';
+import { TextField, IconButton, Tooltip, Snackbar } from '@material-ui/core';
 import { Autocomplete, Alert } from '@material-ui/lab';
 import AddIcon from '@material-ui/icons/Add';
 
-import { Project, Member, IProjectRequest } from '../../../models/models';
+import { Project, Member, IProjectRequest, IProjectUpdateProps } from '../../../models/models';
 import { projectFormStyles } from './ProjectFormStyles';
 import { PersonaComponent } from '../PersonaCard/Persona';
-import ProjectService from '../../../services/ProjectService';
 import UserService from '../../../services/UserService';
 import DrawerForm from '../../Form/DrawerForm';
+import ProjectService from '../../../services/ProjectService';
 
 /**
  * Project Form
  * Input Fields for Project Creation
  * 
  */
-const InputForm: FunctionComponent<{
-    projects: Project[]; setProjects: (projects: Project[]) => void, collegues: Member[]
+const ProjectForm: FunctionComponent<{
+    formTitle: string,
+    isOpen: boolean,
+    projects: Project[],
+    collegues: Member[],
+    project?: Project,
+    formType: "Create" | "Update",
+    setIsOpen: (open: boolean) => void,
+    setProjects: (projects: Project[]) => void,
 }> = props => {
-    const { projects, collegues, setProjects } = props;
-    const formTitle = "Create Project";
+    const { projects, collegues, isOpen, formType, formTitle, setProjects, project, setIsOpen } = props;
     const classes = projectFormStyles()
-
-    const [isOpen, setIsOpen] = useState(false);
-    const [title, setTitle] = useState("");
-    const [description, setDescription] = useState("");
+    const [title, setTitle] = useState((project) ? project.title : "");
+    const [description, setDescription] = useState(project ? project.description : "");
     const [member, setMember] = useState("");
-    const [team, setTeam] = useState<Member[]>([]);
+    const [team, setTeam] = useState<Member[]>(project ? project.team : []);
     const [error, setError] = useState(false)
     const [alreadyInTeam, setAlreadyInTeam] = useState(false)
     const [loading, setLoading] = useState(false)
     const [showFeedback, setShowFeedback] = useState(false)
     const [feedbackMessage, setFeedbackMessage] = useState("")
 
-    const openPanel = (() => setIsOpen(true));
     const dismissPanel = (() => setIsOpen(false));
-    const submit = (): void => {
+
+    const submit = async (): Promise<void> => {
         if (!checkInput()) {
             setError(true)
             return
         }
         setLoading(true)
-        const newProject: IProjectRequest = {
-            title: title,
-            description: description,
-            team: team.map(member => member.id).concat(UserService.getCurrentUser().id),
-            leader: UserService.getCurrentUser().id
-        }
-        ProjectService.addProject(newProject).then((res) => {
-            //@ts-ignore
-            setProjects([...projects, res.project])
-            setLoading(false)
-            setIsOpen(false);
 
-            //@ts-ignore
-            setFeedbackMessage(res.message)
+        try {
+            if (formType === "Create") {
+                await sendItemToDataBase()
+            } else if (formType === "Update") {
+                await updateItemInDataBase()
+            } else {
+                setFeedbackMessage("Fatal error")
+                setShowFeedback(true)
+            }
+
+            setLoading(false)
             setShowFeedback(true)
+
             //reset input
             setTitle("");
             setDescription("");
             setMember("");
             setTeam([]);
             setError(false)
-        }).catch(err => {
+            setIsOpen(false);
+        } catch (err) {
             setLoading(false)
             setFeedbackMessage(err)
             setShowFeedback(true)
             console.log(err)
-        })
+        }
+    }
+
+    const sendItemToDataBase = async () => {
+        const newProject: IProjectRequest = {
+            title: title,
+            description: description,
+            team: [UserService.getCurrentUser().id].concat(team.map(member => member.id)),
+            leader: UserService.getCurrentUser().id
+        }
+        let response = await ProjectService.addProject(newProject)
+        //@ts-ignore
+        setFeedbackMessage(response.message)
+        //@ts-ignore
+        setProjects([...projects, response.item])
+    }
+
+    const updateItemInDataBase = async () => {
+        let updateProps: IProjectUpdateProps = {}
+        if (!project) {
+            setFeedbackMessage("No item to update")
+            setShowFeedback(true)
+            return
+        }
+        if (title !== project.title) {
+            updateProps.title = title
+        } else if (description !== project.description) {
+            updateProps.description = description
+        } else if (team !== project.team) {
+            updateProps.team = team.map(member => member.id)
+        }
+        try {
+            let response = await ProjectService.updateProject(project.id, updateProps)
+            let updatedProjects = [...projects]
+            const projectIndex = updatedProjects.findIndex(item => item.id === project.id)
+            if (projectIndex) {
+                //@ts-ignore
+                updatedProjects[projectIndex] = response.item
+                setProjects([...updatedProjects])
+            } else {
+                setFeedbackMessage("No item found to update")
+                setError(true)
+            }
+            //@ts-ignore
+            setFeedbackMessage(response.message)
+        } catch (error) {
+            setFeedbackMessage(error)
+            setError(true)
+        }
     }
 
     const checkInput = (): boolean => {
@@ -93,13 +145,12 @@ const InputForm: FunctionComponent<{
     };
 
     return (
-        <div>
-            <Button className={classes.createProjectBtn} onClick={openPanel} variant="contained">{formTitle}</Button>
+        <>
             <DrawerForm
                 formTitle={formTitle}
                 isOpen={isOpen}
                 loading={loading}
-                formType="Create"
+                formType={project ? "Update" : "Create"}
                 onSubmit={submit}
                 dismissPanel={dismissPanel}
             >
@@ -189,8 +240,8 @@ const InputForm: FunctionComponent<{
                     {feedbackMessage}
                 </Alert>
             </Snackbar>
-        </div >
+        </>
     );
 };
 
-export default InputForm;
+export default ProjectForm;

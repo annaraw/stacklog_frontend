@@ -2,12 +2,6 @@ import { makeStyles } from "@material-ui/core";
 import { Colors } from "../../../util/constants";
 
 export const projectFormStyles = makeStyles((theme) => ({
-    root: {
-        '& .MuiTextField-root': {
-            margin: theme.spacing(1),
-            width: 200,
-        },
-    },
     drawer: {
         position: "relative"
     },
@@ -60,9 +54,5 @@ export const projectFormStyles = makeStyles((theme) => ({
     defaultButton: {
         backgroundColor: Colors.secondaryColor,
         margin: "5px",
-    },
-    createProjectBtn: {
-        right: 10,
-        position: "absolute",
     },
 }));

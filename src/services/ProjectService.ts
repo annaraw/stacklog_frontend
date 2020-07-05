@@ -1,6 +1,6 @@
 import HttpService from "./HttpService";
 import { backendserverURL } from "../util/constants";
-import { Project, IProjectRequest } from "../models/models";
+import { IProjectRequest, IProjectUpdateProps } from "../models/models";
 
 export default class ProjectService {
 
@@ -49,9 +49,9 @@ export default class ProjectService {
         });
     }
 
-    static updateProject(item: Project) {
+    static updateProject(itemID: string, item: IProjectUpdateProps) {
         return new Promise((resolve, reject) => {
-            HttpService.put(`${ProjectService.baseURL()}${item.id}`,
+            HttpService.put(`${ProjectService.baseURL()}${itemID}`,
                 item,
                 function (data: any) {
                     if (!data) {
