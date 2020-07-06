@@ -20,15 +20,22 @@ export interface IBacklogItem {
     author: string,
     assignee: string,
     title: string,
-    description: string,
-    priority: number,
+    description?: string,
+    priority: Priority,
     reminder?: number,
+    estimation?: number,
     completed: boolean,
     startDate?: Date | null,
     dueDate?: Date,
     category: string,
     team?: string,
-    index: number,
+    index?: number,
+}
+
+enum Priority {
+    "high",
+    "medium",
+    "low"
 }
 
 export interface Category {

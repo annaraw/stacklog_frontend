@@ -21,7 +21,7 @@ const BoardColumnContent = styled.div<BoardColumnContentStylesProps>`
 `
 
 export const Schedule: React.FC<BoardColumnProps> = (props) => {
-
+    console.log(props.items)
     return (
       <React.Fragment>
       <div className="backlogContainer">
@@ -34,14 +34,14 @@ export const Schedule: React.FC<BoardColumnProps> = (props) => {
               ref={provided.innerRef}
               isDraggingOver={snapshot.isDraggingOver}
             >
-              {props.items.map((backlogItem: any, index: number) => 
+              {props.items.map((backlogItem: IBacklogItem, index: number) => 
                   
                     <BacklogItem 
                       index={index} 
                       id={backlogItem.id} 
                       key={backlogItem.id} 
                       title={backlogItem.title} 
-                      description={backlogItem.description}
+                      description={backlogItem.description ? backlogItem.description : ""}
                       category={backlogItem.category} 
                       priority={backlogItem.priority}
                     />
