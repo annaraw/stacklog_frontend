@@ -1,31 +1,18 @@
 import * as React from 'react';
-import { Component } from 'react';
-
-import './BacklogComponent.css'
-import { IBacklogItem } from '../models/models'
-import BacklogItem from './BacklogItem';
-
-
+import { IBacklogItem, Column } from '../../../models/models';
+import BacklogItem from '../Backlog/BacklogItem';
 import { Droppable } from 'react-beautiful-dnd'
 import styled from 'styled-components'
-
 import Scrollbar from 'react-scrollbars-custom';
 
-
-
 type BoardColumnProps = {
-  column: any,
-  items: any,
-}
-
-interface BacklogState {
-  items: IBacklogItem[];
+  column: Column,
+  items: IBacklogItem[],
 }
 
 type BoardColumnContentStylesProps = {
   isDraggingOver: boolean
 }
-
 
 const BoardColumnContent = styled.div<BoardColumnContentStylesProps>`
   min-height: 20px;
@@ -33,12 +20,11 @@ const BoardColumnContent = styled.div<BoardColumnContentStylesProps>`
   border-radius: 4px;
 `
 
-export const Day: React.FC<BoardColumnProps> = (props) => {
+export const Schedule: React.FC<BoardColumnProps> = (props) => {
 
     return (
       <React.Fragment>
       <div className="backlogContainer">
-        {/* <div className="menuBar"></div> */}
         <div className="containerTitle">Schedule</div>
         <Scrollbar style={{ width: "100%", float: "left", height: "500px" }}>
         <Droppable droppableId={props.column.id}>
@@ -61,10 +47,6 @@ export const Day: React.FC<BoardColumnProps> = (props) => {
                     />
                     
                 )}
-                {provided.placeholder}
-              {/* {
-                this.props.items.map((item: any, index: number) => <Item key={item.id} item={item} index={index} />
-              )} */}
               {provided.placeholder}
             </BoardColumnContent>
           )}

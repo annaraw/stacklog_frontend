@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import './BacklogItem.css'
 import { FunctionComponent } from 'react';
-import { Category } from '../models/models';
+import { Category } from '../../../models/models';
 
 import { Draggable } from 'react-beautiful-dnd'
 import styled from 'styled-components'

@@ -7,8 +7,8 @@ import LoginScreen from './views/LoginView';
 import HomeScreen from './views/HomeScreenView';
 import NotFound from './views/NotFoundView';
 import ProjectScreen from './views/ProjectsView';
-import Planner from './components/Planner';
-import Backlog from './components/BacklogComponent';
+import Planner from './components/Planner/Planner';
+import Backlog from './components/Planner/Backlog/BacklogComponent';
 import RegisterScreen from './views/RegisterView';
 
 interface AppState {

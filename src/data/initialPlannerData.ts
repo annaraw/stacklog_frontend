@@ -1,66 +1,61 @@
 import { backlogDummy } from "./dummyData";
-
-var items: any = {};
-var backlogItemIds: string[] = [];
-var scheduleItemIds: string[] = [];
+import { Column } from '../models/models';
 
 const datesAreOnSameDay = (first: Date, second:Date) =>
     first.getFullYear() === second.getFullYear() &&
     first.getMonth() === second.getMonth() &&
     first.getDate() === second.getDate();
 
-backlogDummy.forEach(item => {
-  items[item.id] = item;
-});
-
-export const initialPlannerData = {
-  items: items,
-  columns: {
-    'backlog': {
+export const columns:Column[] = [
+    {
       id: 'backlog',
       title: 'Backlog',
       itemsIds: backlogDummy.filter((item) => !item.startDate || item.startDate < new Date('2020-07-06')).map((item) => item.id )
     },
-    '2020-07-06': {
-      id: '2020-07-06',
+    {
+      id: 'Mon Jul 06 2020',
       title: '2020-07-06',
       itemsIds: backlogDummy.filter((item) => item.startDate && datesAreOnSameDay(new Date('2020-07-06'), item.startDate) ).map((item) => item.id)
     },
-    '2020-07-07': {
-      id: '2020-07-07',
+    {
+      id: 'Tue Jul 07 2020',
       title: '2020-07-07',
       itemsIds: backlogDummy.filter((item) => item.startDate && datesAreOnSameDay(new Date('2020-07-07'), item.startDate) ).map((item) => item.id)
     },
-    '2020-07-08': {
-      id: '2020-07-08',
+    {
+      id: 'Wed Jul 08 2020',
       title: '2020-07-08',
       itemsIds: backlogDummy.filter((item) => item.startDate && datesAreOnSameDay(new Date('2020-07-08'), item.startDate) ).map((item) => item.id)
     },
-    '2020-07-09': {
-      id: '2020-07-09',
+    {
+      id: 'Thu Jul 09 2020',
       title: '2020-07-09',
       itemsIds: backlogDummy.filter((item) => item.startDate && datesAreOnSameDay(new Date('2020-07-09'), item.startDate) ).map((item) => item.id)
     },
-    '2020-07-10': {
-      id: '2020-07-10',
+    {
+      id: 'Fri Jul 10 2020',
       title: '2020-07-10',
       itemsIds: backlogDummy.filter((item) => item.startDate && datesAreOnSameDay(new Date('2020-07-10'), item.startDate) ).map((item) => item.id)
     },
-    '2020-07-11': {
-      id: '2020-07-11',
+    {
+      id: 'Sat Jul 11 2020',
       title: '2020-07-11',
       itemsIds: backlogDummy.filter((item) => item.startDate && datesAreOnSameDay(new Date('2020-07-11'), item.startDate) ).map((item) => item.id)
     },
-    '2020-07-12': {
-      id: '2020-07-12',
+    {
+      id: 'Sun Jul 12 2020',
       title: '2020-07-12',
       itemsIds: backlogDummy.filter((item) => item.startDate && datesAreOnSameDay(new Date('2020-07-12'), item.startDate) ).map((item) => item.id)
     },
-    '2020-07-13': {
-      id: '2020-07-13',
+    {
+      id: 'Mon Jul 13 2020',
       title: '2020-07-13',
       itemsIds: backlogDummy.filter((item) => item.startDate && datesAreOnSameDay(new Date('2020-07-13'), item.startDate) ).map((item) => item.id)
-    },
+    }
+]
+    
+    
+    /* ,
     '2020-07-14': {
       id: '2020-07-14',
       title: '2020-07-14',
@@ -151,6 +146,4 @@ export const initialPlannerData = {
       title: '2020-07-31',
       itemsIds: backlogDummy.filter((item) => item.startDate && datesAreOnSameDay(new Date('2020-07-31'), item.startDate) ).map((item) => item.id)
     }
-
-  }
-}
+} */

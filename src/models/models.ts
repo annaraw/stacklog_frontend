@@ -36,3 +36,9 @@ export interface Category {
     text: string,
     color: string,
 }
+
+export interface Column {
+	id: string,
+	title: string,
+	itemsIds: string[]
+}
