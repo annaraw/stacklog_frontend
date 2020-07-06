@@ -19,7 +19,7 @@ export const initialPlannerData = {
     'backlog': {
       id: 'backlog',
       title: 'Backlog',
-      itemsIds: backlogDummy.filter((item) => !item.startDate || item.startDate < new Date()).map((item) => item.id )
+      itemsIds: backlogDummy.filter((item) => !item.startDate || item.startDate < new Date('2020-07-06')).map((item) => item.id )
     },
     '2020-07-06': {
       id: '2020-07-06',
