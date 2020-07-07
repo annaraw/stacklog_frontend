@@ -1,13 +1,11 @@
 import * as React from 'react'
 import { DragDropContext } from 'react-beautiful-dnd'
 import styled from "styled-components";
-import { columns } from '../../data/initialPlannerData'
 import BacklogComponent from './Backlog/BacklogComponent';
 import { Schedule } from './Schedule/Schedule';
 import { Calendar } from './Calendar/Calendar';
 import { sortTypes } from '../../util/constants';
 import { IBacklogItem, Column } from '../../models/models';
-import { backlogDummy } from '../../data/dummyData';
 import BacklogItemService from '../../services/BacklogItemService';
 
 const BoardEl = styled.div`
@@ -18,8 +16,9 @@ const BoardEl = styled.div`
 
 type BoardColumnProps = {
 	setSortType: (sortType: string) => void
-	//setSortIsUp
-	//setSearchInput
+	setSortIsUp: (sortIsUp: boolean) => void
+	setSearchInput: (searchInput: string) => void
+	setSelectedFilters: (selectedFilters: string[]) => void
 }
 
 interface BacklogState {
@@ -29,6 +28,7 @@ interface BacklogState {
 	searchInput: string,
 	sortIsUp: boolean,
 	sortType: string,
+	selectedFilters: string[],
 	loading: boolean,
 }
 
@@ -46,6 +46,8 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 			searchInput: "",
 			sortIsUp: false,
 			sortType: sortTypes.priority,
+			selectedFilters: [],
+
 			loading: true,
 		}
 	}
@@ -55,8 +57,6 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 
 		//backend request - get backlog items
 		BacklogItemService.getBacklogItems().then(responseItems => {
-			console.log(responseItems)
-
 			let itemsFormBackend: IBacklogItem[] = []
 
 			if (responseItems) {
@@ -96,7 +96,9 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 				id: 'backlog',
 				title: 'backlog',
 				itemsIds: itemsFormBackend.filter((item) => !item.startDate
-					|| new Date(item.startDate).toDateString() <= new Date().toDateString()).map(item => item.id)
+					//TODO: add items back into backlog when startDate is in the past and completed = false
+					//|| new Date(item.startDate).toDateString() <= new Date().toDateString()
+					).map(item => item.id)
 			}]
 			for (let i in nextDays) {
 				initialColumns.push({
@@ -109,7 +111,7 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 
 			this.setState({
 				items: itemsFormBackend,
-				displayedItems: itemsFormBackend,
+				displayedItems: itemsFormBackend.filter((item) => !item.startDate),
 				columns: initialColumns,
 				loading: false,
 			})
@@ -134,96 +136,110 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 		this.setState({ columns: newColumns })
 	}
 
-	setSearchInput = (searchInput: string) => {
+	setSearchInput = async (searchInput: string) => {
 		this.setState({ searchInput: searchInput })
+		var allBacklogItems = await this.state.items.filter((item) => !item.startDate)
+		this.setDisplayedItems(await this.search(await this.sort(allBacklogItems)))
 	}
 
-	setSortIsUp = (isUp: boolean) => {
+	setSortIsUp = async (isUp: boolean) => {
 		this.setState({ sortIsUp: isUp })
+		var allBacklogItems = await this.state.items.filter((item) => !item.startDate)
+		this.setDisplayedItems(await this.sort(allBacklogItems))
 	}
 
-	setSortType = (sortType: string) => {
+	setSortType = async (sortType: string) => {
 		this.setState({ sortType: sortType })
+		var allBacklogItems = await this.state.items.filter((item) => !item.startDate)
+		this.setDisplayedItems(await this.sort(allBacklogItems))
 	}
 
-	/* 	filter = async (option?: IDropdownOption): Promise<void> => {
-			//add option to selected keys
-			if (option) {
-			  this.setSelectedKeys(option)
-			}
-			//create list of filtered backlog
-			var temp: IBacklogItem[] = []
-			if (this.state.selectedKeys.length === 0) {
-			  //show all items if no category is selected
-			  temp = this.state.backlog
-			} else {
-			  this.state.backlog.map(backlogItem => {
-				if (this.state.selectedKeys.includes(backlogItem.category)) {
-				  temp.push(backlogItem)
-				}
-			  })
-			}
-			this.setDisplayedBacklog(temp)
-		  }
-		
-		  sort = () => {
-			var temp
-			if (this.state.sortType === sortTypes.priority) {
-			  temp = this.state.sortIsUp ? (this.state.displayedBacklog.sort(function (a, b) { return b.priority - a.priority })) : (this.state.displayedBacklog.sort(function (a, b) { return a.priority - b.priority }))
-			}
-			else if (this.state.sortType === sortTypes.alphabetical) {
-			  temp =
-				this.state.sortIsUp ? (this.state.displayedBacklog.sort(
-				  function (a, b) {
-					if (a.title > b.title) { return -1; }
-					if (a.title < b.title) { return 1; }
-					return 0;
-				  }
-				)) : (this.state.displayedBacklog.sort(
-				  function (a, b) {
-					if (a.title < b.title) { return -1; }
-					if (a.title > b.title) { return 1; }
-					return 0;
-				  }
-				))
-			}
-			if (temp) {
-			  this.setDisplayedBacklog(temp)
-			}
-		  }
-		
-		  search = async (input?: string) => {
-			//set state only when there is a input or empty string (occurs when deleting the last character in the search bar)
-			if (input || input === "") {
-			  await this.setSearchInput(input)
-			}
-			//split search string into array of keywords
-			var searchInput: string[] = this.state.searchInput.split(' ')
-			//delete the last space character in the keyword array except if it is the last remaining item in the array
-			if (searchInput.length !== 1) {
-			  searchInput = searchInput.filter(function (element) { return element !== ""; })
-			}
-			//select all backlog items that contain one of the keywords
-			var temp: IBacklogItem[] = []
-			searchInput.map(keyword => {
-			  this.state.backlog.map(backlogItem => {
-				if (backlogItem.title.toLowerCase().includes(keyword.toLowerCase())) {
-				  //item not already in the list AND (check applied filters OR no filter applied)
-				  if (!temp.includes(backlogItem) && (this.state.selectedKeys.includes(backlogItem.category) || this.state.selectedKeys.length === 0)) {
-					temp.push(backlogItem)
-				  }
-				}
-			  })
-			})
-			this.setDisplayedBacklog(temp)
-		  }
-		
-		  changeOrder = async () => {
-			this.setSortIsUp(!this.state.sortIsUp)
-			this.sort()
-		  } */
+	setSelectedFilters = async (selectedFilters: string[]) => {
+		this.setState({ selectedFilters: selectedFilters })
+		var allBacklogItems = await this.state.items.filter((item) => !item.startDate)
+		this.setDisplayedItems(await this.filter(await this.search( await this.sort(allBacklogItems))))
+	}
 
-	onDragEnd = (result: any) => {
+	setDisplayedItems = (displayedItems: IBacklogItem[]) => {
+		this.setState({ displayedItems: displayedItems })
+	  }
+
+	filter = async (itemList: IBacklogItem[]) => {
+		//create list of filtered backlog
+		var temp: IBacklogItem[] = []
+		if (this.state.selectedFilters.length === 0) {
+			//show all items if no category is selected
+			temp = itemList
+		} else {
+			itemList.map(backlogItem => {
+			if (this.state.selectedFilters.includes(backlogItem.category)) {
+				temp.push(backlogItem)
+			}
+			})
+		}
+		return temp
+	}
+
+	sort = async (itemList: IBacklogItem[]) => {
+		var temp: IBacklogItem[] = []
+		if (this.state.sortType === sortTypes.priority) {
+			temp =
+			this.state.sortIsUp ? (itemList.sort(
+				function (a, b) {
+				if (a.priority > b.priority) { return -1; }
+				if (a.priority < b.priority) { return 1; }
+				return 0;
+				}
+			)) : (itemList.sort(
+				function (a, b) {
+				if (a.priority < b.priority) { return -1; }
+				if (a.priority > b.priority) { return 1; }
+				return 0;
+				}
+			))
+		}
+		else if (this.state.sortType === sortTypes.alphabetical) {
+			temp =
+			this.state.sortIsUp ? (itemList.sort(
+				function (a, b) {
+				if (a.title > b.title) { return -1; }
+				if (a.title < b.title) { return 1; }
+				return 0;
+				}
+			)) : (itemList.sort(
+				function (a, b) {
+				if (a.title < b.title) { return -1; }
+				if (a.title > b.title) { return 1; }
+				return 0;
+				}
+			))
+		}
+		return temp
+	}
+
+	search = async (itemList: IBacklogItem[]) => {
+		//split search string into array of keywords
+		var searchInput: string[] = this.state.searchInput.split(' ')
+		//delete the last space character in the keyword array except if it is the last remaining item in the array
+		if (searchInput.length !== 1) {
+			searchInput = searchInput.filter(function (element) { return element !== ""; })
+		}
+		//select all backlog items that contain one of the keywords
+		var temp: IBacklogItem[] = []
+		searchInput.map(keyword => {
+			itemList.map(backlogItem => {
+			if (backlogItem.title.toLowerCase().includes(keyword.toLowerCase())) {
+				//item not already in the list AND (check applied filters OR no filter applied)
+				if (!temp.includes(backlogItem) && (this.state.selectedFilters.includes(backlogItem.category) || this.state.selectedFilters.length === 0)) {
+					temp.push(backlogItem)
+				}
+			}
+			})
+		})
+		return temp
+	}
+
+	onDragEnd = async (result: any) => {
 		const { source, destination, draggableId } = result
 		// (1) DROPPED OUTSIDE - NO CHANGE
 		if (!destination) {
@@ -260,7 +276,6 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 			var newItem = this.state.items.filter(item => item.id === draggableId)[0]
 			newItem.startDate = newDate
 
-			//console.log(columnStart.itemsIds)
 			const newStartItemsIds = Array.from(columnStart.itemsIds) // Get all item ids in source list
 			newStartItemsIds.splice(source.index, 1) // Remove the id of dragged item from its original position
 
@@ -281,10 +296,10 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 
 			this.setColumns(newColumnStart, newColumnFinish)
 		}
+		this.setDisplayedItems(await this.sort(await this.filter(await this.search(this.state.items.filter((item) => !item.startDate)))))
 	};
 
 	render() {
-
 		if (this.state.loading) {
 			return (
 				<p>Loading</p>
@@ -305,10 +320,15 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 						<BacklogComponent
 							key={backlogColumn.id}
 							column={backlogColumn}
-							items={backlogItems}
+							items={this.state.displayedItems}
+							sortType={this.state.sortType}
+							sortIsUp={this.state.sortIsUp}
+							searchInput={this.state.searchInput}
+							selectedFilters={this.state.selectedFilters}
 							setSortType={this.setSortType}
-						//setSortIsUp
-						//setSearchInput
+							setSortIsUp={this.setSortIsUp}
+							setSearchInput={this.setSearchInput}
+							setSelectedFilters={this.setSelectedFilters}
 						/>
 						<Schedule key={scheduleColumn.id} column={scheduleColumn} items={scheduleItems} />
 						<Calendar key='calendar' columns={this.state.columns} items={this.state.items} />

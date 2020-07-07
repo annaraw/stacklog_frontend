@@ -21,7 +21,6 @@ const BoardColumnContent = styled.div<BoardColumnContentStylesProps>`
 `
 
 export const Schedule: React.FC<BoardColumnProps> = (props) => {
-    console.log(props.items)
     return (
       <React.Fragment>
       <div className="backlogContainer">

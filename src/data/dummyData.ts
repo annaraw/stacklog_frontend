@@ -105,8 +105,8 @@ export const categories: Category[] = [
         color: "#91d680",
     },
     { 
-        key: 'DB',
-        text: 'Databases',
+        key: 'max',
+        text: 'max',
         color: "#d38484",
     },
 ]
