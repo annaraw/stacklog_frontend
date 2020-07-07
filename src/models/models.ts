@@ -15,8 +15,19 @@ export interface Member {
     email: string,
 }
 
+export interface IUser {
+    username: string,
+    password: string,
+    email: string,
+    firstname: string,
+    surname: string,
+    role: string,
+    subscriptionPlan: string,
+    companyName: string,
+}
+
 export interface IBacklogItem {
-    id: any,
+    id: string,
     author: string,
     assignee: string,
     title: string,

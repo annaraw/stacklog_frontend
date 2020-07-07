@@ -6,3 +6,7 @@ export const sortTypes = {
     deadline: "Deadline",
     category: "Category"
   }
+export const Colors = {
+    primaryColor: "#6AFFA1",
+    secondaryColor: "#BBBBBB"
+}
