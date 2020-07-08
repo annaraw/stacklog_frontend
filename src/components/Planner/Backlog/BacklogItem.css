@@ -1,0 +1,21 @@
+.backlogItem {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    transition: 0.3s;
+    margin: 10px;
+    cursor: pointer;
+}
+
+.backlogItem:hover {
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+    background-color: -50%;
+}
+
+.header {
+    padding: 20px;
+    font-weight: bold;
+}
+
+.description {
+    font-size: 12px;
+    font-weight: normal
+}

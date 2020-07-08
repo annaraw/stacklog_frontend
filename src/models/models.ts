@@ -39,17 +39,37 @@ export interface IUser {
     companyName: string,
 }
 
-export interface BacklogItem {
-    id: number,
+export interface IBacklogItem {
+    id: string,
     author: string,
     assignee: string,
     title: string,
-    description: string,
-    priority: number,
+    description?: string,
+    priority: Priority,
     reminder?: number,
+    estimation?: number,
     completed: boolean,
-    startDate?: Date,
+    startDate?: Date | null,
     dueDate?: Date,
-    category?: string,
-    team?: string
+    category: string,
+    team?: string,
+    index?: number,
+}
+
+enum Priority {
+    "high",
+    "medium",
+    "low"
+}
+
+export interface Category {
+    key: string,
+    text: string,
+    color: string,
+}
+
+export interface Column {
+	id: string,
+	title: string,
+	itemsIds: string[]
 }
