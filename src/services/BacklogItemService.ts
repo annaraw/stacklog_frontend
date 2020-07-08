@@ -34,6 +34,20 @@ export default class BacklogItemService {
         });
     }
 
+    static getProjectBacklogItems(projectID: string) {
+        return new Promise((resolve, reject) => {
+            HttpService.get(`${BacklogItemService.baseURL()}project/${projectID}`, 
+            function (data: any) {
+                if(!data){
+                    reject("Error while retrieving Items");
+                }
+                resolve(data);
+            }, function (textStatus: string) {
+                reject(textStatus);
+            });
+        });
+    }
+
     static addBacklogItem(item: IBacklogItem) {
         return new Promise((resolve, reject) => {
             HttpService.post(`${BacklogItemService.baseURL()}`, 
