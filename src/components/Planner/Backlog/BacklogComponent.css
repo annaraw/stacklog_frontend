@@ -1,0 +1,20 @@
+.backlogContainer {
+    width: 80%;
+    height: auto;
+    margin: 20px auto;
+    background-color: white;
+    overflow: hidden;
+    padding: 20px;
+}
+
+.containerTitle {
+    float: right;
+    font-size: 25px;
+    margin-right: 20px;
+    font-weight: bold;
+}
+
+
+.containerControls {
+    float: left;
+}

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FunctionComponent, useState } from 'react';
-import UserService from '../../services/UserService';
+import UserService from '../../../services/UserService';
 import {
     Card,
     IconButton,

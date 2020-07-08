@@ -7,6 +7,19 @@ export interface Project {
     progress: number,
 }
 
+export interface IProjectRequest {
+    title: string,
+    description: string,
+    team: string[],
+    leader: string,
+}
+
+export interface IProjectUpdateProps {
+    title?: string,
+    description?: string,
+    team?: string[],
+}
+
 export interface Member {
     name: string,
     lastName: string,
@@ -26,19 +39,21 @@ export interface IUser {
     companyName: string,
 }
 
-export interface BacklogItem {
-    id: number,
+export interface IBacklogItem {
+    id: string,
     author: string,
     assignee: string,
     title: string,
-    description: string,
-    priority: number,
+    description?: string,
+    priority: Priority,
     reminder?: number,
+    estimation?: number,
     completed: boolean,
-    startDate?: Date,
+    startDate?: Date | null,
     dueDate?: Date,
-    category?: string,
+    category: string,
     team?: string
+    index?: number,
 }
 
 export interface CalendarItem {
@@ -124,4 +139,22 @@ export interface Calendar {
     owner: string,
     url?: string,
     items: CalendarItem[]
+}
+
+enum Priority {
+    "high",
+    "medium",
+    "low"
+}
+
+export interface Category {
+    key: string,
+    text: string,
+    color: string,
+}
+
+export interface Column {
+	id: string,
+	title: string,
+	itemsIds: string[]
 }

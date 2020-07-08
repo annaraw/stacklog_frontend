@@ -6,6 +6,8 @@ import './App.css';
 import LoginScreen from './views/Login/LoginView';
 import HomeScreen from './views/HomeScreenView';
 import NotFound from './views/NotFoundView';
+import ProjectScreen from './views/ProjectsView';
+import Planner from './components/Planner/Planner';
 import RegisterScreen from './views/Register/RegisterView';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core';
 import { Colors } from './util/constants';
@@ -27,6 +29,8 @@ export default class App extends React.Component<AppProps, AppState> {
       routes: [
         { component: HomeScreen, path: '/', exact: true },
         { component: LoginScreen, path: '/login' },
+        { component: ProjectScreen, path: '/projects' },
+        { component: Planner, path: '/planner' },
         { component: RegisterScreen, path: '/register' },
         //route if view is not found
         { component: NotFound }
