@@ -7,6 +7,19 @@ export interface Project {
     progress: number,
 }
 
+export interface IProjectRequest {
+    title: string,
+    description: string,
+    team: string[],
+    leader: string,
+}
+
+export interface IProjectUpdateProps {
+    title?: string,
+    description?: string,
+    team?: string[],
+}
+
 export interface Member {
     name: string,
     lastName: string,
