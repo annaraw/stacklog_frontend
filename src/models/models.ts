@@ -56,6 +56,21 @@ export interface IBacklogItem {
     index?: number,
 }
 
+export interface IBacklogItemRequest {
+    author: string,
+    assignee: string,
+    title: string,
+    description?: string,
+    priority: string,
+    reminder?: number,
+    estimation?: number,
+    completed: boolean,
+    startDate?: Date | null,
+    dueDate?: Date,
+    category: string,
+    team?: string
+}
+
 export interface CalendarItem {
     /* ICS event format:
     *** TUM EVENT ***
@@ -141,7 +156,7 @@ export interface Calendar {
     items: CalendarItem[]
 }
 
-enum Priority {
+export enum Priority {
     "high",
     "medium",
     "low"
