@@ -36,7 +36,7 @@ export default class BacklogItemService {
 
     static getProjectBacklogItems(projectID: string) {
         return new Promise((resolve, reject) => {
-            HttpService.get(`${BacklogItemService.baseURL()}project/${projectID}`, 
+            HttpService.get(`${BacklogItemService.baseURL()}projects/${projectID}`, 
             function (data: any) {
                 if(!data){
                     reject("Error while retrieving Items");

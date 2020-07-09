@@ -11,6 +11,7 @@ import Planner from './components/Planner/Planner';
 import RegisterScreen from './views/Register/RegisterView';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core';
 import { Colors } from './util/constants';
+import ProjectBacklogView from './views/Projects/ProjectBacklogView/ProjectBacklogView';
 
 interface AppState {
   title: string,
@@ -32,6 +33,7 @@ export default class App extends React.Component<AppProps, AppState> {
         { component: ProjectScreen, path: '/projects' },
         { component: Planner, path: '/planner' },
         { component: RegisterScreen, path: '/register' },
+        { component: ProjectBacklogView, path: '/view'},
         //route if view is not found
         { component: NotFound }
       ]
