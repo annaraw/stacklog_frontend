@@ -5,13 +5,14 @@ import Button from '@material-ui/core/Button';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import { RadioGroup, FormControl, FormControlLabel, Radio, TextField, Checkbox, Drawer, IconButton, Box } from '@material-ui/core';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
-import { CalendarItem } from '../../models/models'
+import { CalendarItem, Calendar } from '../../models/models'
 import CalendarImportService from '../../services/CalendarImportService'
 import CloseIcon from '@material-ui/icons/Close';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import { addCalendarFormStyles } from './AddCalendarFormStyles';
 import UserService from '../../services/UserService';
 import Snackbar from '@material-ui/core/Snackbar';
+import DrawerForm from '../Form/DrawerForm';
 
 export enum UploadState {
     Empty,
@@ -37,11 +38,13 @@ const AddCalendarForm: FunctionComponent<any> = props => {
     const [calendarFilename, setCalendarFilename] = useState("");
     const [uploadState, setUploadState] = useState(UploadState.Empty);
     const [success, setSuccess] = useState(false);
+    const [loading, setLoading] = useState(false)
 
     const classes = addCalendarFormStyles()
 
     const openPanel = (() => setIsOpen(true));
     const dismissPanel = (() => {
+        setCalendarFilename("")
         setIsOpen(false);
         setCalendarTitle("");
         setCalendarUrl("");
@@ -49,35 +52,41 @@ const AddCalendarForm: FunctionComponent<any> = props => {
         setShowFileUpload(false);
         setShowSync(false);
         setUploadState(UploadState.Empty)
+        setUploadError(false)
+        setSuccess(false)
+        setLoading(false)
 
-        console.log(calendarItems)
+        console.log(loading)
     });
 
     const submit = () => {
-        var cal
-        if (calendarUrl !== "") {
-            cal = {
-                name: calendarTitle,
-                items: calendarItems,
-                owner: UserService.getCurrentUser().id,
-                url: calendarUrl
-            };
-        } else {
-            cal = {
-                name: calendarTitle,
-                items: calendarItems,
-                owner: UserService.getCurrentUser().id
-            };
-        }
+        setUploadError(false)
         if(uploadState === UploadState.Empty || uploadState === UploadState.Fail || calendarTitle === "")  {
             setUploadError(true);
         } else {
+            setLoading(true)
+            var cal:Calendar
+            if (calendarUrl !== "") {
+                cal = {
+                    name: calendarTitle,
+                    items: calendarItems,
+                    owner: UserService.getCurrentUser().id,
+                    url: calendarUrl
+                };
+            } else {
+                cal = {
+                    name: calendarTitle,
+                    items: calendarItems,
+                    owner: UserService.getCurrentUser().id
+                };
+            }
             CalendarImportService.addCalendar(cal).then((data) => {
                 setUploadError(false);
                 dismissPanel();
                 setSuccess(true);
+                setLoading(false);
             }).catch((e) => {
-                console.log(e);
+                setLoading(false);
                 setUploadError(true);
             });
         }
@@ -166,23 +175,14 @@ const AddCalendarForm: FunctionComponent<any> = props => {
     return (
         <div>
             <Button onClick={openPanel}>{formTitle}</Button>
-            <Drawer
-                anchor="left"
-                open={isOpen}
-                onClose={dismissPanel}
-                className={classes.drawer}
-            >
-                <Box className={classes.box}>
-                    <div className={classes.drawerHeading}>
-                        <p><strong>{formTitle}</strong></p>
-                        <IconButton
-                            aria-label="close"
-                            className={classes.closeButton}
-                            onClick={dismissPanel}
-                        >
-                            <CloseIcon fontSize="inherit" />
-                        </IconButton>
-                    </div>
+                <DrawerForm
+                    formTitle={formTitle}
+                    isOpen={isOpen}
+                    loading={loading}
+                    formType={"Import"}
+                    onSubmit={submit}
+                    dismissPanel={dismissPanel}
+                >
                     <TextField
                         id="outlined-basic"
                         label="Calendar Title"
@@ -190,7 +190,7 @@ const AddCalendarForm: FunctionComponent<any> = props => {
                         required
                         fullWidth
                         value={calendarTitle}
-                        onChange={(e) => { setCalendarTitle(e.target.value) }}
+                        onChange={(e) => { setCalendarTitle(e.target.value); setUploadError(false) }}
                         error={uploadError && !calendarTitle}
                     />
                     <FormControl component="fieldset">
@@ -213,6 +213,7 @@ const AddCalendarForm: FunctionComponent<any> = props => {
 
                     {showSync &&
                     <div className={classes.borderBox}>
+                        <div className={classes.text}>Please insert an URL and check if it contains a valid ical format:</div>
                         <TextField
                             id="outlined-basic"
                             label="Calendar URL"
@@ -262,6 +263,7 @@ const AddCalendarForm: FunctionComponent<any> = props => {
                     }
                     {showFileUpload &&
                         <div className={classes.borderBox}>
+                            <div className={classes.text}>Please select an .ics calendar file from your computer:</div>
                             <input
                                 id="contained-button-file"
                                 accept=".ics"
@@ -284,7 +286,7 @@ const AddCalendarForm: FunctionComponent<any> = props => {
                             {
                                 (uploadState === UploadState.Success) &&
                                 <Alert severity="success" onClose={handleClose} elevation={0}>
-                                    <strong>{calendarFilename}</strong> ({calendarItems.length} items) selected.
+                                    <strong>{calendarFilename}</strong> ({calendarItems.length} calendar items) selected.
                                 </Alert>
                             }
                             {
@@ -307,24 +309,7 @@ const AddCalendarForm: FunctionComponent<any> = props => {
                         </Alert>
                         : <span></span>
                     )}
-                    <div className={classes.drawerFooter}>
-                        <Button
-                            variant="contained"
-                            className={classes.secondaryButton}
-                            onClick={dismissPanel}
-                        >
-                            Cancel
-                        </Button>
-                        <Button
-                            variant="contained"
-                            className={classes.primaryButton}
-                            onClick={submit}
-                        >
-                            Import
-                        </Button>
-                    </div>
-                </Box>
-            </Drawer>
+            </DrawerForm>
             <Snackbar open={success} autoHideDuration={6000} onClose={handleCloseSuccessAlert}>
                 <Alert onClose={handleCloseSuccessAlert} severity="success">
                 Calendar successfully imported
