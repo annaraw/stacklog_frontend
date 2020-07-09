@@ -10,6 +10,9 @@ export const addCalendarFormStyles = makeStyles({
     drawer: {
         position: "relative"
     },
+    text: {
+        margin: "5px"
+    },
     box: {
         padding: "20px",
         width:"800px"
