@@ -33,7 +33,7 @@ export default class App extends React.Component<AppProps, AppState> {
         { component: ProjectScreen, path: '/projects' },
         { component: Planner, path: '/planner' },
         { component: RegisterScreen, path: '/register' },
-        { component: ProjectBacklogView, path: '/view'},
+        { component: ProjectBacklogView, path: '/project'},
         //route if view is not found
         { component: NotFound }
       ]

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Component } from 'react';
 import { DragDropContext } from 'react-beautiful-dnd';
-import { withStyles, Backdrop, CircularProgress } from '@material-ui/core';
+import { withStyles, Backdrop, CircularProgress, Snackbar } from '@material-ui/core';
 
 import { Project, Member, IBacklogItem, Column } from '../../../models/models'
 import ProjectService from '../../../services/ProjectService';
@@ -10,15 +10,16 @@ import UserService from '../../../services/UserService';
 import { projectBacklogViewStyles } from './ProjectBacklogViewStyles';
 import BacklogItemService from '../../../services/BacklogItemService';
 import { UnsortedBacklog } from '../../../components/Planner/Backlog/UnsortedBacklog';
+import { Alert } from '@material-ui/lab';
 
 interface ProjectBacklogState {
     project: Project | null,
     projectBacklogItems: IBacklogItem[],
-    backlogItems: IBacklogItem[],
     collegues: Member[],
     loading: boolean,
     formIsOpen: boolean,
     error: boolean,
+    loadingError: boolean,
     urlError: boolean,
     columns: Column[],
 }
@@ -34,11 +35,11 @@ class ProjectBacklogScreen extends Component<ProjectBacklogProps, ProjectBacklog
         this.state = {
             project: null,
             projectBacklogItems: [],
-            backlogItems: [],
             collegues: [],
             loading: true,
             formIsOpen: false,
             error: false,
+            loadingError: false,
             urlError: false,
             columns: []
         }
@@ -52,11 +53,8 @@ class ProjectBacklogScreen extends Component<ProjectBacklogProps, ProjectBacklog
             try {
                 let project = await ProjectService.getProjectById(projectID)
                 let colleagues = await UserService.getColleagues()
-                let backlogItems = await BacklogItemService.getBacklogItems()
                 let projectBacklog = await BacklogItemService.getProjectBacklogItems(projectID)
 
-                //@ts-ignore
-                let myItems: IBacklogItem[] = backlogItems
                 //@ts-ignore
                 let projectItems: IBacklogItem[] = projectBacklog
 
@@ -64,21 +62,22 @@ class ProjectBacklogScreen extends Component<ProjectBacklogProps, ProjectBacklog
                 let initialColumns: Column[] = [{
                     id: 'backlog',
                     title: 'Backlog',
-                    itemsIds: myItems.filter((item) => !item.startDate
-                        || new Date(item.startDate).toDateString() <= new Date().toDateString()
-                    ).map(item => item.id)
+                    itemsIds: projectItems
+                        .filter((item) => item.assignee === UserService.getCurrentUser().id)
+                        .map(item => item.id)
                 }, {
                     id: 'projectBacklog',
                     //@ts-ignore
                     title: project.title,
-                    itemsIds: projectItems.map(item => item.id)
+                    itemsIds: projectItems
+                        .filter((item) => item.assignee !== UserService.getCurrentUser().id)
+                        .map(item => item.id)
                 }]
 
                 this.setState({
                     //@ts-ignore
                     project: project,
                     projectBacklogItems: projectItems,
-                    backlogItems: myItems,
                     columns: initialColumns,
                     //@ts-ignore
                     collegues: colleagues,
@@ -86,7 +85,7 @@ class ProjectBacklogScreen extends Component<ProjectBacklogProps, ProjectBacklog
                 })
             } catch (error) {
                 this.setState({
-                    urlError: true,
+                    loadingError: true,
                     loading: false,
                 })
             }
@@ -118,25 +117,15 @@ class ProjectBacklogScreen extends Component<ProjectBacklogProps, ProjectBacklog
         this.setState({ formIsOpen: isOpen })
     }
 
-    setColumns = (column: Column, columnEnd?: Column, backlogItems?: IBacklogItem[], projectsItems?: IBacklogItem[]) => {
+    setColumns = (column: Column, columnEnd?: Column) => {
         let index = this.state.columns.findIndex(c => column.id === c.id)
         let newColumns = [...this.state.columns]
         newColumns[index] = column
-        if (columnEnd && backlogItems && projectsItems) {
+        if (columnEnd) {
             let indexEndColumn = this.state.columns.findIndex(c => columnEnd.id === c.id)
             newColumns[indexEndColumn] = columnEnd
-
-            this.setState({
-                columns: newColumns,
-                projectBacklogItems: projectsItems,
-                backlogItems: backlogItems,
-            })
-        } else {
-            this.setState({
-                columns: newColumns,
-            })
         }
-
+        this.setState({ columns: [...newColumns] })
     }
 
     onDragEnd = async (result: any) => {
@@ -150,8 +139,10 @@ class ProjectBacklogScreen extends Component<ProjectBacklogProps, ProjectBacklog
             return
         }
         // TURN OFF DRAG AND DROP WITHIN BACKLOG COLUMN
-        const columnStart = this.state.columns.filter((column) => column.id === source.droppableId)[0] // Find column from which the item was dragged from
-        const columnFinish = this.state.columns.filter((column) => column.id === destination.droppableId)[0] // Find column in which the item was dropped
+        const columnStart = Object.assign(this.state.columns
+            .filter((column) => column.id === source.droppableId)[0]) // Find column from which the item was dragged from
+        const columnFinish = Object.assign(this.state.columns
+            .filter((column) => column.id === destination.droppableId)[0]) // Find column in which the item was dropped
         // (3) DROPPED IN SAME COLUMN, DIFFERENT ORDER
         if (columnStart === columnFinish) {
             const newItemsIds = Array.from(columnStart.itemsIds) // Get all item ids in currently active list
@@ -168,26 +159,31 @@ class ProjectBacklogScreen extends Component<ProjectBacklogProps, ProjectBacklog
         }
         // (4) DROPPED INTO ANOTHER COLUMN --- TODO: change start/end date when dropping into another day
         else {
-            let itemsBacklog
-            let itemsProject
             // Change date of item to the date of columnFinish
             if (columnFinish.id === 'backlog') {
                 let newItem: IBacklogItem = this.state.projectBacklogItems.filter(item => item.id === draggableId)[0]
                 newItem.assignee = UserService.getCurrentUser().id
-                itemsBacklog = this.state.backlogItems
-                itemsProject = this.state.projectBacklogItems
-                itemsBacklog.splice(destination.index, 0, itemsProject.filter(item => item.id === draggableId)[0])
-                itemsProject.splice(source.index, 1)
+                BacklogItemService.updateBacklogItem(newItem.id, { assignee: UserService.getCurrentUser().id }).then()
+                    .catch(error => {
+                        newItem.assignee = ""
+                        this.setColumns(columnStart, columnFinish)
+                        this.setState({
+                            error: true
+                        })
+                    })
             } else {
-                let newItem: IBacklogItem = this.state.backlogItems.filter(item => item.id === draggableId)[0]
+                let newItem: IBacklogItem = this.state.projectBacklogItems.filter(item => item.id === draggableId)[0]
                 newItem.assignee = ""
-                itemsProject = this.state.projectBacklogItems
-                itemsBacklog = this.state.backlogItems
-                itemsProject.splice(destination.index, 0, itemsBacklog.filter(item => item.id === draggableId)[0])
-                itemsBacklog.splice(source.index, 1)
+                BacklogItemService.updateBacklogItem(newItem.id, { assignee: UserService.getCurrentUser().id }).then()
+                    .catch(error => {
+                        newItem.assignee = UserService.getCurrentUser().id
+                        this.setColumns(columnStart, columnFinish)
+                        this.setState({
+                            error: true
+                        })
+                    })
             }
-
-            const newStartItemsIds = columnStart.itemsIds // Get all item ids in source list
+            const newStartItemsIds = [...columnStart.itemsIds] // Get all item ids in source list
             newStartItemsIds.splice(source.index, 1) // Remove the id of dragged item from its original position
 
             // Create new, updated object with data for source column
@@ -196,7 +192,7 @@ class ProjectBacklogScreen extends Component<ProjectBacklogProps, ProjectBacklog
                 itemsIds: newStartItemsIds
             }
 
-            const newFinishItemsIds = columnFinish.itemsIds // Get all item ids in destination list
+            const newFinishItemsIds = [...columnFinish.itemsIds] // Get all item ids in destination list
             newFinishItemsIds.splice(destination.index, 0, draggableId) // Insert the id of dragged item to the new position in destination list
 
             // Create new, updated object with data for destination column
@@ -204,9 +200,17 @@ class ProjectBacklogScreen extends Component<ProjectBacklogProps, ProjectBacklog
                 ...columnFinish,
                 itemsIds: newFinishItemsIds
             }
-
-            this.setColumns(newColumnStart, newColumnFinish, itemsBacklog, itemsProject)
+            this.setColumns(newColumnStart, newColumnFinish)
         }
+    };
+
+    handleClose = (event?: React.SyntheticEvent, reason?: string) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        this.setState({
+            error: false
+        })
     };
 
     render() {
@@ -229,7 +233,7 @@ class ProjectBacklogScreen extends Component<ProjectBacklogProps, ProjectBacklog
                     <p>Error: no url parameter provided</p>
                 </React.Fragment >
             )
-        } else if (this.state.error) {
+        } else if (this.state.loadingError) {
             return (
                 <React.Fragment >
                     <MenuBar title="Error" />
@@ -239,8 +243,14 @@ class ProjectBacklogScreen extends Component<ProjectBacklogProps, ProjectBacklog
         } else {
             const backlogColumn = this.state.columns.filter((column) => column.id === 'backlog')[0]
             const projectColumn = this.state.columns.filter((column) => column.id === 'projectBacklog')[0]
-            const backlogItems = backlogColumn.itemsIds.map((itemId: string) => (this.state.backlogItems.filter(item => item.id === itemId)[0])).filter(item => item.team === this.state.project?.id)
-            const projectItems = projectColumn.itemsIds.map((itemId: string) => (this.state.projectBacklogItems.filter(item => item.id === itemId)[0]))
+            const backlogItems = backlogColumn.itemsIds.map((itemId: string) => (this.state.projectBacklogItems
+                .filter(item => item.id === itemId)[0]))
+                .filter(item => item.team === this.state.project?.id)
+            const projectItems = projectColumn.itemsIds.map((itemId: string) => (this.state.projectBacklogItems
+                .filter(item => item.id === itemId)[0]))
+                .filter(item => item.team === this.state.project?.id
+                    && item.assignee !== UserService.getCurrentUser().id)
+
             return (
                 <React.Fragment>
                     <MenuBar title={this.state.project ? this.state.project.title : "Loading"} />
@@ -249,13 +259,20 @@ class ProjectBacklogScreen extends Component<ProjectBacklogProps, ProjectBacklog
                             <CircularProgress color="inherit" />
                         </Backdrop>
                         :
-                        <DragDropContext onDragEnd={this.onDragEnd}>
-                            <div className={classes.container}>
-                                <UnsortedBacklog key={projectColumn.id} column={projectColumn} items={projectItems} title={projectColumn.title} />
-                                <UnsortedBacklog key={backlogColumn.id} column={backlogColumn} items={backlogItems} title={backlogColumn.title} />
-                            </div>
+                        <>
+                            <DragDropContext onDragEnd={this.onDragEnd}>
+                                <div className={classes.container}>
+                                    <UnsortedBacklog key={projectColumn.id} column={projectColumn} items={projectItems} title={projectColumn.title} />
+                                    <UnsortedBacklog key={backlogColumn.id} column={backlogColumn} items={backlogItems} title={backlogColumn.title} />
+                                </div>
 
-                        </DragDropContext>
+                            </DragDropContext>
+                            <Snackbar open={this.state.error} autoHideDuration={6000} onClose={this.handleClose}>
+                                <Alert onClose={this.handleClose} severity="error">
+                                    Faild to update item
+                                </Alert>
+                            </Snackbar>
+                        </>
                     }
 
                 </React.Fragment>

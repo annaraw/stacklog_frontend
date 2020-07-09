@@ -56,6 +56,20 @@ export interface IBacklogItem {
     index?: number,
 }
 
+export interface IBacklogItemUpdateProps {
+    assignee?: string,
+    title?: string,
+    description?: string,
+    priority?: Priority,
+    reminder?: number,
+    estimation?: number,
+    completed?: boolean,
+    startDate?: Date | null,
+    dueDate?: Date,
+    category?: string,
+    team?: string
+}
+
 export interface CalendarItem {
     /* ICS event format:
     *** TUM EVENT ***

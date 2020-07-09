@@ -5,7 +5,7 @@ import {
 
 import { Project, Member } from '../../../models/models';
 import { FunctionComponent, useState } from 'react';
-import { Card, CardHeader, IconButton, CardContent, Typography, Menu, MenuItem, ListItemText, Snackbar } from '@material-ui/core';
+import { Card, CardHeader, IconButton, CardContent, Typography, Menu, MenuItem, ListItemText, Snackbar, Button, CardActions } from '@material-ui/core';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -82,7 +82,7 @@ const ProjectCard: FunctionComponent<{
                 }
                 title={project.title}
             />
-            <CardContent>
+            <CardContent className={classes.cardContent}>
                 <Typography variant="body2" color="textSecondary" component="div">
                     {(project.team.length !== 0) ?
                         <div className={`${classes.cardInfo}`}>
@@ -129,6 +129,15 @@ const ProjectCard: FunctionComponent<{
                     }
                 </Typography>
             </CardContent>
+            <CardActions className={classes.actions}>
+                <Button
+                    size="small"
+                    color="secondary"
+                    onClick={() => window.location.href = "/project?projectID=" + project.id}
+                >
+                    Show Backlog
+                </Button>
+            </CardActions>
             <Snackbar open={deleteError} autoHideDuration={6000} onClose={handleClose}>
                 <Alert onClose={handleClose} severity="error">
                     Could not delete Project
