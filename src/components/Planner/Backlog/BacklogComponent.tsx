@@ -2,8 +2,7 @@ import * as React from 'react';
 import { Component } from 'react';
 
 import './BacklogComponent.css'
-import { IBacklogItem, Column } from '../../../models/models'
-import { categories } from '../../../data/dummyData'
+import { IBacklogItem, Column, Category } from '../../../models/models'
 import BacklogItem from './BacklogItem';
 
 import { Dropdown } from 'office-ui-fabric-react/lib/Dropdown';
@@ -22,6 +21,7 @@ type BoardColumnProps = {
   sortIsUp: boolean
   searchInput: string
   selectedFilters: string[]
+  categories: Category[]
   setSortType: (sortType: string) => void
   setSortIsUp: (sortIsUp: boolean) => void
   setSearchInput: (searchInput: string) => void
@@ -90,7 +90,7 @@ export default class BacklogComponent extends Component<BoardColumnProps, {}> {
                     : this.props.setSelectedFilters(this.props.selectedFilters.filter(key => key !== option.key))
                     )
                 }}
-                options={categories}
+                options={this.props.categories}
               />
             </div>
           </div>

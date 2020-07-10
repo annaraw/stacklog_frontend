@@ -44,7 +44,7 @@ const BacklogItem: FunctionComponent<{ title: String, description: string, categ
                    isDragging={snapshot.isDragging}
                 >
                     <div className="header">
-                        <div className="header-title">{title} ({category})<span style={{float:"right"}}>Prio: {priority}</span></div>
+                        <div className="header-title">{title} {category ? "("+category+")" : ""}<span style={{float:"right"}}>Prio: {priority}</span></div>
                         <div className="description"  >{description}</div>
                     </div>
                 </BoardItemEl>
