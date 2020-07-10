@@ -174,7 +174,7 @@ class ProjectBacklogScreen extends Component<ProjectBacklogProps, ProjectBacklog
             } else {
                 let newItem: IBacklogItem = this.state.projectBacklogItems.filter(item => item.id === draggableId)[0]
                 newItem.assignee = ""
-                BacklogItemService.updateBacklogItem(newItem.id, { assignee: UserService.getCurrentUser().id }).then()
+                BacklogItemService.updateBacklogItem(newItem.id, { assignee: "" }).then()
                     .catch(error => {
                         newItem.assignee = UserService.getCurrentUser().id
                         this.setColumns(columnStart, columnFinish)
