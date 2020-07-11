@@ -101,6 +101,10 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 
 	}
 
+	updateBacklogItem = (item: IBacklogItem) => {
+		BacklogItemService.updateBacklogItem(item)
+	}
+
 	setInitialColumns = (items: IBacklogItem[]) => {
 		// dynamically create next 7 days from today for calendar columns
 		const nextDays: string[] = []
@@ -293,6 +297,7 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 			var newDate = (columnFinish.id === 'backlog') ? null : new Date(columnFinish.id)
 			var newItem = this.state.items.filter(item => item.id === draggableId)[0]
 			newItem.startDate = newDate
+			this.updateBacklogItem(newItem)
 
 			const newStartItemsIds = Array.from(columnStart.itemsIds) // Get all item ids in source list
 			newStartItemsIds.splice(source.index, 1) // Remove the id of dragged item from its original position
