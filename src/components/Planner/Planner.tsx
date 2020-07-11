@@ -158,6 +158,14 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 		this.setState({ columns: newColumns })
 	}
 
+	setItem = (item: IBacklogItem) => {
+		let index = this.state.items.findIndex(i => item.id === i.id)
+		let newItems = [...this.state.items]
+		newItems[index] = item
+		this.setState({ items: newItems })
+		console.log("NEW STATE",this.state)
+	}
+
 	setSearchInput = async (searchInput: string) => {
 		this.setState({ searchInput: searchInput })
 		var allBacklogItems = await this.state.items.filter((item) => !item.startDate)
@@ -290,6 +298,16 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 			}
 
 			this.setColumns(newColumnStart)
+
+			/*let cnt = 0
+			for (const id of newColumnStart.itemsIds){
+				const item = this.state.items.filter(item => item.id === id)[0]
+				item.index = cnt
+				this.updateBacklogItem(item)
+				this.setItem(item)
+				console.log("ITEM",item)
+				cnt+=1
+			}*/
 		}
 		// (4) DROPPED INTO ANOTHER COLUMN --- TODO: change start/end date when dropping into another day
 		else {

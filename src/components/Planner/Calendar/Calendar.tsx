@@ -37,9 +37,14 @@ export const Calendar: React.FC<BoardColumnProps> = (props) => {
 
   let nextDaysItems:any[] = []
   for (let i in nextDays) {
-    nextDaysItems.push({items: props.items.filter((item) => item.startDate && new Date(item.startDate).toDateString() === nextDays[i] )})
+    nextDaysItems.push({items: props.items
+      .filter((item) => item.startDate && new Date(item.startDate).toDateString() === nextDays[i] )
+      .sort((a:IBacklogItem,b:IBacklogItem) => a.index && b.index ? a.index - b.index : 0)
+    })
     //console.log(props.items.filter((item) => item.startDate && item.startDate.toDateString() === nextDays[i]))
   }
+
+  console.log("SORTED_ITEMS",nextDaysItems)
 
   return (
     <div>
