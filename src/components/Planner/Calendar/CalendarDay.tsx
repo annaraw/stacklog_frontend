@@ -6,8 +6,9 @@ import { Droppable } from 'react-beautiful-dnd'
 import styled from 'styled-components'
 
 interface BoardColumnProps {
-  column: Column,
-  items: any,
+  columns: Column[],
+  day: string
+  items: IBacklogItem[]
 }
 
 
@@ -38,20 +39,19 @@ export const CalendarDay: React.FC<BoardColumnProps> = (props) => {
     return (
       <BoardColumnWrapper>
         <BoardColumnTitle>
-          {props.column.title}
+          {props.day}
         </BoardColumnTitle>
             <BoardColumnContent>
-              {props.items.map((backlogItem: IBacklogItem, index: number) => 
-                  
-                    <Quarter
-                      key={backlogItem.id}
-                      column={props.column.title+" "+index}
-                      items={[backlogItem]}
+              {props.columns.map((col,index) => {
+                return (
+                  <Quarter
+                      key={col.id}
+                      column={col}
                       index= {index}
+                      items={props.items}
                     />
-                    
-                )}
-              {/*Array(2).fill(2).map((_, i) => <Quarter column={props.column+i} items={[]}/>)*/}
+                )
+              })}
             </BoardColumnContent>
       </BoardColumnWrapper>
     );

@@ -1,13 +1,13 @@
 import * as React from 'react';
-import { IBacklogItem } from '../../../models/models'
+import { IBacklogItem, Column } from '../../../models/models'
 import {CalendarItem} from './CalendarItem';
 import { Droppable } from 'react-beautiful-dnd'
 import styled from 'styled-components'
 
 interface BoardColumnProps {
-  column: string,
-  items: any,
-  index: number
+  column: Column,
+  index: number,
+  items: IBacklogItem[]
 }
 
 type BoardColumnContentStylesProps = {
@@ -15,8 +15,7 @@ type BoardColumnContentStylesProps = {
 }
 
 const BoardColumnWrapper = styled.div`
-  flex: 1;
-  padding: 8px;
+  display:flex;
   background-color: #e5eff5;
   border-radius: 4px;
 
@@ -24,35 +23,40 @@ const BoardColumnWrapper = styled.div`
 
 const BoardColumnTitle = styled.h2`
   font: 14px sans-serif;
-  margin-bottom: 12px;
+  margin-right: 12px;
 `
 
 const BoardColumnContent = styled.div<BoardColumnContentStylesProps>`
-  min-height: 20px;
   background-color: ${props => props.isDraggingOver ? '#aecde0' : null};
   border-radius: 4px;
+  width: 100%
 `
 
 export const Quarter: React.FC<BoardColumnProps> = (props) => {
     return (
       <BoardColumnWrapper>
         <BoardColumnTitle>
-          {props.index}
+          {props.index+":00"}
         </BoardColumnTitle>
-        <Droppable droppableId={props.column}>
+        <Droppable droppableId={props.column.id}>
           {(provided, snapshot) => (
             <BoardColumnContent
               {...provided.droppableProps}
               ref={provided.innerRef}
               isDraggingOver={snapshot.isDraggingOver}
             >
-              {props.items.map((backlogItem: IBacklogItem, index: number) => 
-                  
+              {props.column.itemsIds.map((id: String, index: number) => {
+
+                const item = props.items.filter((item) => item.id == id)[0]
+
+                return (
                     <CalendarItem
-                      key={backlogItem.id}
+                      key={item.id}
                       index={index} 
-                      item={backlogItem}
+                      item={item}
                     />
+                  )
+              }
                     
                 )}
               

@@ -16,7 +16,6 @@ type BoardItemStylesProps = {
 
 // Create style for board item element
 const BoardItemEl = styled.div<BoardItemStylesProps>`
-  padding: 8px;
   background-color: ${(props) => props.isDragging ? '#d3e4ee' : '#fff'};
   border-radius: 4px;
   transition: background-color .25s ease-out;
@@ -27,6 +26,7 @@ const BoardItemEl = styled.div<BoardItemStylesProps>`
 
   & + & {
     margin-top: 4px;
+    margin-bottom: 4px;
   }
 `
 

@@ -54,6 +54,7 @@ export interface IBacklogItem {
     category: string,
     team?: string
     index: number,
+    hour: number
 }
 
 export interface IBacklogItemRequest {

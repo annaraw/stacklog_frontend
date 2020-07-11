@@ -80,7 +80,8 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 						dueDate: item.dueDate ? item.dueDate : null,
 						category: item.category ? item.category : null,
 						team: item.team ? item.team : null,
-						index: item.index ? item.index : null,
+						index: item.index ? item.index : 0,
+						hour: item.hour ? item.hour : 0
 					})
 				}
 			}
@@ -125,13 +126,19 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 			).map(item => item.id)
 		}]
 		for (let i in nextDays) {
-			initialColumns.push({
-				id: nextDays[i],
-				title: nextDays[i],
-				itemsIds: items.filter((item) => item.startDate
-					&& new Date(item.startDate).toDateString() === nextDays[i]).map(item => item.id)
-			})
+			for (let hour = 0; hour < 24; hour++) {
+				initialColumns.push({
+					id: nextDays[i]+"-"+hour,
+					title: nextDays[i]+"-"+hour,
+					itemsIds: items.filter((item) => item.startDate
+						&& new Date(item.startDate).toDateString() === nextDays[i])
+					.filter(item => item.hour == hour)
+					.sort((a,b)=> a.index - b.index)
+					.map(item => item.id)
+				})
+			}
 		}
+		console.log("INIT COLUMNS", initialColumns)
 		return initialColumns
 	}
 
@@ -284,6 +291,7 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 			return
 		} */
 		const columnStart = this.state.columns.filter((column) => column.id === source.droppableId)[0] // Find column from which the item was dragged from
+		console.log("COL ID", source.droppableId)
 		const columnFinish = this.state.columns.filter((column) => column.id === destination.droppableId)[0] // Find column in which the item was dropped
 		// (3) DROPPED IN SAME COLUMN, DIFFERENT ORDER
 		if (columnStart === columnFinish) {
@@ -312,9 +320,14 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 		// (4) DROPPED INTO ANOTHER COLUMN --- TODO: change start/end date when dropping into another day
 		else {
 			// Change date of item to the date of columnFinish
-			var newDate = (columnFinish.id === 'backlog') ? null : new Date(columnFinish.id)
+			var newDate = (columnFinish.id === 'backlog') ? null : new Date(columnFinish.id.split("-")[0])
+			var newHour = (columnFinish.id === 'backlog') ? 0 : parseInt(columnFinish.id.split("-")[1])
+			console.log("COL FINISH",columnFinish.id)
+			console.log("NEW DATE",newDate)
+			console.log("NEW HOUR",newHour)
 			var newItem = this.state.items.filter(item => item.id === draggableId)[0]
 			newItem.startDate = newDate
+			newItem.hour = newHour
 			this.updateBacklogItem(newItem)
 
 			const newStartItemsIds = Array.from(columnStart.itemsIds) // Get all item ids in source list
@@ -371,9 +384,9 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 			)
 		} else {
 			const backlogColumn = this.state.columns.filter((column) => column.id === 'backlog')[0]
-			const scheduleColumn = this.state.columns.filter((column) => column.id === new Date().toDateString())[0]
+			//const scheduleColumn = this.state.columns.filter((column) => column.id === new Date().toDateString())[0]
 			const backlogItems = backlogColumn.itemsIds.map((itemId: string) => (this.state.items.filter(item => item.id === itemId)[0]))
-			const scheduleItems = scheduleColumn.itemsIds.map((itemId: string) => (this.state.items.filter(item => item.id === itemId)[0]))
+			//const scheduleItems = scheduleColumn.itemsIds.map((itemId: string) => (this.state.items.filter(item => item.id === itemId)[0]))
 
 			return (
 				<React.Fragment>
@@ -392,7 +405,7 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 								setSearchInput={this.setSearchInput}
 								setSelectedFilters={this.setSelectedFilters}
 							/>
-							<Schedule key={scheduleColumn.id} column={scheduleColumn} items={scheduleItems} />
+							{/*<Schedule key={scheduleColumn.id} column={scheduleColumn} items={scheduleItems} />*/}
 							<Calendar key='calendar' columns={this.state.columns} items={this.state.items} />
 						</DragDropContext>
 					</BoardEl>

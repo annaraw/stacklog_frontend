@@ -17,6 +17,8 @@ const BoardEl = styled.div`
 
 export const Calendar: React.FC<BoardColumnProps> = (props) => {
 
+ 
+
   function addDays(dateObj: Date, numDays: number) {
     return new Date(dateObj.setDate(dateObj.getDate() + numDays));
   }
@@ -24,7 +26,7 @@ export const Calendar: React.FC<BoardColumnProps> = (props) => {
   function getDateOfString(dateString: string) {
     return new Date(Date.parse(dateString))
   }
-
+  /*
   // dynamically create next 7 days from today for calendar columns
   const nextDays: string[] = []
   for (let i = 1; i < 7; i++) {
@@ -44,29 +46,22 @@ export const Calendar: React.FC<BoardColumnProps> = (props) => {
     //console.log(props.items.filter((item) => item.startDate && item.startDate.toDateString() === nextDays[i]))
   }
 
-  console.log("SORTED_ITEMS",nextDaysItems)
+  console.log("SORTED_ITEMS",nextDaysItems)*/
+
+  function getDayColumns(day:string) {
+    return props.columns.filter((col)=> col.id.split("-")[0]==day)
+  } 
 
   return (
     <div>
       {/* <Week key='week1' columns={weekOneColumns} items={weekOneItems}/> */}
       <BoardEl>
         {/*new Date(c.id) > new Date()*/
-          props.columns.filter((c: Column) => new Date(c.id) > new Date()).map((c: Column, index: number) => {
-            let items:IBacklogItem[] = []
-            for (let id of c.itemsIds){
-              props.items.map((item:IBacklogItem) => {
-                if (item.id === id) {
-                  console.log(item)
-                  items.push(item)
-                } else {
-                }
-              })
-            }
-            props.items.filter((item: IBacklogItem) => item.startDate && new Date(item.startDate).toDateString() === c.id)
-            return (
-              <CalendarDay key={c.id} column={c} items={items} />
-              )
-          }) 
+          props.columns.map((col)=>col.id.split("-")[0])
+            .filter((item, i, ar) => ar.indexOf(item) === i)
+            .filter((col) => col != 'backlog')
+            .map((col)=> <CalendarDay key={col} columns={getDayColumns(col)} day={col} items={props.items} />)
+
         }
       </BoardEl>
     </div>
