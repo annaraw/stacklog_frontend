@@ -1,6 +1,6 @@
 import HttpService from "./HttpService";
 import { backendserverURL } from "../util/constants";
-import { Calendar } from "../models/models";
+import { ICalendar } from "../models/models";
 
 export default class CalendarImportService {
 
@@ -20,7 +20,11 @@ export default class CalendarImportService {
         });
     }
 
-    static addCalendar(calendar: Calendar) {
+    static getCalendarsAsArray() {
+        const calPromise = this.getCalendars().then((data) => {return data})
+    }
+
+    static addCalendar(calendar: ICalendar) {
         return new Promise((resolve, reject) => {
             HttpService.post(`${CalendarImportService.baseURL()}`, 
             calendar,

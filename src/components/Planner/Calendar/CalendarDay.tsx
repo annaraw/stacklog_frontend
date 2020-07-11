@@ -5,6 +5,7 @@ import {Quarter} from './Quarter';
 import { Droppable } from 'react-beautiful-dnd'
 import styled from 'styled-components'
 
+
 interface BoardColumnProps {
   columns: Column[],
   day: string
@@ -19,7 +20,7 @@ const BoardColumnWrapper = styled.div`
   background-color: #e5eff5;
   border-radius: 4px;
   width: 150px;
-  
+
   & + & {
     margin-left: 12px;
   }
@@ -36,6 +37,8 @@ const BoardColumnContent = styled.div`
 `
 
 export const CalendarDay: React.FC<BoardColumnProps> = (props) => {
+
+
     return (
       <BoardColumnWrapper>
         <BoardColumnTitle>

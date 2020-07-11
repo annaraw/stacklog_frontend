@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IBacklogItem, Column } from '../../../models/models'
+import { IBacklogItem, Column, ICalendar, ICalendarItem } from '../../../models/models'
 import styled from 'styled-components'
 import { Week } from './Week';
 import { CalendarDay } from './CalendarDay';
@@ -7,6 +7,7 @@ import { CalendarDay } from './CalendarDay';
 interface BoardColumnProps {
   columns: Column[],
   items: IBacklogItem[]
+  calendars: ICalendar[]
 }
 
 const BoardEl = styled.div`
@@ -52,9 +53,16 @@ export const Calendar: React.FC<BoardColumnProps> = (props) => {
     return props.columns.filter((col)=> col.id.split("-")[0]==day)
   } 
 
+  const calendars : ICalendar[] = props.calendars
+  console.log(calendars)
+  //const calItems : ICalendarItem[] = props.calendars[0].items
+
   return (
     <div>
       {/* <Week key='week1' columns={weekOneColumns} items={weekOneItems}/> */}
+      
+      {console.log("CALs",calendars)}
+      {/*console.log("CAL_ITEMS",calItems)*/}
       <BoardEl>
         {/*new Date(c.id) > new Date()*/
           props.columns.map((col)=>col.id.split("-")[0])

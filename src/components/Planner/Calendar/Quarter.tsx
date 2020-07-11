@@ -22,7 +22,7 @@ const BoardColumnWrapper = styled.div`
 
 const BoardColumnTitle = styled.h2`
   font: 14px sans-serif;
-  margin-right: 12px;
+  width: 55px;
 `
 
 const BoardColumnContent = styled.div<BoardColumnContentStylesProps>`

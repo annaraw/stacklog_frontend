@@ -5,10 +5,11 @@ import BacklogComponent from './Backlog/BacklogComponent';
 import { Schedule } from './Schedule/Schedule';
 import { Calendar } from './Calendar/Calendar';
 import { sortTypes } from '../../util/constants';
-import { IBacklogItem, Column } from '../../models/models';
+import { IBacklogItem, Column, ICalendar} from '../../models/models';
 import BacklogItemService from '../../services/BacklogItemService';
 import AddBacklogItemForm from '../BacklogItemForm/AddBacklogItemForm';
 import { Button } from '@material-ui/core';
+import CalendarImportService from '../../services/CalendarImportService'
 
 const BoardEl = styled.div`
   display: flex;
@@ -24,6 +25,7 @@ type BoardColumnProps = {
 }
 
 interface BacklogState {
+	calendars: ICalendar[],
 	items: IBacklogItem[],
 	displayedItems: IBacklogItem[],
 	columns: Column[],
@@ -41,6 +43,7 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 		super(props)
 		//const {column, items, setSortType} = props
 		this.state = {
+			calendars: [],
 			items: [], // all items in every column
 			displayedItems: [],
 			columns: [], // column objects (backlog + schedule + calendar days)
@@ -100,10 +103,38 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 			this.setState({ loading: false })
 		})
 
+
+		CalendarImportService.getCalendars().then(responseItems => {
+			let calendars: ICalendar[] = []
+
+			if (responseItems) {
+				//@ts-ignore
+				for (let cal of responseItems) {
+					calendars.push(cal)
+				}
+			}
+
+			this.setState({
+				calendars : calendars,
+				loading: false,
+			})
+
+
+		}).catch(error => {
+			//TODO show error message to user
+			console.log(error)
+			this.setState({ loading: false })
+		})
+
 	}
 
 	updateBacklogItem = (item: IBacklogItem) => {
 		BacklogItemService.updateBacklogItem(item)
+	}
+
+	getCalendars = async () => {
+		var allBacklogItems = await this.state.items.filter((item) => !item.startDate)
+		this.setDisplayedItems(await this.filter(await this.search(await this.sort(allBacklogItems))))
 	}
 
 	setInitialColumns = (items: IBacklogItem[]) => {
@@ -406,7 +437,7 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 								setSelectedFilters={this.setSelectedFilters}
 							/>
 							{/*<Schedule key={scheduleColumn.id} column={scheduleColumn} items={scheduleItems} />*/}
-							<Calendar key='calendar' columns={this.state.columns} items={this.state.items} />
+							<Calendar calendars={this.state.calendars} key='calendar' columns={this.state.columns} items={this.state.items} />
 						</DragDropContext>
 					</BoardEl>
 					<Button

@@ -5,7 +5,7 @@ import Button from '@material-ui/core/Button';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import { RadioGroup, FormControl, FormControlLabel, Radio, TextField, Checkbox, Drawer, IconButton, Box } from '@material-ui/core';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
-import { CalendarItem } from '../../models/models'
+import { ICalendarItem } from '../../models/models'
 import CalendarImportService from '../../services/CalendarImportService'
 import CloseIcon from '@material-ui/icons/Close';
 import GetAppIcon from '@material-ui/icons/GetApp';
@@ -33,7 +33,7 @@ const AddCalendarForm: FunctionComponent<any> = props => {
     const [isPublic, { toggle: toggleIsPublic }] = useBoolean(true);
     const [calendarTitle, setCalendarTitle] = useState("");
     const [calendarUrl, setCalendarUrl] = useState("");
-    const [calendarItems, setCalendarItems] = useState<CalendarItem[] | []>([]);
+    const [calendarItems, setCalendarItems] = useState<ICalendarItem[] | []>([]);
     const [calendarFilename, setCalendarFilename] = useState("");
     const [uploadState, setUploadState] = useState(UploadState.Empty);
     const [success, setSuccess] = useState(false);
@@ -91,7 +91,7 @@ const AddCalendarForm: FunctionComponent<any> = props => {
             if (data.hasOwnProperty(k)) {
                 var ev = data[k];
                 if (data[k].type === 'VEVENT') {
-                    const calItem: CalendarItem = {
+                    const calItem: ICalendarItem = {
                         id: ev.id,
                         uid: ev.uid,
                         summary: ev.summary,
@@ -125,7 +125,7 @@ const AddCalendarForm: FunctionComponent<any> = props => {
     const uploadCalendarFile = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
             var reader = new FileReader();
-            var calItems: CalendarItem[] = []
+            var calItems: ICalendarItem[] = []
             var filename = e.target.files[0].name
             reader.onload = function () {
                 calItems = convertIcal(reader.result)

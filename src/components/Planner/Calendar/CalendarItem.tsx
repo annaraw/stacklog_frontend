@@ -48,10 +48,10 @@ const BoardItemEl = styled.div<BoardItemStylesProps>`
   }
 `
 
-
+// isDragDisabled
 // Create and export the BoardItem component
 export const CalendarItem = (props: BoardItemProps) => {
-  return <Draggable draggableId={props.item.id} index={props.index}>
+  return <Draggable  draggableId={props.item.id} index={props.index}>
     {(provided, snapshot) => (
       <BoardItemEl
         {...provided.draggableProps}
