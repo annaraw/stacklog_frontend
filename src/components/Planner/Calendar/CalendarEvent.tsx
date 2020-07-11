@@ -1,11 +1,12 @@
 import * as React from 'react'
 import { Draggable } from 'react-beautiful-dnd'
 import styled from 'styled-components'
+import { ICalendarItem } from '../../../models/models'
 
 // Define types for board item element properties
 type BoardItemProps = {
   index: number
-  item: any
+  calItem: ICalendarItem
 }
 
 // Define types for board item element style properties
@@ -13,7 +14,7 @@ type BoardItemProps = {
 type BoardItemStylesProps = {
   isDragging: boolean
   index: number
-  /*height: string*/
+  height: string
 }
 
 // Create style for board item element
@@ -35,29 +36,31 @@ type BoardItemStylesProps = {
 `*/
 
 const BoardItemEl = styled.div<BoardItemStylesProps>`
-  background-color: ${(props) => props.isDragging ? '#d3e4ee' : '#fff'};
-  ${(props) => {if (!props.isDragging) {return ('position: relative')}}};
-  border-radius: 4px;
+  background-color: #FFE000;
+  height:  ${props => props.height};
   width: 85px;
-  height: 20px
-  z-index: 2;
+  border: solid;
+  border-width: thin;
   text-overflow: ellipsis;
   overflow: hidden;
-  white-space: nowrap;
-  margin-top: 4px;
-  margin-bottom: 4px;
+  z-index: 0;
+  ${(props) => {if (!props.isDragging) {return ('position: absolute')}}};
+  ${(props) => {if (props.isDragging) {return ('max-height: 10px')}}};
+  border-radius: 1px;
   transition: background-color .25s ease-out;
-  &:hover {
-    background-color: #0099FF;
-  }
-
-   
+  
 `
+
+function getHeight(calItem:ICalendarItem){
+  const startHour = new Date(calItem.dtStart).getHours()
+  const endHour = new Date (calItem.dtEnd).getHours()
+  return (endHour - startHour)*28+"px"
+}
 
 // isDragDisabled
 // Create and export the BoardItem component
-export const CalendarItem = (props: BoardItemProps) => {
-  return <Draggable  draggableId={props.item.id} index={props.index}>
+export const CalendarEvent = (props: BoardItemProps) => {
+  return <Draggable  isDragDisabled draggableId={""+props.calItem.uid} index={props.index}>
     {(provided, snapshot) => (
       <BoardItemEl
         {...provided.draggableProps}
@@ -65,10 +68,10 @@ export const CalendarItem = (props: BoardItemProps) => {
         ref={provided.innerRef}
         isDragging={snapshot.isDragging}
         index={props.index}
-        /*height='100px'*/
+        height={getHeight(props.calItem)}
       >
         {/* The content of the BoardItem */}
-        {props.item.title}
+        {props.calItem.summary}
       </BoardItemEl>
     )}
   </Draggable>

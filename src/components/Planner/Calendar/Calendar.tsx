@@ -18,8 +18,6 @@ const BoardEl = styled.div`
 
 export const Calendar: React.FC<BoardColumnProps> = (props) => {
 
- 
-
   function addDays(dateObj: Date, numDays: number) {
     return new Date(dateObj.setDate(dateObj.getDate() + numDays));
   }
@@ -27,48 +25,38 @@ export const Calendar: React.FC<BoardColumnProps> = (props) => {
   function getDateOfString(dateString: string) {
     return new Date(Date.parse(dateString))
   }
-  /*
-  // dynamically create next 7 days from today for calendar columns
-  const nextDays: string[] = []
-  for (let i = 1; i < 7; i++) {
-    nextDays.push(
-      new Date(
-        new Date().setDate(new Date().getDate()+i)
-        ).toDateString()
-      )
-  }
-
-  let nextDaysItems:any[] = []
-  for (let i in nextDays) {
-    nextDaysItems.push({items: props.items
-      .filter((item) => item.startDate && new Date(item.startDate).toDateString() === nextDays[i] )
-      .sort((a:IBacklogItem,b:IBacklogItem) => a.index - b.index)
-    })
-    //console.log(props.items.filter((item) => item.startDate && item.startDate.toDateString() === nextDays[i]))
-  }
-
-  console.log("SORTED_ITEMS",nextDaysItems)*/
 
   function getDayColumns(day:string) {
     return props.columns.filter((col)=> col.id.split("-")[0]==day)
-  } 
+  }
+
+  function sameDay(a:Date,b:Date){
+    return   a.getFullYear() == b.getFullYear() 
+      &&  a.getMonth() == b.getMonth()
+      &&  a.getDate() == b.getDate() 
+  }
 
   const calendars : ICalendar[] = props.calendars
-  console.log(calendars)
-  //const calItems : ICalendarItem[] = props.calendars[0].items
+  const calItems : ICalendarItem[] = props.calendars[0] ? props.calendars[0].items : []
+
+
+  function getEventsOfDay(day:string){
+    return props.calendars
+    .map((cal:ICalendar) => cal ? cal.items
+      .filter((calItem:ICalendarItem)=> sameDay(new Date(calItem.dtStart),new Date(day)))
+      .map((calItem:ICalendarItem)=> calItem) : []
+    )
+  }
 
   return (
     <div>
-      {/* <Week key='week1' columns={weekOneColumns} items={weekOneItems}/> */}
       
-      {console.log("CALs",calendars)}
-      {/*console.log("CAL_ITEMS",calItems)*/}
       <BoardEl>
         {/*new Date(c.id) > new Date()*/
           props.columns.map((col)=>col.id.split("-")[0])
             .filter((item, i, ar) => ar.indexOf(item) === i)
             .filter((col) => col != 'backlog')
-            .map((col)=> <CalendarDay key={col} columns={getDayColumns(col)} day={col} items={props.items} />)
+            .map((col)=> <CalendarDay key={col} columns={getDayColumns(col)} day={col} items={props.items} calEvents={getEventsOfDay(col)}/>)
 
         }
       </BoardEl>
