@@ -19,7 +19,7 @@ const BoardColumnWrapper = styled.div`
   background-color: #e5eff5;
   border-radius: 4px;
   width: 150px;
-
+  
   & + & {
     margin-left: 12px;
   }

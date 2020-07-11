@@ -18,7 +18,6 @@ const BoardColumnWrapper = styled.div`
   display:flex;
   background-color: #e5eff5;
   border-radius: 4px;
-
 `
 
 const BoardColumnTitle = styled.h2`
@@ -30,6 +29,7 @@ const BoardColumnContent = styled.div<BoardColumnContentStylesProps>`
   background-color: ${props => props.isDraggingOver ? '#aecde0' : null};
   border-radius: 4px;
   width: 100%
+  
 `
 
 export const Quarter: React.FC<BoardColumnProps> = (props) => {
@@ -59,9 +59,9 @@ export const Quarter: React.FC<BoardColumnProps> = (props) => {
               }
                     
                 )}
-              
               {provided.placeholder}
             </BoardColumnContent>
+
           )}
         </Droppable>
       </BoardColumnWrapper>

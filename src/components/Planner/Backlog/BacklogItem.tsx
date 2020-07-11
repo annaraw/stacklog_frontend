@@ -16,6 +16,8 @@ const BoardItemEl = styled.div<BoardItemStylesProps>`
   background-color: ${(props) => props.isDragging ? '#d3e4ee' : '#fff'};
   border-radius: 4px;
   transition: background-color .25s ease-out;
+  ${(props) => {if (props.isDragging) {return ('max-height: 20px')}}};
+  ${(props) => {if (props.isDragging) {return ('max-width: 80px')}}};
 
   &:hover {
     background-color: #f7fafc;
@@ -43,10 +45,11 @@ const BacklogItem: FunctionComponent<{ title: String, description: string, categ
                    ref={provided.innerRef}
                    isDragging={snapshot.isDragging}
                 >
-                    <div className="header">
+                {!snapshot.isDragging ? <div className="header">
                         <div className="header-title">{title} ({category})<span style={{float:"right"}}>Prio: {priority}</span></div>
                         <div className="description"  >{description}</div>
-                    </div>
+                    </div> : title}
+                    
                 </BoardItemEl>
             )}
         </Draggable>
