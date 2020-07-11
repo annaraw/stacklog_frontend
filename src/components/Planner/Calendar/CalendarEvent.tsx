@@ -12,7 +12,6 @@ type BoardItemProps = {
 // Define types for board item element style properties
 // This is necessary for TypeScript to accept the 'isDragging' prop.
 type BoardItemStylesProps = {
-  isDragging: boolean
   index: number
   height: string
 }
@@ -43,11 +42,11 @@ const BoardItemEl = styled.div<BoardItemStylesProps>`
   border-width: thin;
   text-overflow: ellipsis;
   overflow: hidden;
-  z-index: 0;
-  ${(props) => {if (!props.isDragging) {return ('position: absolute')}}};
-  ${(props) => {if (props.isDragging) {return ('max-height: 10px')}}};
   border-radius: 1px;
+  position:absolute;
+  z-index: 0;
   transition: background-color .25s ease-out;
+
   
 `
 
@@ -60,19 +59,11 @@ function getHeight(calItem:ICalendarItem){
 // isDragDisabled
 // Create and export the BoardItem component
 export const CalendarEvent = (props: BoardItemProps) => {
-  return <Draggable  isDragDisabled draggableId={""+props.calItem.uid} index={props.index}>
-    {(provided, snapshot) => (
-      <BoardItemEl
-        {...provided.draggableProps}
-        {...provided.dragHandleProps}
-        ref={provided.innerRef}
-        isDragging={snapshot.isDragging}
-        index={props.index}
+  return <BoardItemEl
+        index={0}
         height={getHeight(props.calItem)}
       >
         {/* The content of the BoardItem */}
         {props.calItem.summary}
       </BoardItemEl>
-    )}
-  </Draggable>
 }

@@ -36,11 +36,11 @@ type BoardItemStylesProps = {
 
 const BoardItemEl = styled.div<BoardItemStylesProps>`
   background-color: ${(props) => props.isDragging ? '#d3e4ee' : '#fff'};
-  ${(props) => {if (!props.isDragging) {return ('position: relative')}}};
   border-radius: 4px;
   width: 85px;
-  height: 20px
-  z-index: 2;
+  height: 20px;
+  z-index: ${props => props.isDragging ? 3 : 2};;
+  position:relative;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;

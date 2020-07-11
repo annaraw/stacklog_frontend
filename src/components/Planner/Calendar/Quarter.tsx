@@ -24,11 +24,18 @@ const BoardColumnWrapper = styled.div<BoardWrapperContentStylesProps>`
   display:flex;
   background-color: #e5eff5;
   border-radius: 4px;
-  z-index: 1;
   height:${props => props.items != 0 ? props.items*24+'px' : '28px'};
   border: solid;
   border-width: thin;
+  width:100%;
 `
+
+const QuarterWrapper = styled.div`
+  display:flex;
+`
+
+const EventWrapper = styled.div`
+  `
 
 const BoardColumnTitle = styled.div`
   font: 14px sans-serif;
@@ -38,16 +45,19 @@ const BoardColumnTitle = styled.div`
 const BoardColumnContent = styled.div<BoardColumnContentStylesProps>`
   background-color: ${props => props.isDraggingOver ? '#aecde0' : null};
   border-radius: 4px;
-  width: 100%
+  width: 100%;
+  z-index: ${props => props.isDraggingOver ? 0 : 1};;
   
 `
 
 export const Quarter: React.FC<BoardColumnProps> = (props) => {
     return (
-      <BoardColumnWrapper items={props.column.itemsIds.length} events={props.events.length}>
-        <BoardColumnTitle>
+      <QuarterWrapper>
+      <BoardColumnTitle>
           {props.index+":00"}
         </BoardColumnTitle>
+      <BoardColumnWrapper items={props.column.itemsIds.length} events={props.events.length}>
+        
         <Droppable droppableId={props.column.id}>
           {(provided, snapshot) => (
             <BoardColumnContent
@@ -70,7 +80,11 @@ export const Quarter: React.FC<BoardColumnProps> = (props) => {
                     
                 )}
               {provided.placeholder}
-              {props.events.map((calItem:ICalendarItem, index: number) => {
+              
+            </BoardColumnContent>
+          )}
+        </Droppable>
+        {props.events.map((calItem:ICalendarItem, index: number) => {
                 return (
                     <CalendarEvent
                       key={calItem.id}
@@ -79,10 +93,8 @@ export const Quarter: React.FC<BoardColumnProps> = (props) => {
                     />
                   )
               })}
-            </BoardColumnContent>
-          )}
-        </Droppable>
       </BoardColumnWrapper>
+      </QuarterWrapper>
     );
 
 };
