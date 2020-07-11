@@ -50,7 +50,24 @@ export const Calendar: React.FC<BoardColumnProps> = (props) => {
     <div>
       {/* <Week key='week1' columns={weekOneColumns} items={weekOneItems}/> */}
       <BoardEl>
-        {nextDays.map((c: any, index: number) => <CalendarDay key={c+index} column={c} items={nextDaysItems[index].items} />)}
+        {/*new Date(c.id) > new Date()*/
+          props.columns.filter((c: Column) => new Date(c.id) > new Date()).map((c: Column, index: number) => {
+            let items:IBacklogItem[] = []
+            for (let id of c.itemsIds){
+              props.items.map((item:IBacklogItem) => {
+                if (item.id === id) {
+                  console.log(item)
+                  items.push(item)
+                } else {
+                }
+              })
+            }
+            props.items.filter((item: IBacklogItem) => item.startDate && new Date(item.startDate).toDateString() === c.id)
+            return (
+              <CalendarDay key={c.id} column={c} items={items} />
+              )
+          }) 
+        }
       </BoardEl>
     </div>
   );
