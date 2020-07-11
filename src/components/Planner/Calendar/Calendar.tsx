@@ -39,7 +39,7 @@ export const Calendar: React.FC<BoardColumnProps> = (props) => {
   for (let i in nextDays) {
     nextDaysItems.push({items: props.items
       .filter((item) => item.startDate && new Date(item.startDate).toDateString() === nextDays[i] )
-      .sort((a:IBacklogItem,b:IBacklogItem) => a.index && b.index ? a.index - b.index : 0)
+      .sort((a:IBacklogItem,b:IBacklogItem) => a.index - b.index)
     })
     //console.log(props.items.filter((item) => item.startDate && item.startDate.toDateString() === nextDays[i]))
   }
@@ -50,7 +50,7 @@ export const Calendar: React.FC<BoardColumnProps> = (props) => {
     <div>
       {/* <Week key='week1' columns={weekOneColumns} items={weekOneItems}/> */}
       <BoardEl>
-        {nextDays.map((c: any, index: number) => <CalendarDay key={c.index} column={c} items={nextDaysItems[index].items} />)}
+        {nextDays.map((c: any, index: number) => <CalendarDay key={c+index} column={c} items={nextDaysItems[index].items} />)}
       </BoardEl>
     </div>
   );

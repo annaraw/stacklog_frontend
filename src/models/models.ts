@@ -53,7 +53,7 @@ export interface IBacklogItem {
     dueDate?: Date,
     category: string,
     team?: string
-    index?: number,
+    index: number,
 }
 
 export interface IBacklogItemRequest {

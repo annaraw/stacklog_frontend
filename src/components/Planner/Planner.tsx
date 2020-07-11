@@ -163,7 +163,7 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 		let newItems = [...this.state.items]
 		newItems[index] = item
 		this.setState({ items: newItems })
-		console.log("NEW STATE",this.state)
+		//console.log("NEW STATE",this.state)
 	}
 
 	setSearchInput = async (searchInput: string) => {
@@ -299,7 +299,7 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 
 			this.setColumns(newColumnStart)
 
-			/*let cnt = 0
+			let cnt = 0
 			for (const id of newColumnStart.itemsIds){
 				const item = this.state.items.filter(item => item.id === id)[0]
 				item.index = cnt
@@ -307,7 +307,7 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 				this.setItem(item)
 				console.log("ITEM",item)
 				cnt+=1
-			}*/
+			}
 		}
 		// (4) DROPPED INTO ANOTHER COLUMN --- TODO: change start/end date when dropping into another day
 		else {
@@ -336,6 +336,26 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 			}
 
 			this.setColumns(newColumnStart, newColumnFinish)
+
+			let cnt = 0
+			for (const id of newColumnStart.itemsIds){
+				const item = this.state.items.filter(item => item.id === id)[0]
+				item.index = cnt
+				this.updateBacklogItem(item)
+				this.setItem(item)
+				//console.log("ITEM",item)
+				cnt+=1
+			}
+
+			cnt = 0
+			for (const id of newColumnFinish.itemsIds){
+				const item = this.state.items.filter(item => item.id === id)[0]
+				item.index = cnt
+				this.updateBacklogItem(item)
+				this.setItem(item)
+				//console.log("ITEM",item)
+				cnt+=1
+			}
 		}
 		this.setDisplayedItems(await this.sort(await this.filter(await this.search(this.state.items.filter((item) => !item.startDate)))))
 	};
