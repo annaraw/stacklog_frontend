@@ -12,6 +12,7 @@ import { Button } from '@material-ui/core';
 import CalendarImportService from '../../services/CalendarImportService'
 import MenuBar from './../MenuBar';
 import { withStyles, Backdrop, CircularProgress, Snackbar } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
 
 
 
@@ -398,6 +399,30 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 		}
 	}
 
+	updateSameColumn (newColumnStart:any,columnStart:any,undo:boolean){
+			let cnt = 0
+			let breakLoop = false
+			for (const id of newColumnStart.itemsIds){
+				const item = this.state.items.filter(item => item.id === id)[0]
+				item.index = cnt
+				this.setItem(item)
+				cnt+=1
+				//IF THIS IS NO UNDO OPERATION -> CALL THE BACKEND
+				if(!undo){
+					this.updateBacklogItem(item).then()
+                    .catch(error => {
+                    	console.log("ERROR",error)
+                    	this.setColumns(columnStart)
+                    	this.setState({
+			                            error: true
+			                        })
+                    	// ERROR -> CALL UNDO OPERATION WITH OLD columnStart AS newColumnStart
+                    	this.updateSameColumn(columnStart,columnStart,true)
+                    })
+				}
+			}
+	}
+
 	onDragEnd = async (result: any) => {
 		const { source, destination, draggableId } = result
 		// (1) DROPPED OUTSIDE - NO CHANGE
@@ -429,19 +454,7 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 
 			this.setColumns(newColumnStart)
 
-			let cnt = 0
-			for (const id of newColumnStart.itemsIds){
-				const item = this.state.items.filter(item => item.id === id)[0]
-				item.index = cnt
-				this.updateBacklogItem(item).then()
-                    .catch(error => {
-                    	
-                        console.log("ERROR",error)
-                    })
-				this.setItem(item)
-				console.log("ITEM",item)
-				cnt+=1
-			}
+			this.updateSameColumn(newColumnStart,columnStart,false)
 		}
 		// (4) DROPPED INTO ANOTHER COLUMN --- TODO: change start/end date when dropping into another day
 		else {
@@ -478,6 +491,15 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 		}
 		this.setDisplayedItems(await this.sort(await this.filter(await this.search(this.state.items.filter((item) => !item.startDate)))))
 	};
+
+	handleClose = (event?: React.SyntheticEvent, reason?: string) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        this.setState({
+            error: false
+        })
+    };
 
 	render() {
 
@@ -536,6 +558,11 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 							{/*<Schedule key={scheduleColumn.id} column={scheduleColumn} items={scheduleItems} />*/}
 							<Calendar calendars={this.state.calendars} key='calendar' columns={this.state.columns} items={this.state.items} />
 						</DragDropContext>
+						<Snackbar open={this.state.error} autoHideDuration={6000} onClose={this.handleClose}>
+                                <Alert onClose={this.handleClose} severity="error">
+                                    Faild to update item
+                                </Alert>
+                            </Snackbar>
 					</BoardEl>
 					<Button
 						//className={classes.createProjectBtn}
