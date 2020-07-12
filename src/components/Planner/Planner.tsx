@@ -10,6 +10,10 @@ import BacklogItemService from '../../services/BacklogItemService';
 import AddBacklogItemForm from '../BacklogItemForm/AddBacklogItemForm';
 import { Button } from '@material-ui/core';
 import CalendarImportService from '../../services/CalendarImportService'
+import MenuBar from './../MenuBar';
+import { withStyles, Backdrop, CircularProgress, Snackbar } from '@material-ui/core';
+
+
 
 const BoardEl = styled.div`
   display: flex;
@@ -34,6 +38,9 @@ interface BacklogState {
 	sortType: string,
 	selectedFilters: string[],
 	loading: boolean,
+	loadingError: boolean,
+	error: boolean,
+	urlError: boolean,
 	formIsOpen: boolean,
 }
 
@@ -56,6 +63,10 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 
 			loading: true,
 			formIsOpen: false,
+			error: false,
+            loadingError: false,
+            urlError: false,
+
 		}
 	}
 
@@ -405,9 +416,17 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 	};
 
 	render() {
+
+		//@ts-ignore
+
 		if (this.state.loading) {
 			return (
-				<p>Loading</p>
+				<React.Fragment >
+                    <MenuBar title="Loading" />
+                    <Backdrop open={true}>
+                        <CircularProgress color="inherit" />
+                    </Backdrop>
+                </React.Fragment >
 			)
 		} else if (this.state.items.length === 0 || this.state.columns.length === 0) {
 			return (
