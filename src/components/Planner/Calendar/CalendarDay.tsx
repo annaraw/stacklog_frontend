@@ -45,7 +45,7 @@ events={props.calEvents.map((calItem:ICalendarItem)=> calItem.dtStart.getHours)}
       <BoardColumnWrapper>
         <BoardColumnTitle>
           {props.day}
-          {console.log("calEvents",props.calEvents[0] ? props.calEvents[0].map((calItem:ICalendarItem)=> new Date(calItem.dtStart).getHours()): [])}
+          {/*console.log("calEvents",props.calEvents[0] ? props.calEvents[0].map((calItem:ICalendarItem)=> new Date(calItem.dtStart).getHours()): [])*/}
         </BoardColumnTitle>
             <BoardColumnContent>
               {props.columns.map((col,index) => {

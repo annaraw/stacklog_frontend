@@ -88,7 +88,7 @@ export const Quarter: React.FC<BoardColumnProps> = (props) => {
         {props.events.map((calItem:ICalendarItem, index: number) => {
                 return (
                     <CalendarEvent
-                      key={calItem.id}
+                      key={calItem.uid}
                       index={index} 
                       calItem={calItem}
                     />

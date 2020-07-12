@@ -98,20 +98,28 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 						hour: item.hour ? item.hour : 0
 					})
 				}
+			
+
+				this.setState({
+					items: itemsFromBackend,
+					displayedItems: itemsFromBackend.filter((item) => !item.startDate),
+					columns: this.setInitialColumns(itemsFromBackend),
+					loading: false,
+				})
+			} else {
+				this.setState({
+                	urlError: true,
+                	loading: false,
+            	})
 			}
-
-			this.setState({
-				items: itemsFromBackend,
-				displayedItems: itemsFromBackend.filter((item) => !item.startDate),
-				columns: this.setInitialColumns(itemsFromBackend),
-				loading: false,
-			})
-
 
 		}).catch(error => {
 			//TODO show error message to user
 			console.log(error)
-			this.setState({ loading: false })
+			this.setState({ 
+				loadingError: true,
+				loading: false 
+			})
 		})
 
 
@@ -123,24 +131,35 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 				for (let cal of responseItems) {
 					calendars.push(cal)
 				}
+			
+
+				this.setState({
+					calendars : calendars,
+					loading: false,
+				})
+
+			}else {
+				this.setState({
+                	urlError: true,
+                	loading: false,
+            	})
 			}
-
-			this.setState({
-				calendars : calendars,
-				loading: false,
-			})
-
-
 		}).catch(error => {
 			//TODO show error message to user
 			console.log(error)
-			this.setState({ loading: false })
+			this.setState({ 
+				loadingError: true,
+				loading: false 
+			})
 		})
 
 	}
 
 	updateBacklogItem = (item: IBacklogItem) => {
-		BacklogItemService.updateBacklogItem(item)
+
+		let throwError = false;
+		return BacklogItemService.updateBacklogItem(item)
+        
 	}
 
 	getCalendars = async () => {
@@ -353,7 +372,11 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 			for (const id of newColumnStart.itemsIds){
 				const item = this.state.items.filter(item => item.id === id)[0]
 				item.index = cnt
-				this.updateBacklogItem(item)
+				this.updateBacklogItem(item).then()
+                    .catch(error => {
+                    	
+                        console.log("ERROR",error)
+                    })
 				this.setItem(item)
 				console.log("ITEM",item)
 				cnt+=1
@@ -362,15 +385,16 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 		// (4) DROPPED INTO ANOTHER COLUMN --- TODO: change start/end date when dropping into another day
 		else {
 			// Change date of item to the date of columnFinish
-			var newDate = (columnFinish.id === 'backlog') ? null : new Date(columnFinish.id.split("-")[0])
-			var newHour = (columnFinish.id === 'backlog') ? 0 : parseInt(columnFinish.id.split("-")[1])
-			console.log("COL FINISH",columnFinish.id)
-			console.log("NEW DATE",newDate)
-			console.log("NEW HOUR",newHour)
-			var newItem = this.state.items.filter(item => item.id === draggableId)[0]
-			newItem.startDate = newDate
-			newItem.hour = newHour
-			this.updateBacklogItem(newItem)
+			//var newDate = (columnFinish.id === 'backlog') ? null : new Date(columnFinish.id.split("-")[0])
+			//var newHour = (columnFinish.id === 'backlog') ? 0 : parseInt(columnFinish.id.split("-")[1])
+			//console.log("COL FINISH",columnFinish.id)
+			//console.log("NEW DATE",newDate)
+			//console.log("NEW HOUR",newHour)
+			/*var newItem = this.state.items.filter(item => item.id === draggableId)[0]
+				newItem.startDate = newDate
+				newItem.hour = newHour
+				this.updateBacklogItem(newItem)*/
+			
 
 			const newStartItemsIds = Array.from(columnStart.itemsIds) // Get all item ids in source list
 			newStartItemsIds.splice(source.index, 1) // Remove the id of dragged item from its original position
@@ -392,25 +416,132 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 
 			this.setColumns(newColumnStart, newColumnFinish)
 
+			
+			let backendError = false
+
+			var newDate = (columnFinish.id === 'backlog') ? null : new Date(columnFinish.id.split("-")[0])
+			var newHour = (columnFinish.id === 'backlog') ? 0 : parseInt(columnFinish.id.split("-")[1])
+
 			let cnt = 0
+			let breakLoop = false
 			for (const id of newColumnStart.itemsIds){
+				if (breakLoop) {break}
 				const item = this.state.items.filter(item => item.id === id)[0]
 				item.index = cnt
-				this.updateBacklogItem(item)
 				this.setItem(item)
 				//console.log("ITEM",item)
 				cnt+=1
+				this.updateBacklogItem(item).then()
+                .catch(error => {
+                	backendError = true
+                    console.log("ERROR",error)
+                    this.setColumns(columnStart, columnFinish)
+					var oldDate = (columnStart.id === 'backlog') ? null : new Date(columnStart.id.split("-")[0])
+					var oldHour = (columnStart.id === 'backlog') ? 0 : parseInt(columnStart.id.split("-")[1])
+					this.setState({
+		                            error: true
+		                        })
+					let cnt = 0
+					for (const id of columnStart.itemsIds){
+						const item = this.state.items.filter(item => item.id === id)[0]
+						item.index = cnt
+						//this.updateBacklogItem(item)
+						this.setItem(item)
+						//console.log("ITEM",item)
+						cnt+=1
+					}
+
+					cnt = 0
+					for (const id of columnFinish.itemsIds){
+						const item = this.state.items.filter(item => item.id === id)[0]
+						item.index = cnt
+						item.hour = oldHour
+						item.startDate = oldDate
+						//this.updateBacklogItem(item)
+						this.setItem(item)
+						//console.log("ITEM",item)
+						cnt+=1
+					}
+					breakLoop = true
+                })
+				
 			}
 
 			cnt = 0
+			breakLoop = false
 			for (const id of newColumnFinish.itemsIds){
+				if (breakLoop) {break}
 				const item = this.state.items.filter(item => item.id === id)[0]
 				item.index = cnt
-				this.updateBacklogItem(item)
+				item.hour = newHour
+				item.startDate = newDate
 				this.setItem(item)
 				//console.log("ITEM",item)
 				cnt+=1
+				this.updateBacklogItem(item).then()
+                .catch(error => {
+                	backendError = true
+                    console.log("ERROR",error)
+                    this.setColumns(columnStart, columnFinish)
+					var oldDate = (columnStart.id === 'backlog') ? null : new Date(columnStart.id.split("-")[0])
+					var oldHour = (columnStart.id === 'backlog') ? 0 : parseInt(columnStart.id.split("-")[1])
+					this.setState({
+		                            error: true
+		                        })
+					let cnt = 0
+					for (const id of columnStart.itemsIds){
+						const item = this.state.items.filter(item => item.id === id)[0]
+						item.index = cnt
+						//this.updateBacklogItem(item)
+						this.setItem(item)
+						//console.log("ITEM",item)
+						cnt+=1
+					}
+
+					cnt = 0
+					for (const id of columnFinish.itemsIds){
+						const item = this.state.items.filter(item => item.id === id)[0]
+						item.index = cnt
+						item.hour = oldHour
+						item.startDate = oldDate
+						//this.updateBacklogItem(item)
+						this.setItem(item)
+						//console.log("ITEM",item)
+						cnt+=1
+					}
+                })
+                breakLoop = true
 			}
+
+			/*if (backendError) {
+				this.setColumns(columnStart, columnFinish)
+				var oldDate = (columnStart.id === 'backlog') ? null : new Date(columnStart.id.split("-")[0])
+				var oldHour = (columnStart.id === 'backlog') ? 0 : parseInt(columnStart.id.split("-")[1])
+				this.setState({
+	                            error: true
+	                        })
+				let cnt = 0
+				for (const id of columnStart.itemsIds){
+					const item = this.state.items.filter(item => item.id === id)[0]
+					item.index = cnt
+					//this.updateBacklogItem(item)
+					this.setItem(item)
+					//console.log("ITEM",item)
+					cnt+=1
+				}
+
+				cnt = 0
+				for (const id of columnFinish.itemsIds){
+					const item = this.state.items.filter(item => item.id === id)[0]
+					item.index = cnt
+					item.hour = oldHour
+					item.startDate = oldDate
+					//this.updateBacklogItem(item)
+					this.setItem(item)
+					//console.log("ITEM",item)
+					cnt+=1
+				}
+			}*/
 		}
 		this.setDisplayedItems(await this.sort(await this.filter(await this.search(this.state.items.filter((item) => !item.startDate)))))
 	};
@@ -432,7 +563,21 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 			return (
 				<p>No items available</p>
 			)
-		} else {
+		} else if (this.state.urlError) {
+            return (
+                <React.Fragment >
+                    <MenuBar title="Error" />
+                    <p>Error: no url parameter provided</p>
+                </React.Fragment >
+            )
+        } else if (this.state.loadingError) {
+            return (
+                <React.Fragment >
+                    <MenuBar title="Error" />
+                    <p>Error: Server is not responding</p>
+                </React.Fragment >
+            )
+        } else {
 			const backlogColumn = this.state.columns.filter((column) => column.id === 'backlog')[0]
 			//const scheduleColumn = this.state.columns.filter((column) => column.id === new Date().toDateString())[0]
 			const backlogItems = backlogColumn.itemsIds.map((itemId: string) => (this.state.items.filter(item => item.id === itemId)[0]))
