@@ -35,7 +35,7 @@ type BoardItemStylesProps = {
 `*/
 
 const BoardItemEl = styled.div<BoardItemStylesProps>`
-  background-color: ${(props) => props.isDragging ? '#d3e4ee' : '#fff'};
+  background-color: ${(props) => props.isDragging ? '#6AFFA1' : '#00FF5E'};
   border-radius: 4px;
   width: 85px;
   height: 20px;

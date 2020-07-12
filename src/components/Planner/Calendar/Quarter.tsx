@@ -26,7 +26,8 @@ const BoardColumnWrapper = styled.div<BoardWrapperContentStylesProps>`
   border-radius: 4px;
   height:${props => props.items != 0 ? props.items*24+'px' : '28px'};
   border: solid;
-  border-width: thin;
+  border-color: grey;
+  border-width: 0.5px;
   width:100%;
 `
 
@@ -43,10 +44,10 @@ const BoardColumnTitle = styled.div`
 `
 
 const BoardColumnContent = styled.div<BoardColumnContentStylesProps>`
-  background-color: ${props => props.isDraggingOver ? '#aecde0' : null};
+  background-color: ${props => props.isDraggingOver ? '#000000' : null};
   border-radius: 4px;
   width: 100%;
-  z-index: ${props => props.isDraggingOver ? 0 : 1};;
+  z-index: ${props => props.isDraggingOver ? 0 : 1};
   
 `
 

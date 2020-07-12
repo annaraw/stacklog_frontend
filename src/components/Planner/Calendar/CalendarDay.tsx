@@ -18,7 +18,7 @@ interface BoardColumnProps {
 const BoardColumnWrapper = styled.div`
   flex: 1;
   padding: 8px;
-  background-color: #e5eff5;
+  background-color: #FFFFFF;
   border-radius: 4px;
   width: 150px;
 
