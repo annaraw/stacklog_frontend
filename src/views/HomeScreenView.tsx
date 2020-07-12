@@ -1,5 +1,5 @@
 import React from 'react';
-import MenuBar from '../components/MenuBar';
+import MenuBar from '../components/MenuBar/MenuBar';
 import AddCalendarForm from '../components/CalendarForm/AddCalendarForm';
 import UserService from '../services/UserService';
 
@@ -11,7 +11,7 @@ function HomeScreen(props: HomeScreenProps) {
 
     return (
         <React.Fragment>
-            <MenuBar title="Home" />
+            <MenuBar title="Home" disableButton = {false}/>
             <div style={{padding: "20px"}}><AddCalendarForm /></div>
             {(UserService.isAuthenticated()) ?
                 <p>Logged in</p> : <p>Logged out</p>

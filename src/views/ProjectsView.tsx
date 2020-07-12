@@ -5,7 +5,7 @@ import ProjectCard from '../components/Projects/ProjectCard/ProjectCard';
 import { Project, Member } from '../models/models'
 import { projectsDummy } from '../data/dummyData'
 import ProjectService from '../services/ProjectService';
-import MenuBar from '../components/MenuBar';
+import MenuBar from '../components/MenuBar/MenuBar';
 import { projectViewStyles } from './ProjectsViewStyles';
 import { withStyles, Backdrop, CircularProgress, Button } from '@material-ui/core';
 import UserService from '../services/UserService';
@@ -74,7 +74,7 @@ class ProjectScreen extends Component<{}, ProjectState> {
 
         return (
             <React.Fragment>
-                <MenuBar title="Projects" />
+                <MenuBar title="Projects" disableButton = {false}/>
                 {this.state.loading ?
                     <Backdrop className={classes.backdrop} open={true}>
                         <CircularProgress color="inherit" />

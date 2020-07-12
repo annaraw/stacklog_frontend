@@ -1,0 +1,29 @@
+
+.closeButton {
+    position: absolute;
+    margin-top: 20px;
+    margin-right: 10px;
+}
+.box {
+    width: 20px;
+    padding: 20px;
+}
+
+.menuOption {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 2px;
+    margin-right: 10px;
+
+}
+.menuIcons {
+    margin-left: 10px;
+}
+.containerBox {
+    position: relative;
+    text-align: center;
+    display: flex;
+}
+.buttonColor {
+    background-color: #6AFFA1;
+}
