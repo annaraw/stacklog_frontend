@@ -1,5 +1,6 @@
 import React from 'react';
-import { AppBar, Box, Button, Toolbar, IconButton, Typography, makeStyles, Grid } from '@material-ui/core';
+import { AppBar, Box, Button, Toolbar, IconButton, ButtonGroup,
+    Typography, makeStyles, Grid } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import UserService from '../../services/UserService';
 import LandingPagePic from './Images/LandingPagePic.png';
@@ -34,17 +35,22 @@ function LandingPage () {
                                 </IconButton>
                             </Grid>
 
-                            <Grid item>                    
-                                <Button
-                                    variant="outlined"
-                                    color="inherit"
-                                        onClick={() => {
-                                            window.location.href = "/login"
+                            <Grid item> 
+                                <ButtonGroup variant="outlined" color="inherit" size= "large">
+                                    <Button
+                                            onClick={() => {
+                                                window.location.href = "/login"
+                                            }
                                         }
-                                    }
-                                >  Login
-                                </Button>  
-
+                                    >  Login
+                                    </Button>
+                                    <Button onClick={() => {
+                                                window.location.href = "/register"
+                                            }
+                                        } >
+                                        Register
+                                    </Button>  
+                                </ButtonGroup>
                             </Grid>
                         </Grid>                
                     </Toolbar>
