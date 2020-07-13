@@ -16,23 +16,16 @@
 
 .text-header-start {
     position: absolute;
-    top: 35%;
-    right: 38%;
-    left: 39%;
+    top: 32%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     background-color: black;
     color: white;
     padding-left: 20px;
     padding-right: 20px;
+    font-size: 1vw;
   }
-.text-description-start {
-    position: absolute;
-    top: 40%;
-    right: 34%;
-    left: 35%;
-    color: black;
-    padding-left: 20px;
-    padding-right: 20px;
-}
+
 .text-header-icons {
     background-color: black;
     color: white;
@@ -79,4 +72,18 @@
     background-color: gray ;
     color: rgb(49, 48, 48);
     text-align: center;
+}
+.text-description-start {
+    
+    position: absolute;
+    top: 36.3%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: black;
+    padding-left: 20px;
+    padding-right: 20px;
+    font-size: 1vw;
+}
+@media only screen and (max-width: 320px) {
+    body {font-size: 12px}
 }

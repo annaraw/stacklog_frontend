@@ -64,7 +64,7 @@ function LandingPage () {
                 <div className = 'text-header-start' >
                     <h2>WELCOME TO STACKLOG</h2>
                 </div>
-                <div className ="text-description-start">
+                <div className = 'text-description-start'>
                      <h2> Become a more organized individual</h2>
                 </div>
                 <div>

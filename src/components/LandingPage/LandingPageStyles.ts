@@ -23,15 +23,16 @@ export const LandingPageStyles = makeStyles ((theme) =>({
     buttonColor: {
         backgroundColor: '#6AFFA1',
         position: "absolute",
-        top: '45% ',
-        right: '10%',
-        left: '47.5%',
+        paddingTop: '0.2%',
+
+        top: '42% ',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
         "&:hover" : {
             background: '#212121',
           }
-
-
     },
+   
    
     
 }))
