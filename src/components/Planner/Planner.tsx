@@ -7,7 +7,7 @@ import { Calendar } from './Calendar/Calendar';
 import { sortTypes } from '../../util/constants';
 import { IBacklogItem, Column, Category, Priority } from '../../models/models';
 import BacklogItemService from '../../services/BacklogItemService';
-import AddBacklogItemForm from '../BacklogItemForm/AddBacklogItemForm';
+import AddBacklogItemForm from '../BacklogItemForm/BacklogItemForm';
 import { Button } from '@material-ui/core';
 
 const BoardEl = styled.div`

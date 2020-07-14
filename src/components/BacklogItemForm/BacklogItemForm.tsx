@@ -2,19 +2,26 @@ import React from 'react';
 import { useState, FunctionComponent } from 'react';
 import { TextField, Button, IconButton, Tooltip, Snackbar } from '@material-ui/core';
 import { Autocomplete, Alert } from '@material-ui/lab';
+import { createFilterOptions } from '@material-ui/lab/Autocomplete';
 import { Grid, Paper, Drawer, List, ListItem, Box } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import 'date-fns';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
-import { IBacklogItem, IBacklogItemRequest, Priority } from '../../models/models';
+import { IBacklogItem, IBacklogItemRequest, Priority, Project, Member } from '../../models/models';
 import UserService from '../../services/UserService';
 import TaskCreationFormStyles from './BacklogItemFormStyles';
 import DrawerForm from '../Form/DrawerForm';
 import BacklogItemService from '../../services/BacklogItemService';
 
+const filter = createFilterOptions<CategoryOption>();
 
-const AddBacklogItemForm: FunctionComponent<{
+interface CategoryOption {
+    inputValue?: string;
+    category: string;
+}
+
+interface BacklogItemFormProps {
     isOpen: boolean
     setIsOpen: (isOpen: boolean) => void
     formTitle: string
@@ -22,21 +29,26 @@ const AddBacklogItemForm: FunctionComponent<{
     setBacklogItems: (backlogItem: IBacklogItem[]) => void
     formType: string
     item?: IBacklogItem
-    isProjectTask?: boolean
-}> = props => {
+    project?: Project
+}
+
+const AddBacklogItemForm: FunctionComponent<BacklogItemFormProps> = props => {
     const { isOpen, setIsOpen, formTitle, items,
-        setBacklogItems, formType, item, isProjectTask } = props
+        setBacklogItems, formType, item, project } = props
 
     const classes = TaskCreationFormStyles()
 
     const [title, setTitle] = useState("")
-    const [category, setCategory] = useState("")
+    const [category, setCategory] = useState<CategoryOption | null>(null)
     const [dueDate, setDueDate] = useState(new Date())
     const [priority, setPriority] = useState<string>("medium")
     const [reminder, setReminder] = useState<number | undefined>(undefined)
     const [estimatedH, setEstimatedH] = useState<number>(1)
     const [estimatedMIN, setEstimatedMIN] = useState<number>(0)
     const [description, setDescription] = useState("")
+
+    //project stuff
+    const [assignee, setAssignee] = useState<Member | null>(null)
 
     const [error, setError] = useState(false)
     const [loading, setLoading] = useState(false)
@@ -45,26 +57,20 @@ const AddBacklogItemForm: FunctionComponent<{
 
     const dismissPanel = (() => setIsOpen(false));
 
-    const categories: string[] = [];
-
+    // get list of all categories
+    const categories: CategoryOption[] = [];
     items.map(item => {
-        if (item.category && !categories.includes(item.category)) {
-            categories.push(item.category)
+        if (item.category && categories.filter(entry => entry.category === item.category).length === 0) {
+            categories.push({ category: item.category })
         }
     })
-
-
 
     const submit = async (): Promise<void> => {
         if (!checkInput()) {
             setError(true)
             return
         }
-
-
-
         setLoading(true)
-
         try {
             if (formType === "Create") {
                 await sendItemToDataBase()
@@ -81,7 +87,7 @@ const AddBacklogItemForm: FunctionComponent<{
             //reset input
             setTitle("");
             setDescription("");
-            setCategory("")
+            setCategory(null)
             setPriority("medium")
             setDueDate(new Date())
             setReminder(undefined)
@@ -133,7 +139,7 @@ const AddBacklogItemForm: FunctionComponent<{
             author: UserService.getCurrentUser().id,
             assignee: UserService.getCurrentUser().id,
             title: title,
-            category: category,
+            category: category ? category.category : "",
             dueDate: dueDate,
             priority: priority,
             reminder: reminder,
@@ -215,23 +221,63 @@ const AddBacklogItemForm: FunctionComponent<{
                 />
 
                 <Autocomplete
+                    renderInput={(params) => <TextField {...params} label="Enter or choose a category" variant="outlined" />}
+                    fullWidth
                     id="category-combobox"
                     className={classes.textField}
-                    defaultValue={item?.category ? item.category : category}
-                    fullWidth
-                    options={categories}
-                    onChange={(event, value) => setCategory(value ? value : "")}
-                    //style = {styles}
-                    renderInput={(params) => <TextField {...params} label="Enter or choose a category" variant="outlined" />}
-                />
+                    value={category}
+                    onChange={(event, newValue) => {
+                        if (typeof newValue === 'string') {
+                            setCategory({
+                                category: newValue,
+                            });
+                        } else if (newValue && newValue.inputValue) {
+                            // Create a new value from the user input
+                            setCategory({
+                                category: newValue.inputValue,
+                            });
+                        } else {
+                            setCategory(newValue);
+                        }
+                    }}
+                    filterOptions={(options, params) => {
+                        const filtered = filter(options, params);
 
+                        // Suggest the creation of a new value
+                        if (params.inputValue !== '') {
+                            filtered.push({
+                                inputValue: params.inputValue,
+                                category: `Add "${params.inputValue}"`,
+                            });
+                        }
+                        return filtered;
+                    }}
+                    selectOnFocus
+                    clearOnBlur
+                    handleHomeEndKeys
+                    options={categories}
+                    getOptionLabel={(option) => {
+                        // Value selected with enter, right from the input
+                        if (typeof option === 'string') {
+                            return option;
+                        }
+                        // Add "xxx" option created dynamically
+                        if (option.inputValue) {
+                            return option.inputValue;
+                        }
+                        // Regular option
+                        return option.category;
+                    }}
+                    renderOption={(option) => option.category}
+                    freeSolo
+                />
 
                 <MuiPickersUtilsProvider utils={DateFnsUtils}>
                     <KeyboardDatePicker
                         className={classes.textField}
                         variant="inline"
                         inputVariant="outlined"
-                        label="With keyboard"
+                        label="Due Date"
                         format="dd/MM/yyyy"
                         value={dueDate}
                         defaultValue={item?.dueDate ? item.dueDate : dueDate}
@@ -269,9 +315,9 @@ const AddBacklogItemForm: FunctionComponent<{
                                     id='hours-box'
                                     placeholder="0"
                                     variant="outlined"
-                                    type="number"
                                     onChange={(event) => setEstimatedH(Number(event.target.value))}
                                     inputProps={{ style: { textAlign: "right" } }}
+                                    InputProps={{ inputProps: { min: 0 } }}
                                 />
 
                             </Grid>
@@ -291,6 +337,7 @@ const AddBacklogItemForm: FunctionComponent<{
                                     type="number"
                                     onChange={(event) => setEstimatedMIN(Number(event.target.value))}
                                     inputProps={{ style: { textAlign: "right" } }}
+                                    InputProps={{ inputProps: { min: 0 } }}
                                 />
                             </Grid>
                             <Grid item>
@@ -304,7 +351,7 @@ const AddBacklogItemForm: FunctionComponent<{
                     id="description-box"
                     className={classes.textField}
                     label="Description"
-                    placeholder="Enter an optional to-do description"
+                    placeholder="Enter a description..."
                     fullWidth
                     defaultValue={item?.description ? item.description : description}
                     multiline
@@ -312,6 +359,19 @@ const AddBacklogItemForm: FunctionComponent<{
                     onChange={(e) => setDescription(e.target.value)}
                     variant="outlined"
                 />
+
+                {project &&
+                    <div>
+                        <p><strong>Project Settings</strong></p>
+                        <Autocomplete
+                            id="assignee"
+                            options={project.team.map((option) => option.name)}
+                            renderInput={(params) => (
+                                <TextField {...params} label="Assignee" margin="normal" variant="outlined" />
+                            )}
+                        />
+                    </div>
+                }
             </DrawerForm>
             <Snackbar open={showFeedback} autoHideDuration={6000} onClose={handleClose}>
                 <Alert onClose={handleClose} severity={(error) ? "error" : "success"}>
