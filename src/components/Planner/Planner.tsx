@@ -7,7 +7,7 @@ import { Calendar } from './Calendar/Calendar';
 import { sortTypes } from '../../util/constants';
 import { IBacklogItem, Column, Category, Priority } from '../../models/models';
 import BacklogItemService from '../../services/BacklogItemService';
-import AddBacklogItemForm from '../BacklogItemForm/BacklogItemForm';
+import BacklogItemForm from '../BacklogItemForm/BacklogItemForm';
 import { Button } from '@material-ui/core';
 
 const BoardEl = styled.div`
@@ -413,7 +413,7 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 						variant="contained">
 						Create Task
                     </Button>
-					<AddBacklogItemForm
+					<BacklogItemForm
 						isOpen={this.state.formIsOpen}
 						setIsOpen={this.setFormIsOpen}
 						formTitle="Create Task"

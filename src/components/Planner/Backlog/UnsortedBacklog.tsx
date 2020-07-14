@@ -1,6 +1,6 @@
 
 import * as React from 'react';
-import { IBacklogItem, Column } from '../../../models/models';
+import { IBacklogItem, Column, Project } from '../../../models/models';
 import BacklogItem from './BacklogItem';
 import { Droppable } from 'react-beautiful-dnd'
 import styled from 'styled-components'
@@ -9,6 +9,8 @@ import { IconButton, Tooltip } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 
 import { unsortedBacklogStyles } from './UnsortedBacklogStyles';
+import BacklogItemForm from '../../BacklogItemForm/BacklogItemForm';
+import { FunctionComponent, useState } from 'react';
 
 interface BoardColumnProps {
   column: Column,
@@ -28,27 +30,41 @@ const BoardColumnContent = styled.div<BoardColumnContentStylesProps>`
   height: 100%;
   width: 100%;
 `
+interface BacklogItemFormProps {
+  title: string,
+  column: Column,
+  items: IBacklogItem[],
+  projectItems: IBacklogItem[],
+  project?: Project,
+  selfAssigned?: boolean,
+  setBacklogItems: (items: IBacklogItem[]) => void
+}
 
-export const UnsortedBacklog: React.FC<BoardColumnProps> = (props) => {
+export const UnsortedBacklog: FunctionComponent<BacklogItemFormProps> = props => {
+
+  const { title, column, items, project, selfAssigned, projectItems, setBacklogItems } = props
+
+  const [isOpen, setIsOpen] = useState<boolean>(false)
+
   const classes = unsortedBacklogStyles()
   return (
     <React.Fragment>
       <div className={classes.backlogContainer}>
         <Tooltip title="Add new Backlog Item" placement="left" arrow>
-          <IconButton className={classes.addButton} aria-label="add">
+          <IconButton className={classes.addButton} aria-label="add" onClick={() => setIsOpen(true)}>
             <AddIcon />
           </IconButton>
         </Tooltip>
-        <div className={classes.containerTitle}>{props.title}</div>
+        <div className={classes.containerTitle}>{title}</div>
         <Scrollbar className={classes.scrollbar}>
-          <Droppable droppableId={props.column.id}>
+          <Droppable droppableId={column.id}>
             {(provided, snapshot) => (
               <BoardColumnContent
                 {...provided.droppableProps}
                 ref={provided.innerRef}
                 isDraggingOver={snapshot.isDraggingOver}
               >
-                {props.items.map((backlogItem: IBacklogItem, index: number) =>
+                {items.map((backlogItem: IBacklogItem, index: number) =>
 
                   <BacklogItem
                     index={index}
@@ -67,8 +83,17 @@ export const UnsortedBacklog: React.FC<BoardColumnProps> = (props) => {
           </Droppable>
 
         </Scrollbar>
-
       </div>
+      <BacklogItemForm
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        formTitle={"Add Task"}
+        items={projectItems}
+        setBacklogItems={setBacklogItems}
+        formType={"Create"}
+        project={project}
+        selfAssigned={selfAssigned}
+      />
     </React.Fragment>
   );
 

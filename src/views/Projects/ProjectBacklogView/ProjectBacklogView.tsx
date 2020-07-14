@@ -118,6 +118,12 @@ class ProjectBacklogScreen extends Component<ProjectBacklogProps, ProjectBacklog
         this.setState({ formIsOpen: isOpen })
     }
 
+    setProjectBacklogItems = (items: IBacklogItem[]) => {
+        this.setState({
+            projectBacklogItems: items
+        })
+    }
+
     setColumns = (column: Column, columnEnd?: Column) => {
         let index = this.state.columns.findIndex(c => column.id === c.id)
         let newColumns = [...this.state.columns]
@@ -270,8 +276,25 @@ class ProjectBacklogScreen extends Component<ProjectBacklogProps, ProjectBacklog
                             </Button>
                             <DragDropContext onDragEnd={this.onDragEnd}>
                                 <div className={classes.container}>
-                                    <UnsortedBacklog key={projectColumn.id} column={projectColumn} items={projectItems} title={projectColumn.title} />
-                                    <UnsortedBacklog key={backlogColumn.id} column={backlogColumn} items={backlogItems} title={backlogColumn.title} />
+                                    <UnsortedBacklog
+                                        key={projectColumn.id}
+                                        column={projectColumn}
+                                        items={projectItems}
+                                        projectItems={this.state.projectBacklogItems}
+                                        title={projectColumn.title}
+                                        setBacklogItems={this.setProjectBacklogItems}
+                                        project={this.state.project ? this.state.project : undefined}
+                                    />
+                                    <UnsortedBacklog
+                                        key={backlogColumn.id}
+                                        column={backlogColumn}
+                                        items={backlogItems}
+                                        projectItems={this.state.projectBacklogItems}
+                                        title={backlogColumn.title}
+                                        setBacklogItems={this.setProjectBacklogItems}
+                                        project={this.state.project ? this.state.project : undefined}
+                                        selfAssigned={true}
+                                    />
                                 </div>
 
                             </DragDropContext>

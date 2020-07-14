@@ -3,8 +3,7 @@ import { useState, FunctionComponent } from 'react';
 import { TextField, Button, IconButton, Tooltip, Snackbar } from '@material-ui/core';
 import { Autocomplete, Alert } from '@material-ui/lab';
 import { createFilterOptions } from '@material-ui/lab/Autocomplete';
-import { Grid, Paper, Drawer, List, ListItem, Box } from '@material-ui/core';
-import CloseIcon from '@material-ui/icons/Close';
+import { Grid } from '@material-ui/core';
 import 'date-fns';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
@@ -21,6 +20,11 @@ interface CategoryOption {
     category: string;
 }
 
+interface AssigneeOption {
+    inputValue?: string;
+    id: string;
+}
+
 interface BacklogItemFormProps {
     isOpen: boolean
     setIsOpen: (isOpen: boolean) => void
@@ -30,11 +34,12 @@ interface BacklogItemFormProps {
     formType: string
     item?: IBacklogItem
     project?: Project
+    selfAssigned?: boolean
 }
 
-const AddBacklogItemForm: FunctionComponent<BacklogItemFormProps> = props => {
+const BacklogItemForm: FunctionComponent<BacklogItemFormProps> = props => {
     const { isOpen, setIsOpen, formTitle, items,
-        setBacklogItems, formType, item, project } = props
+        setBacklogItems, formType, item, project, selfAssigned } = props
 
     const classes = TaskCreationFormStyles()
 
@@ -48,7 +53,7 @@ const AddBacklogItemForm: FunctionComponent<BacklogItemFormProps> = props => {
     const [description, setDescription] = useState("")
 
     //project stuff
-    const [assignee, setAssignee] = useState<Member | null>(null)
+    const [assignee, setAssignee] = useState<string | null>(!project || selfAssigned ? UserService.getCurrentUser().id : null)
 
     const [error, setError] = useState(false)
     const [loading, setLoading] = useState(false)
@@ -58,12 +63,23 @@ const AddBacklogItemForm: FunctionComponent<BacklogItemFormProps> = props => {
     const dismissPanel = (() => setIsOpen(false));
 
     // get list of all categories
-    const categories: CategoryOption[] = [];
+    let categories: CategoryOption[] = [];
     items.map(item => {
         if (item.category && categories.filter(entry => entry.category === item.category).length === 0) {
             categories.push({ category: item.category })
         }
     })
+
+    let members: AssigneeOption[] = [];
+    if (project) {
+        project.team.map(member => {
+            members.push({
+                inputValue: member.name + " " + member.lastName,
+                id: member.id
+            })
+        })
+    }
+
 
     const submit = async (): Promise<void> => {
         if (!checkInput()) {
@@ -96,6 +112,7 @@ const AddBacklogItemForm: FunctionComponent<BacklogItemFormProps> = props => {
             setError(false)
             setIsOpen(false);
         } catch (err) {
+            setError(true)
             setLoading(false)
             setFeedbackMessage(err)
             setShowFeedback(true)
@@ -137,7 +154,7 @@ const AddBacklogItemForm: FunctionComponent<BacklogItemFormProps> = props => {
     const sendItemToDataBase = async () => {
         const newBacklogItem: IBacklogItemRequest = {
             author: UserService.getCurrentUser().id,
-            assignee: UserService.getCurrentUser().id,
+            assignee: assignee ? assignee : "",
             title: title,
             category: category ? category.category : "",
             dueDate: dueDate,
@@ -145,14 +162,45 @@ const AddBacklogItemForm: FunctionComponent<BacklogItemFormProps> = props => {
             reminder: reminder,
             estimation: (estimatedH * 60 + estimatedMIN),
             description: description,
+            team: project ? project.id : "",
             completed: false,
         }
         let response = await BacklogItemService.addBacklogItem(newBacklogItem)
+
+        let newTask: IBacklogItem = {
+            //@ts-ignore
+            id: response.item.id,
+            //@ts-ignore
+            author: response.item.author,
+            //@ts-ignore
+            assignee: response.item.assignee,
+            //@ts-ignore
+            title: response.item.title,
+            //@ts-ignore
+            description: response.item.description,
+            //@ts-ignore
+            priority: response.item.priority,
+            //@ts-ignore
+            reminder: response.item.reminder,
+            //@ts-ignore
+            estimation: response.item.estimation,
+            //@ts-ignore
+            completed: response.item.completed,
+            //@ts-ignore
+            startDate: response.item.startDate ? new Date(response.item.startDate) : null,
+            //@ts-ignore
+            dueDate: response.item.dueDate ? new Date(response.item.dueDate) : null,
+            //@ts-ignore
+            category: response.item.category,
+            //@ts-ignore
+            team: response.item.team
+        }
+
+        debugger
         //@ts-ignore
         setFeedbackMessage(response.message)
-        console.log(response)
         //@ts-ignore
-        setBacklogItems([...items, response.item])
+        setBacklogItems([...items, newTask])
     }
 
     const checkInput = (): boolean => {
@@ -365,7 +413,33 @@ const AddBacklogItemForm: FunctionComponent<BacklogItemFormProps> = props => {
                         <p><strong>Project Settings</strong></p>
                         <Autocomplete
                             id="assignee"
-                            options={project.team.map((option) => option.name)}
+                            disabled={selfAssigned}
+                            defaultValue={selfAssigned
+                                ?
+                                project.team.filter(member => member.id === UserService.getCurrentUser().id)
+                                    .map(member => {
+                                        return {
+                                            inputValue: member.name + " " + member.lastName,
+                                            id: UserService.getCurrentUser().id
+                                        }
+                                    })[0]
+                                : null
+                            }
+                            options={members}
+                            getOptionLabel={(option) => {
+                                // Value selected with enter, right from the input
+                                if (typeof option === 'string') {
+                                    return option;
+                                }
+                                // Add "xxx" option created dynamically
+                                if (option.inputValue) {
+                                    return option.inputValue;
+                                }
+                                // Regular option
+                                return option.id;
+                            }}
+                            renderOption={(option) => option.inputValue}
+                            onChange={(event, value) => setAssignee(value ? value.id : "")}
                             renderInput={(params) => (
                                 <TextField {...params} label="Assignee" margin="normal" variant="outlined" />
                             )}
@@ -382,4 +456,4 @@ const AddBacklogItemForm: FunctionComponent<BacklogItemFormProps> = props => {
     );
 }
 
-export default AddBacklogItemForm;
+export default BacklogItemForm;
