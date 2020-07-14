@@ -223,17 +223,6 @@ const AddBacklogItemForm: FunctionComponent<BacklogItemFormProps> = props => {
                     variant="outlined"
                 />
 
-                {/* <Autocomplete
-                    id="category-combobox"
-                    className={classes.textField}
-                    defaultValue={item?.category ? item.category : category}
-                    fullWidth
-                    options={categories}
-                    onChange={(event, value) => setCategory(value ? value : "")}
-                    //style = {styles}
-                    renderInput={(params) => <TextField {...params} label="Enter or choose a category" variant="outlined" />}
-                /> */}
-
                 <Autocomplete
                     renderInput={(params) => <TextField {...params} label="Enter or choose a category" variant="outlined" />}
                     fullWidth
