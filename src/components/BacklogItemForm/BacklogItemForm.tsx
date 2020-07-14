@@ -65,9 +65,6 @@ const AddBacklogItemForm: FunctionComponent<BacklogItemFormProps> = props => {
         }
     })
 
-    // get list of all project members
-    const memberList: Member[] = props.project ? props.project.team : [];
-
     const submit = async (): Promise<void> => {
         if (!checkInput()) {
             setError(true)
@@ -368,7 +365,7 @@ const AddBacklogItemForm: FunctionComponent<BacklogItemFormProps> = props => {
                         <p><strong>Project Settings</strong></p>
                         <Autocomplete
                             id="assignee"
-                            options={memberList.map((option) => option.name)}
+                            options={project.team.map((option) => option.name)}
                             renderInput={(params) => (
                                 <TextField {...params} label="Assignee" margin="normal" variant="outlined" />
                             )}
