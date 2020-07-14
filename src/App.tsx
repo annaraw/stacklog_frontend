@@ -7,6 +7,7 @@ import LoginScreen from './views/Login/LoginView';
 import HomeScreen from './views/HomeScreenView';
 import NotFound from './views/NotFoundView';
 import ProjectScreen from './views/Projects/ProjectView/ProjectsView';
+import LandingPage from './components/LandingPage/LandingPage'
 import Planner from './components/Planner/Planner';
 import RegisterScreen from './views/Register/RegisterView';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core';
@@ -28,12 +29,13 @@ export default class App extends React.Component<AppProps, AppState> {
     this.state = {
       title: 'Stacklog',
       routes: [
-        { component: HomeScreen, path: '/', exact: true },
+        { component: HomeScreen, path: '/home', exact: true },
         { component: LoginScreen, path: '/login' },
         { component: ProjectScreen, path: '/projects' },
         { component: Planner, path: '/planner' },
         { component: RegisterScreen, path: '/register' },
         { component: ProjectBacklogView, path: '/project'},
+        { component: LandingPage, path: '/'},
         //route if view is not found
         { component: NotFound }
       ]

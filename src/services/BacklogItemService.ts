@@ -1,6 +1,6 @@
 import HttpService from "./HttpService";
 import { backendserverURL } from "../util/constants";
-import { IBacklogItem, IBacklogItemUpdateProps } from "../models/models";
+import { IBacklogItemUpdateProps, IBacklogItemRequest } from "../models/models";
 
 export default class BacklogItemService {
 
@@ -48,7 +48,7 @@ export default class BacklogItemService {
         });
     }
 
-    static addBacklogItem(item: IBacklogItem) {
+    static addBacklogItem(item: IBacklogItemRequest) {
         return new Promise((resolve, reject) => {
             HttpService.post(`${BacklogItemService.baseURL()}`, 
             item,
