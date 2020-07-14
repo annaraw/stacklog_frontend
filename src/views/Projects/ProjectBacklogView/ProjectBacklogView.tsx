@@ -119,8 +119,23 @@ class ProjectBacklogScreen extends Component<ProjectBacklogProps, ProjectBacklog
     }
 
     setProjectBacklogItems = (items: IBacklogItem[]) => {
+        let updatedColumns: Column[] = [{
+            id: 'backlog',
+            title: 'Backlog',
+            itemsIds: items
+                .filter((item) => item.assignee === UserService.getCurrentUser().id)
+                .map(item => item.id)
+        }, {
+            id: 'projectBacklog',
+            //@ts-ignore
+            title: this.state.project.title,
+            itemsIds: items
+                .filter((item) => item.assignee !== UserService.getCurrentUser().id)
+                .map(item => item.id)
+        }]
         this.setState({
-            projectBacklogItems: items
+            projectBacklogItems: items,
+            columns: updatedColumns,
         })
     }
 
