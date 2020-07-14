@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { Component } from 'react';
 import { DragDropContext } from 'react-beautiful-dnd';
-import { withStyles, Backdrop, CircularProgress, Snackbar } from '@material-ui/core';
+import { withStyles, Backdrop, CircularProgress, Snackbar, Button } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 import { Project, Member, IBacklogItem, Column } from '../../../models/models'
 import ProjectService from '../../../services/ProjectService';
@@ -10,7 +12,6 @@ import UserService from '../../../services/UserService';
 import { projectBacklogViewStyles } from './ProjectBacklogViewStyles';
 import BacklogItemService from '../../../services/BacklogItemService';
 import { UnsortedBacklog } from '../../../components/Planner/Backlog/UnsortedBacklog';
-import { Alert } from '@material-ui/lab';
 
 interface ProjectBacklogState {
     project: Project | null,
@@ -260,6 +261,13 @@ class ProjectBacklogScreen extends Component<ProjectBacklogProps, ProjectBacklog
                         </Backdrop>
                         :
                         <>
+                            <Button
+                                className={classes.backButton}
+                                startIcon={<ArrowBackIcon />}
+                                onClick={() => window.location.href = "/projects"}
+                            >
+                                Projects
+                            </Button>
                             <DragDropContext onDragEnd={this.onDragEnd}>
                                 <div className={classes.container}>
                                     <UnsortedBacklog key={projectColumn.id} column={projectColumn} items={projectItems} title={projectColumn.title} />

@@ -8,4 +8,7 @@ export const projectBacklogViewStyles = () => ({
         gridGap: "10px",
         gridAutoRows: "minmax(auto, auto)",
     },
+    backButton: {
+        margin: "20px"
+    }
 });
