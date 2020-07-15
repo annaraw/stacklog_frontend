@@ -53,7 +53,8 @@ export interface IBacklogItem {
     dueDate?: Date,
     category: string,
     team?: string
-    index?: number,
+    index: number,
+    hour: number
 }
 
 export interface IBacklogItemUpdateProps {
@@ -67,7 +68,8 @@ export interface IBacklogItemUpdateProps {
     startDate?: Date | null,
     dueDate?: Date,
     category?: string,
-    team?: string
+    team?: string,
+    index?: number
 }
 
 export interface IBacklogItemRequest {
@@ -85,7 +87,7 @@ export interface IBacklogItemRequest {
     team?: string
 }
 
-export interface CalendarItem {
+export interface ICalendarItem {
     /* ICS event format:
     *** TUM EVENT ***
     BEGIN:VEVENT
@@ -163,11 +165,11 @@ export interface CalendarItem {
     location?: string
 }
 
-export interface Calendar {
+export interface ICalendar {
     name: string,
     owner: string,
     url?: string,
-    items: CalendarItem[]
+    items: ICalendarItem[]
 }
 
 export enum Priority {

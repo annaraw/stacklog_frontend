@@ -33,8 +33,8 @@ export const Week: React.FC<BoardColumnProps> = (props) => {
   return (
 
     <BoardEl>
-      {props.columns.map((c: any, index: number) => <CalendarDay key={c[1].id} column={c} items={props.items[index]} />
-      )}
+      {/*props.columns.map((c: any, index: number) => <CalendarDay key={c[1].id} column={c} items={props.items[index]} />
+      )*/}
     </BoardEl>
 
 

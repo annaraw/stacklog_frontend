@@ -1,13 +1,13 @@
 import React from 'react';
 import { useState, FunctionComponent } from 'react';
-import { TextField, Button, IconButton, Tooltip, Snackbar } from '@material-ui/core';
+import { TextField, Snackbar } from '@material-ui/core';
 import { Autocomplete, Alert } from '@material-ui/lab';
 import { createFilterOptions } from '@material-ui/lab/Autocomplete';
 import { Grid } from '@material-ui/core';
 import 'date-fns';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
-import { IBacklogItem, IBacklogItemRequest, Priority, Project, Member } from '../../models/models';
+import { IBacklogItem, IBacklogItemRequest, Priority, Project } from '../../models/models';
 import UserService from '../../services/UserService';
 import TaskCreationFormStyles from './BacklogItemFormStyles';
 import DrawerForm from '../Form/DrawerForm';
@@ -64,7 +64,7 @@ const BacklogItemForm: FunctionComponent<BacklogItemFormProps> = props => {
 
     // get list of all categories
     let categories: CategoryOption[] = [];
-    items.map(item => {
+    items.forEach(item => {
         if (item.category && categories.filter(entry => entry.category === item.category).length === 0) {
             categories.push({ category: item.category })
         }
@@ -72,7 +72,7 @@ const BacklogItemForm: FunctionComponent<BacklogItemFormProps> = props => {
 
     let members: AssigneeOption[] = [];
     if (project) {
-        project.team.map(member => {
+        project.team.forEach(member => {
             members.push({
                 inputValue: member.name + " " + member.lastName,
                 id: member.id
