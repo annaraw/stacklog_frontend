@@ -99,12 +99,26 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 					})
 				}
 
+				//initialize categories
+				let temp: string[] = []
+				let categories: Category[] = []
+				for (var i = 0; i < itemsFromBackend.length; i++) {
+					if (temp.includes((itemsFromBackend[i].category))) continue;
+					temp.push(itemsFromBackend[i].category);
+					var c: Category = {
+						key: itemsFromBackend[i].category ? itemsFromBackend[i].category : "No Category",
+						text: itemsFromBackend[i].category ? itemsFromBackend[i].category : "No Category",
+						color: itemsFromBackend[i].category ? "#c0c0c0" : "#ffffff"
+					}
+					categories.push(c)
+				}
 
 				this.setState({
 					items: itemsFromBackend,
 					displayedItems: itemsFromBackend.filter((item) => !item.startDate),
 					columns: this.setInitialColumns(itemsFromBackend),
 					loading: false,
+					categories: categories
 				})
 			} else {
 				this.setState({
