@@ -56,6 +56,20 @@ export interface IBacklogItem {
     index?: number,
 }
 
+export interface IBacklogItemUpdateProps {
+    assignee?: string,
+    title?: string,
+    description?: string,
+    priority?: Priority,
+    reminder?: number,
+    estimation?: number,
+    completed?: boolean,
+    startDate?: Date | null,
+    dueDate?: Date,
+    category?: string,
+    team?: string
+}
+
 export interface IBacklogItemRequest {
     author: string,
     assignee: string,
@@ -138,7 +152,7 @@ export interface CalendarItem {
     END:VEVENT
     END:VCALENDAR
     */
-    
+
     id: string,
     uid?: string,
     summary: string,
@@ -169,7 +183,7 @@ export interface Category {
 }
 
 export interface Column {
-	id: string,
-	title: string,
-	itemsIds: string[]
+    id: string,
+    title: string,
+    itemsIds: string[]
 }

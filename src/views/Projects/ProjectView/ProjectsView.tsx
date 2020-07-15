@@ -1,15 +1,15 @@
 import * as React from 'react';
 import { Component } from 'react';
 
-import ProjectCard from '../components/Projects/ProjectCard/ProjectCard';
-import { Project, Member } from '../models/models'
-import { projectsDummy } from '../data/dummyData'
-import ProjectService from '../services/ProjectService';
-import MenuBar from '../components/MenuBar';
+import ProjectCard from '../../../components/Projects/ProjectCard/ProjectCard';
+import { Project, Member } from '../../../models/models'
+import { projectsDummy } from '../../../data/dummyData'
+import ProjectService from '../../../services/ProjectService';
+import MenuBar from '../../../components/MenuBar';
 import { projectViewStyles } from './ProjectsViewStyles';
 import { withStyles, Backdrop, CircularProgress, Button } from '@material-ui/core';
-import UserService from '../services/UserService';
-import ProjectForm from '../components/Projects/ProjectFrom/ProjectForm';
+import UserService from '../../../services/UserService';
+import ProjectForm from '../../../components/Projects/ProjectFrom/ProjectForm';
 
 interface ProjectState {
     projects: Project[];
