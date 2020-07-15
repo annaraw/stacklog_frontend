@@ -3,7 +3,6 @@ import { FunctionComponent } from 'react';
 import { Draggable } from 'react-beautiful-dnd'
 import styled from 'styled-components'
 
-import './BacklogItem.css'
 import { backlogItemStyles } from './BacklogItemStyles';
 
 type BoardItemStylesProps = {
