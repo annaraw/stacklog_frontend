@@ -9,24 +9,8 @@ import BacklogItemService from '../../services/BacklogItemService';
 import BacklogItemForm from '../BacklogItemForm/BacklogItemForm';
 import { Button } from '@material-ui/core';
 import CalendarImportService from '../../services/CalendarImportService'
-import MenuBar from './../MenuBar';
 import { Backdrop, CircularProgress, Snackbar } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
-
-
-
-const BoardEl = styled.div`
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-`
-
-type BoardColumnProps = {
-	setSortType: (sortType: string) => void
-	setSortIsUp: (sortIsUp: boolean) => void
-	setSearchInput: (searchInput: string) => void
-	setSelectedFilters: (selectedFilters: string[]) => void
-}
 
 interface BacklogState {
 	calendars: ICalendar[],
@@ -44,7 +28,7 @@ interface BacklogState {
 	formIsOpen: boolean,
 }
 
-export class Planner extends React.Component<BoardColumnProps, BacklogState> {
+export class Planner extends React.Component<{}, BacklogState> {
 
 	constructor(props: any) {
 		super(props)
@@ -518,7 +502,6 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 		if (this.state.loading) {
 			return (
 				<React.Fragment >
-					<MenuBar title="Loading" />
 					<Backdrop open={true}>
 						<CircularProgress color="inherit" />
 					</Backdrop>
@@ -527,42 +510,48 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 		} else if (this.state.loadingError) {
 			return (
 				<React.Fragment >
-					<MenuBar title="Error" />
 					<p>Error: Server is not responding</p>
 				</React.Fragment >
 			)
 		} else {
 			return (
 				<React.Fragment>
-					<BoardEl>
-						<DragDropContext onDragEnd={this.onDragEnd}>
+
+					<DragDropContext onDragEnd={this.onDragEnd} >
+						<div style={{
+							display: "grid",
+							gridTemplateColumns: "1fr 3fr"
+						}}>
 							{this.state.columns.map((col) => col.id.split("-")[0])
 								.filter((item, i, ar) => ar.indexOf(item) === i)
 								.filter((col) => col === 'backlog')
-								.map((col) => <BacklogComponent
-									key={col}
-									column={this.getDayColumns(col)[0]}
-									items={this.state.displayedItems}
-									sortType={this.state.sortType}
-									sortIsUp={this.state.sortIsUp}
-									searchInput={this.state.searchInput}
-									selectedFilters={this.state.selectedFilters}
-									setSortType={this.setSortType}
-									setSortIsUp={this.setSortIsUp}
-									setSearchInput={this.setSearchInput}
-									setSelectedFilters={this.setSelectedFilters}
-									categories={this.state.categories}
-								/>)
+								.map((col) =>
+									<BacklogComponent
+										key={col}
+										column={this.getDayColumns(col)[0]}
+										items={this.state.displayedItems}
+										sortType={this.state.sortType}
+										sortIsUp={this.state.sortIsUp}
+										searchInput={this.state.searchInput}
+										selectedFilters={this.state.selectedFilters}
+										setSortType={this.setSortType}
+										setSortIsUp={this.setSortIsUp}
+										setSearchInput={this.setSearchInput}
+										setSelectedFilters={this.setSelectedFilters}
+										categories={this.state.categories}
+									/>)
 							}
-							{/*<Schedule key={scheduleColumn.id} column={scheduleColumn} items={scheduleItems} />*/}
-							<Calendar calendars={this.state.calendars} key='calendar' columns={this.state.columns} items={this.state.items} />
-						</DragDropContext>
-						<Snackbar open={this.state.error} autoHideDuration={6000} onClose={this.handleClose}>
-							<Alert onClose={this.handleClose} severity="error">
-								Faild to update item
+							<div style={{ position: "relative" }}>
+								<Calendar calendars={this.state.calendars} key='calendar' columns={this.state.columns} items={this.state.items} />
+							</div>
+						</div>
+					</DragDropContext>
+					<Snackbar open={this.state.error} autoHideDuration={6000} onClose={this.handleClose}>
+						<Alert onClose={this.handleClose} severity="error">
+							Faild to update item
                                 </Alert>
-						</Snackbar>
-					</BoardEl>
+					</Snackbar>
+
 					<Button
 						//className={classes.createProjectBtn}
 						onClick={() => this.setFormIsOpen(true)}

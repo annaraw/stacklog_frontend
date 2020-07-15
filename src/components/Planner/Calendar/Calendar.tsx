@@ -2,6 +2,9 @@ import * as React from 'react';
 import { IBacklogItem, Column, ICalendar, ICalendarItem } from '../../../models/models'
 import styled from 'styled-components'
 import { CalendarDay } from './CalendarDay';
+import { calendarStyles } from './CalendarStyles';
+import Scrollbar from 'react-scrollbars-custom';
+import AddCalendarForm from '../../CalendarForm/AddCalendarForm';
 
 interface BoardColumnProps {
   columns: Column[],
@@ -9,13 +12,9 @@ interface BoardColumnProps {
   calendars: ICalendar[]
 }
 
-const BoardEl = styled.div`
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-`
-
 export const Calendar: React.FC<BoardColumnProps> = (props) => {
+
+  const classes = calendarStyles();
 
   function getDayColumns(day: string) {
     return props.columns.filter((col) => col.id.split("-")[0] === day)
@@ -36,17 +35,51 @@ export const Calendar: React.FC<BoardColumnProps> = (props) => {
   }
 
   return (
-    <div>
+    <div className={classes.calendars}>
+      <div className={classes.calendar}>
+        <div className={classes.menubar}>
+          <div className={classes.calendarTitle}>Today</div>
+        </div>
+        <div className={classes.calendarContent}>
+          <Scrollbar className={classes.schedule}
+            style={{
+              width: "400px",
+            }}>
+            {
+              props.columns.map((col) => col.id.split("-")[0])
+                .filter((item, i, ar) => ar.indexOf(item) === i)
+                .filter((col) => col !== 'backlog' && col === new Date().toDateString())
+                .map((col) => <CalendarDay key={col} columns={getDayColumns(col)} day={col} items={props.items} calEvents={getEventsOfDay(col)} />)
+            }
+          </Scrollbar>
+        </div>
+      </div>
+      <div className={classes.calendar}>
+        <div className={classes.menubar}>
+          <div className={classes.calendarTitle}>Calendar</div>
+          <div className={classes.importButton}>
+            <AddCalendarForm />
+          </div>
+        </div>
+        <div className={classes.calendarContent}>
+          <Scrollbar className={classes.schedule}
+            style={{
+              margin: "0 20px",
+            }}>
+            <div className={classes.weekdays}>
 
-      <BoardEl>
-        {/*new Date(c.id) > new Date()*/
-          props.columns.map((col) => col.id.split("-")[0])
-            .filter((item, i, ar) => ar.indexOf(item) === i)
-            .filter((col) => col !== 'backlog')
-            .map((col) => <CalendarDay key={col} columns={getDayColumns(col)} day={col} items={props.items} calEvents={getEventsOfDay(col)} />)
 
-        }
-      </BoardEl>
-    </div>
+              {
+                props.columns.map((col) => col.id.split("-")[0])
+                  .filter((item, i, ar) => ar.indexOf(item) === i)
+                  .filter((col) => col !== 'backlog' && col !== new Date().toDateString())
+                  .map((col) => <CalendarDay key={col} columns={getDayColumns(col)} day={col} items={props.items} calEvents={getEventsOfDay(col)} />)
+              }
+
+            </div>
+          </Scrollbar >
+        </div>
+      </div>
+    </div >
   );
 };

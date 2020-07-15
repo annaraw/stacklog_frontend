@@ -2,9 +2,7 @@ import { makeStyles } from "@material-ui/core";
 
 export const backlogComponentStyles = makeStyles((theme) => ({
     backlogContainer: {
-        width: "80%",
         height: "auto",
-        margin: "20px auto",
         backgroundColor: "white",
         overflow: "hidden",
         padding: "20px",

@@ -103,7 +103,7 @@ export const BacklogComponent : FunctionComponent<BoardColumnProps> = props => {
             onClear={async (_) => { setSearchInput("") }}
           />
         </div>
-        <Scrollbar style={{ width: "100%", float: "left", height: "500px" }}>
+        <Scrollbar style={{ width: "100%", float: "left", height: "60vh" }}>
           <Droppable droppableId={column.id}>
             {(provided, snapshot) => (
               <BoardColumnContent

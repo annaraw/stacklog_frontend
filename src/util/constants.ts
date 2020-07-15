@@ -1,6 +1,8 @@
 export const backendserverURL = "https://stacklogservices.herokuapp.com"
 //export const backendserverURL = "http://localhost:8081"
 
+export const hourHeight = "70px";
+
 export const sortTypes = {
     alphabetical: "Alphabetical",
     priority: "Priority",

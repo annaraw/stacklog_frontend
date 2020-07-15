@@ -25,7 +25,6 @@ const BoardItemEl = styled.div<BoardItemStylesProps>`
   text-overflow: ellipsis;
   overflow: hidden;
   border-radius: 1px;
-  position:absolute;
   z-index: 0;
   transition: background-color .25s ease-out; 
 `
