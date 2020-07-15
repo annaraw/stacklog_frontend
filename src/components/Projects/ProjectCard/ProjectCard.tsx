@@ -1,18 +1,17 @@
 import * as React from 'react';
-import {
-    IPersonaSharedProps, Persona, PersonaSize
-} from 'office-ui-fabric-react';
-
-import { Project, Member } from '../../../models/models';
 import { FunctionComponent, useState } from 'react';
-import { Card, CardHeader, IconButton, CardContent, Typography, Menu, MenuItem, ListItemText, Snackbar } from '@material-ui/core';
+import { Card, CardHeader, IconButton, CardContent, Typography, Menu, MenuItem, ListItemText, Snackbar, Button, CardActions } from '@material-ui/core';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
+import { Alert } from '@material-ui/lab';
+
 import { projectCardStyles } from './ProjectCardStyles';
 import ProjectService from '../../../services/ProjectService';
-import { Alert } from '@material-ui/lab';
 import ProjectForm from '../ProjectFrom/ProjectForm';
+import DialogForm from '../../Form/Dialog';
+import { PersonaSmall } from '../PersonaCard/PersonaSmall';
+import { Project, Member } from '../../../models/models';
 
 const ProjectCard: FunctionComponent<{
     project: Project,
@@ -25,17 +24,8 @@ const ProjectCard: FunctionComponent<{
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
     const [deleteError, setdeleteError] = useState<boolean>(false)
     const [isOpen, setIsOpen] = useState<boolean>(false)
+    const [showDeleteDialog, setShowDeleteDialog] = useState<boolean>(false)
 
-    const personas: IPersonaSharedProps[] = project.team.map(member => {
-        return (
-            {
-                imageInitials: member.name[0] + member.lastName[0],
-                text: member.name + " " + member.lastName,
-                secondaryText: member.role,
-                tertiaryText: member.email
-            }
-        )
-    })
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
     };
@@ -73,7 +63,7 @@ const ProjectCard: FunctionComponent<{
                                 <EditIcon fontSize="small" />
                                 <ListItemText primary="Edit" style={{ paddingLeft: "10px" }} />
                             </MenuItem>
-                            <MenuItem onClick={handleDelete}>
+                            <MenuItem onClick={() => setShowDeleteDialog(true)}>
                                 <DeleteIcon fontSize="small" />
                                 <ListItemText primary="Delete" style={{ paddingLeft: "10px" }} />
                             </MenuItem>
@@ -82,24 +72,14 @@ const ProjectCard: FunctionComponent<{
                 }
                 title={project.title}
             />
-            <CardContent>
+            <CardContent className={classes.cardContent}>
                 <Typography variant="body2" color="textSecondary" component="div">
                     {(project.team.length !== 0) ?
                         <div className={`${classes.cardInfo}`}>
                             <p><b>Team</b></p>
                             <div className={classes.personas}>
-                                {personas.map(persona => {
-                                    return (
-                                        <div className={classes.singlePersona} key={persona.text}>
-                                            <Persona
-                                                {...persona}
-                                                size={PersonaSize.size32}
-                                                hidePersonaDetails={true}
-                                                imageAlt={persona.text}
-                                                key={persona.text}
-                                            />
-                                        </div>
-                                    )
+                                {project.team.map(member => {
+                                    return <PersonaSmall member={member} />
                                 })}
                             </div>
                         </div>
@@ -129,6 +109,15 @@ const ProjectCard: FunctionComponent<{
                     }
                 </Typography>
             </CardContent>
+            <CardActions className={classes.actions}>
+                <Button
+                    size="small"
+                    color="secondary"
+                    onClick={() => window.location.href = "/project?projectID=" + project.id}
+                >
+                    Show Backlog
+                </Button>
+            </CardActions>
             <Snackbar open={deleteError} autoHideDuration={6000} onClose={handleClose}>
                 <Alert onClose={handleClose} severity="error">
                     Could not delete Project
@@ -137,13 +126,22 @@ const ProjectCard: FunctionComponent<{
             <ProjectForm
                 isOpen={isOpen}
                 setIsOpen={setIsOpen}
-                formTitle={`Edit Project "${project.title}"`}
+                formTitle={`Edit Project '${project.title}'`}
                 projects={projects}
                 setProjects={setProjects}
                 collegues={collegues}
                 project={project}
                 formType={"Update"}
             />
+            <DialogForm
+                isOpen={showDeleteDialog}
+                formTitle={`Delete '${project.title}'`}
+                formType={"Delete"}
+                onSubmit={handleDelete}
+                dismissPanel={() => setShowDeleteDialog(false)}
+            >
+                Are you sure you want to delete the project {<b>{project.title}</b>}?
+            </DialogForm>
         </Card >
     );
 };

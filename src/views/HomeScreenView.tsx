@@ -11,8 +11,8 @@ function HomeScreen(props: HomeScreenProps) {
 
     return (
         <React.Fragment>
-            <MenuBar title="Home" disableButton = {false}/>
-            <div style={{padding: "20px"}}><AddCalendarForm /></div>
+            <MenuBar title="Home" />
+            <div style={{ padding: "20px" }}><AddCalendarForm /></div>
             {(UserService.isAuthenticated()) ?
                 <p>Logged in</p> : <p>Logged out</p>
             }

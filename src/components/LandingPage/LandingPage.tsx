@@ -9,6 +9,7 @@ import SingleWorker from './Images/SingleWorker.png';
 import TeamWorkers from './Images/TeamWorkers.png';
 import './LandingPage.css'
 import Link from '@material-ui/core/Link';
+import MenuBar from '../MenuBar/MenuBar';
 
 
  
@@ -19,38 +20,7 @@ function LandingPage () {
     const classes = LandingPageStyles();
     return (
         <React.Fragment >
-              
-                <AppBar position="fixed" >
-                    <Toolbar >
-                        <Grid 
-                            justify="space-between"
-                            alignItems = "center"
-                            container
-                        >
-                            <Grid item>
-                                <IconButton edge="start"  color="inherit" aria-label="menu" size= 'medium'
-                               onClick ={ () => { window.location.href = "/"}}>
-                                    <img src={Logo} className = 'homeLogo' />
-                                </IconButton>
-                            </Grid>
-
-                            <Grid item>                    
-                                <Button
-                                    variant="outlined"
-                                    color="inherit"
-                                        onClick={() => {
-                                            window.location.href = "/login"
-                                        }
-                                    }
-                                >  Login
-                                </Button>  
-
-                            </Grid>
-                        </Grid>                
-                    </Toolbar>
-                </AppBar>
-
-            
+            <MenuBar title="LandingPage" disableButton={true}/>
 
             <div className = 'container'>
                 <img src = {LandingPagePic} alt="" className ='landingPagePic'/>

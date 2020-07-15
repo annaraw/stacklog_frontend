@@ -1,15 +1,14 @@
 import * as React from 'react';
 import { Component } from 'react';
 
-import ProjectCard from '../components/Projects/ProjectCard/ProjectCard';
-import { Project, Member } from '../models/models'
-import { projectsDummy } from '../data/dummyData'
-import ProjectService from '../services/ProjectService';
-import MenuBar from '../components/MenuBar/MenuBar';
+import ProjectCard from '../../../components/Projects/ProjectCard/ProjectCard';
+import { Project, Member } from '../../../models/models'
+import ProjectService from '../../../services/ProjectService';
+import MenuBar from '../../../components/MenuBar/MenuBar';
 import { projectViewStyles } from './ProjectsViewStyles';
 import { withStyles, Backdrop, CircularProgress, Button } from '@material-ui/core';
-import UserService from '../services/UserService';
-import ProjectForm from '../components/Projects/ProjectFrom/ProjectForm';
+import UserService from '../../../services/UserService';
+import ProjectForm from '../../../components/Projects/ProjectFrom/ProjectForm';
 
 interface ProjectState {
     projects: Project[];
@@ -23,7 +22,7 @@ class ProjectScreen extends Component<{}, ProjectState> {
     constructor(props: any) {
         super(props)
         this.state = {
-            projects: projectsDummy,
+            projects: [],
             collegues: [],
             loading: false,
             formIsOpen: false
@@ -74,7 +73,7 @@ class ProjectScreen extends Component<{}, ProjectState> {
 
         return (
             <React.Fragment>
-                <MenuBar title="Projects" disableButton = {false}/>
+                <MenuBar title="Projects"/>
                 {this.state.loading ?
                     <Backdrop className={classes.backdrop} open={true}>
                         <CircularProgress color="inherit" />

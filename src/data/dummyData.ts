@@ -126,6 +126,7 @@ export const backlogDummy: IBacklogItem[] = [
         category: "FBL",
         priority: 1,
         index:0,
+        hour: 0,
     },
     {
         id: 'item-2',
@@ -141,6 +142,7 @@ export const backlogDummy: IBacklogItem[] = [
         category: "SEBA",
         priority: 2,
         index:1,
+        hour: 0,
     },
     {
         id: 'item-3',
@@ -156,6 +158,7 @@ export const backlogDummy: IBacklogItem[] = [
         category: "DB",
         priority: 3,
         index:2,
+        hour: 0,
     },
     {
         id: 'item-4',
@@ -171,6 +174,7 @@ export const backlogDummy: IBacklogItem[] = [
         category: "DB",
         priority: 1,
         index:3,
+        hour: 0,
     },
     {
         id: 'item-5',
@@ -186,6 +190,7 @@ export const backlogDummy: IBacklogItem[] = [
         category: "FBL",
         priority: 2,
         index:4,
+        hour: 0,
     },
     {
         id: 'item-6',
@@ -201,6 +206,7 @@ export const backlogDummy: IBacklogItem[] = [
         category: "SEBA",
         priority: 3,
         index:5,
+        hour: 0,
     },
     {
         id: 'item-7',
@@ -216,6 +222,7 @@ export const backlogDummy: IBacklogItem[] = [
         category: "SEBA",
         priority: 1,
         index:6,
+        hour: 0,
     },
     {
         id: 'item-8',
@@ -231,6 +238,7 @@ export const backlogDummy: IBacklogItem[] = [
         category: "SEBA",
         priority: 1,
         index:7,
+        hour: 0,
     },
     {
         id: 'item-9',
@@ -246,6 +254,7 @@ export const backlogDummy: IBacklogItem[] = [
         category: "SEBA",
         priority: 1,
         index:8,
+        hour: 0,
     },
     {
         id: 'item-10',
@@ -261,6 +270,7 @@ export const backlogDummy: IBacklogItem[] = [
         category: "SEBA",
         priority: 1,
         index:8,
+        hour: 0,
     },
     {
         id: 'item-11',
@@ -276,6 +286,7 @@ export const backlogDummy: IBacklogItem[] = [
         category: "SEBA",
         priority: 1,
         index:8,
+        hour: 0,
     },
     {
         id: 'item-12',
@@ -291,6 +302,7 @@ export const backlogDummy: IBacklogItem[] = [
         category: "SEBA",
         priority: 1,
         index:8,
+        hour: 0,
     },
     {
         id: 'item-13',
@@ -306,6 +318,7 @@ export const backlogDummy: IBacklogItem[] = [
         category: "SEBA",
         priority: 1,
         index:8,
+        hour: 0,
     },
     {
         id: 'item-14',
@@ -321,6 +334,7 @@ export const backlogDummy: IBacklogItem[] = [
         category: "SEBA",
         priority: 1,
         index:8,
+        hour: 0,
     },
     {
         id: 'item-15',
@@ -336,6 +350,7 @@ export const backlogDummy: IBacklogItem[] = [
         category: "SEBA",
         priority: 1,
         index:8,
+        hour: 0,
     },
     {
         id: 'item-16',
@@ -351,6 +366,7 @@ export const backlogDummy: IBacklogItem[] = [
         category: "SEBA",
         priority: 1,
         index:8,
+        hour: 0,
     },
     {
         id: 'item-17',
@@ -366,6 +382,7 @@ export const backlogDummy: IBacklogItem[] = [
         category: "SEBA",
         priority: 1,
         index:8,
+        hour: 0,
     },
     {
         id: 'item-18',
@@ -381,6 +398,7 @@ export const backlogDummy: IBacklogItem[] = [
         category: "SEBA",
         priority: 1,
         index:8,
+        hour: 0,
     },
     {
         id: 'item-19',
@@ -396,6 +414,7 @@ export const backlogDummy: IBacklogItem[] = [
         category: "SEBA",
         priority: 1,
         index:8,
+        hour: 0,
     },
     {
         id: 'item-20',
@@ -411,6 +430,7 @@ export const backlogDummy: IBacklogItem[] = [
         category: "SEBA",
         priority: 1,
         index:8,
+        hour: 0,
     },
     /* {
         id: 8,

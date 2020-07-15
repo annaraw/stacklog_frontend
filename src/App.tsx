@@ -6,12 +6,13 @@ import './App.css';
 import LoginScreen from './views/Login/LoginView';
 import HomeScreen from './views/HomeScreenView';
 import NotFound from './views/NotFoundView';
+import ProjectScreen from './views/Projects/ProjectView/ProjectsView';
 import LandingPage from './components/LandingPage/LandingPage'
-import ProjectScreen from './views/ProjectsView';
 import Planner from './components/Planner/Planner';
 import RegisterScreen from './views/Register/RegisterView';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core';
 import { Colors } from './util/constants';
+import ProjectBacklogView from './views/Projects/ProjectBacklogView/ProjectBacklogView';
 
 interface AppState {
   title: string,
@@ -33,6 +34,7 @@ export default class App extends React.Component<AppProps, AppState> {
         { component: ProjectScreen, path: '/projects' },
         { component: Planner, path: '/planner' },
         { component: RegisterScreen, path: '/register' },
+        { component: ProjectBacklogView, path: '/project'},
         { component: LandingPage, path: '/'},
         //route if view is not found
         { component: NotFound }

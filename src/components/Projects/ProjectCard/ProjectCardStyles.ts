@@ -9,6 +9,7 @@ export const projectCardStyles = makeStyles((theme) => ({
         borderStyle: "solid",
         borderRadius: "5px",
         borderWidth: "thin",
+        position: "relative",
         borderColor: Colors.secondaryColor,
         '&:hover': {
             borderColor: "black",
@@ -40,6 +41,13 @@ export const projectCardStyles = makeStyles((theme) => ({
     singlePersona: {
         height: "32px",
         width: "32px"
+    },
+    actions: {
+        position: "absolute",
+        bottom: "0"
+    },
+    cardContent: {
+        marginBottom: "20px"
     }
 
 }));
