@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { Component, FunctionComponent } from 'react';
+import { FunctionComponent } from 'react';
 
 import { IBacklogItem, Column, Category } from '../../../models/models'
 import BacklogItem from './BacklogItem';
 
 import { Dropdown } from 'office-ui-fabric-react/lib/Dropdown';
 import { SearchBox } from 'office-ui-fabric-react/lib/SearchBox';
-import { DefaultButton, IContextualMenuProps, IIconProps } from 'office-ui-fabric-react';
+import { DefaultButton, IContextualMenuProps } from 'office-ui-fabric-react';
 import Scrollbar from 'react-scrollbars-custom';
 
 import { Droppable } from 'react-beautiful-dnd'
@@ -42,12 +42,10 @@ export const BacklogComponent : FunctionComponent<BoardColumnProps> = props => {
 
   const classes = backlogComponentStyles()
 
-  const { column, items, sortType, sortIsUp, searchInput, selectedFilters, categories, setSortType, setSortIsUp, setSearchInput, setSelectedFilters} = props
-
-  let orderIcon: IIconProps = {};
+  const { column, items, sortType, sortIsUp, selectedFilters, categories, setSortType, setSortIsUp, setSearchInput, setSelectedFilters} = props
 
   const getOrderIcon = () => {
-    return (sortIsUp ? orderIcon = { iconName: 'Up' } : orderIcon = { iconName: 'Down' })
+    return (sortIsUp ? { iconName: 'Up' } : { iconName: 'Down' })
   }
 
   const menuProps: IContextualMenuProps = {
