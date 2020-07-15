@@ -94,7 +94,7 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 						category: item.category ? item.category : null,
 						team: item.team ? item.team : null,
 						index: item.index ? item.index : 0,
-						hour: item.hour ? item.hour : 0
+						hour: item.startDate ? new Date(item.startDate).getHours() : 0
 					})
 				}
 			
@@ -363,7 +363,7 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 		}
 	}
 
-	updateFinishColumn (newDate:Date|null,newHour:number,columnStart:any,newColumnFinish:any,columnFinish:any,undo:boolean){
+	updateFinishColumn (newDate:Date|null,columnStart:any,newColumnFinish:any,columnFinish:any,undo:boolean){
 		let cnt = 0
 		let breakLoop = false
 		for (const id of newColumnFinish.itemsIds){
@@ -372,7 +372,6 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 			const item = this.state.items.filter(item => item.id === id)[0]
 			//FINISH COLUMN ->  CHANGE INDEX, HOUR AND START DATE OF ITEMS
 			item.index = cnt
-			item.hour = newHour
 			item.startDate = newDate
 			this.setItem(item)
 			cnt+=1
@@ -383,14 +382,11 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
                 		console.log("ERROR",error)
 	                    this.setColumns(columnStart, columnFinish)
 						var oldDate = (columnStart.id === 'backlog') ? null : new Date(columnStart.id.split("-")[0])
-						var oldHour = (columnStart.id === 'backlog') ? 0 : parseInt(columnStart.id.split("-")[1])
 						this.setState({
 			                            error: true
 			                        })
 						// ERROR -> CALL UNDO OPERATION WITH OLD DATE, OLD HOUR AND OLD columnFinish AS newColumnFinish
-						//if (oldDate){
-							this.updateFinishColumn (oldDate,oldHour,columnStart,columnFinish,columnFinish,true)
-						//}
+						this.updateFinishColumn (oldDate,columnStart,columnFinish,columnFinish,true)
 						breakLoop = true
             		})
 			}	
@@ -484,11 +480,12 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 
 			var newDate = (columnFinish.id === 'backlog') ? null : new Date(columnFinish.id.split("-")[0])
 			var newHour = (columnFinish.id === 'backlog') ? 0 : parseInt(columnFinish.id.split("-")[1])
-
-			//if (newDate){
-				this.updateStartColumn(columnStart,newColumnStart,columnFinish,false)
-				this.updateFinishColumn(newDate,newHour,columnStart,newColumnFinish,columnFinish,false)
-			//}
+			if (newDate){
+				new Date(newDate.setHours(newHour))
+			}
+			this.updateStartColumn(columnStart,newColumnStart,columnFinish,false)
+			this.updateFinishColumn(newDate,columnStart,newColumnFinish,columnFinish,false)
+			
 		}
 		this.setDisplayedItems(await this.sort(await this.filter(await this.search(this.state.items.filter((item) => !item.startDate)))))
 	};
