@@ -366,10 +366,11 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 		}
 	}
 
-	updateFinishColumn (newDate:Date,newHour:number,columnStart:any,newColumnFinish:any,columnFinish:any,undo:boolean){
+	updateFinishColumn (newDate:Date|null,newHour:number,columnStart:any,newColumnFinish:any,columnFinish:any,undo:boolean){
 		let cnt = 0
 		let breakLoop = false
 		for (const id of newColumnFinish.itemsIds){
+			//console.log("ID",id)
 			if (breakLoop) {break}
 			const item = this.state.items.filter(item => item.id === id)[0]
 			//FINISH COLUMN ->  CHANGE INDEX, HOUR AND START DATE OF ITEMS
@@ -390,11 +391,11 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 			                            error: true
 			                        })
 						// ERROR -> CALL UNDO OPERATION WITH OLD DATE, OLD HOUR AND OLD columnFinish AS newColumnFinish
-						if (oldDate){
+						//if (oldDate){
 							this.updateFinishColumn (oldDate,oldHour,columnStart,columnFinish,columnFinish,true)
-						}
+						//}
+						breakLoop = true
             		})
-            	breakLoop = true
 			}	
 		}
 	}
@@ -403,6 +404,8 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 			let cnt = 0
 			let breakLoop = false
 			for (const id of newColumnStart.itemsIds){
+				//console.log("ID",id)
+				if (breakLoop) {break}
 				const item = this.state.items.filter(item => item.id === id)[0]
 				item.index = cnt
 				this.setItem(item)
@@ -418,6 +421,7 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 			                        })
                     	// ERROR -> CALL UNDO OPERATION WITH OLD columnStart AS newColumnStart
                     	this.updateSameColumn(columnStart,columnStart,true)
+                    	breakLoop = true
                     })
 				}
 			}
@@ -484,10 +488,10 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 			var newDate = (columnFinish.id === 'backlog') ? null : new Date(columnFinish.id.split("-")[0])
 			var newHour = (columnFinish.id === 'backlog') ? 0 : parseInt(columnFinish.id.split("-")[1])
 
-			if (newDate){
+			//if (newDate){
 				this.updateStartColumn(columnStart,newColumnStart,columnFinish,false)
 				this.updateFinishColumn(newDate,newHour,columnStart,newColumnFinish,columnFinish,false)
-			}
+			//}
 		}
 		this.setDisplayedItems(await this.sort(await this.filter(await this.search(this.state.items.filter((item) => !item.startDate)))))
 	};
@@ -500,6 +504,10 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
             error: false
         })
     };
+
+    getDayColumns(day:string) {
+    return this.state.columns.filter((col)=> col.id.split("-")[0]==day)
+  }
 
 	render() {
 
@@ -542,19 +550,23 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 				<React.Fragment>
 					<BoardEl>
 						<DragDropContext onDragEnd={this.onDragEnd}>
-							<BacklogComponent
-								key={backlogColumn.id}
-								column={backlogColumn}
-								items={this.state.displayedItems}
-								sortType={this.state.sortType}
-								sortIsUp={this.state.sortIsUp}
-								searchInput={this.state.searchInput}
-								selectedFilters={this.state.selectedFilters}
-								setSortType={this.setSortType}
-								setSortIsUp={this.setSortIsUp}
-								setSearchInput={this.setSearchInput}
-								setSelectedFilters={this.setSelectedFilters}
-							/>
+							{this.state.columns.map((col)=>col.id.split("-")[0])
+					            .filter((item, i, ar) => ar.indexOf(item) === i)
+					            .filter((col) => col == 'backlog')
+					            .map((col)=> <BacklogComponent 
+					            				key={col} 
+					            				column={this.getDayColumns(col)[0]}
+					            				items={this.state.displayedItems}
+					            				sortType={this.state.sortType}
+												sortIsUp={this.state.sortIsUp}
+												searchInput={this.state.searchInput}
+												selectedFilters={this.state.selectedFilters}
+												setSortType={this.setSortType}
+												setSortIsUp={this.setSortIsUp}
+												setSearchInput={this.setSearchInput}
+												setSelectedFilters={this.setSelectedFilters}
+					            			/>)
+					        }
 							{/*<Schedule key={scheduleColumn.id} column={scheduleColumn} items={scheduleItems} />*/}
 							<Calendar calendars={this.state.calendars} key='calendar' columns={this.state.columns} items={this.state.items} />
 						</DragDropContext>

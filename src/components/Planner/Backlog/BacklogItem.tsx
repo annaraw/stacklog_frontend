@@ -12,19 +12,33 @@ type BoardItemStylesProps = {
 }
 
 const BoardItemEl = styled.div<BoardItemStylesProps>`
-  padding: 8px;
-  background-color: ${(props) => props.isDragging ? '#d3e4ee' : '#fff'};
-  border-radius: 4px;
-  transition: background-color .25s ease-out;
-  ${(props) => {if (props.isDragging) {return ('max-height: 20px')}}};
-  ${(props) => {if (props.isDragging) {return ('max-width: 80px')}}};
+  ${(props) => {if (props.isDragging) {return ('padding:0px')}}};
+
+  background-color: ${(props) => props.isDragging ? '#6AFFA1' : '#fff'};
+  
+  ${(props) => {if (props.isDragging) {return ('border-radius: 4px;')}}};
+  ${(props) => {if (props.isDragging) {return ('width: 85px;')}}};
+  
+  ${(props) => {if (props.isDragging) {return ('height: 20px;')}}};
+  
+  ${(props) => {if (props.isDragging) {return ('z-index:3')}}};
+  
+  ${(props) => {if (props.isDragging) {return ('position:relative;')}}};
+  
+  ${(props) => {if (props.isDragging) {return ('text-overflow: ellipsis;')}}};
+  
+  ${(props) => {if (props.isDragging) {return ('overflow: hidden;')}}};
+  
+  ${(props) => {if (props.isDragging) {return ('white-space: nowrap;')}}};
+  
+  ${(props) => {if (props.isDragging) {return ('margin-top: 4px;')}}};
+  
+  ${(props) => {if (props.isDragging) {return ('margin-bottom: 4px;')}}};
+  
+  ${(props) => {if (props.isDragging) {return ('transition: background-color .25s ease-out;')}}};
 
   &:hover {
-    background-color: #f7fafc;
-  }
-
-  & + & {
-    margin-top: 4px;
+    background-color: #0099FF;
   }
 `
 
