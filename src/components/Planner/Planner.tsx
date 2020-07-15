@@ -41,7 +41,6 @@ interface BacklogState {
 	loading: boolean,
 	loadingError: boolean,
 	error: boolean,
-	urlError: boolean,
 	formIsOpen: boolean,
 }
 
@@ -66,7 +65,6 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 			formIsOpen: false,
 			error: false,
             loadingError: false,
-            urlError: false,
 
 		}
 	}
@@ -109,7 +107,7 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 				})
 			} else {
 				this.setState({
-                	urlError: true,
+                	loadingError: true,
                 	loading: false,
             	})
 			}
@@ -141,7 +139,6 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
 
 			}else {
 				this.setState({
-                	urlError: true,
                 	loading: false,
             	})
 			}
@@ -522,18 +519,7 @@ export class Planner extends React.Component<BoardColumnProps, BacklogState> {
                     </Backdrop>
                 </React.Fragment >
 			)
-		} else if (this.state.items.length === 0 || this.state.columns.length === 0) {
-			return (
-				<p>No items available</p>
-			)
-		} else if (this.state.urlError) {
-            return (
-                <React.Fragment >
-                    <MenuBar title="Error" />
-                    <p>Error: no url parameter provided</p>
-                </React.Fragment >
-            )
-        } else if (this.state.loadingError) {
+		} else if (this.state.loadingError) {
             return (
                 <React.Fragment >
                     <MenuBar title="Error" />

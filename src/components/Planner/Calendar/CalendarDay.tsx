@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { IBacklogItem, Column, ICalendarItem } from '../../../models/models'
 import {CalendarItem} from './CalendarItem';
-import {Quarter} from './Quarter';
+import {Hour} from './Hour';
 import { Droppable } from 'react-beautiful-dnd'
 import styled from 'styled-components'
 
@@ -50,7 +50,7 @@ events={props.calEvents.map((calItem:ICalendarItem)=> calItem.dtStart.getHours)}
             <BoardColumnContent>
               {props.columns.map((col,index) => {
                 return (
-                  <Quarter
+                  <Hour
                       key={col.id}
                       column={col}
                       index= {index}

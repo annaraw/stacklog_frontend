@@ -51,7 +51,7 @@ const BoardColumnContent = styled.div<BoardColumnContentStylesProps>`
   
 `
 
-export const Quarter: React.FC<BoardColumnProps> = (props) => {
+export const Hour: React.FC<BoardColumnProps> = (props) => {
     return (
       <QuarterWrapper>
       <BoardColumnTitle>
