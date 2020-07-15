@@ -1,6 +1,6 @@
 import HttpService from "./HttpService";
 import { backendserverURL } from "../util/constants";
-import { IBacklogItem, IBacklogItemRequest } from "../models/models";
+import { IBacklogItemUpdateProps, IBacklogItemRequest } from "../models/models";
 
 export default class BacklogItemService {
 
@@ -34,6 +34,20 @@ export default class BacklogItemService {
         });
     }
 
+    static getProjectBacklogItems(projectID: string) {
+        return new Promise((resolve, reject) => {
+            HttpService.get(`${BacklogItemService.baseURL()}projects/${projectID}`, 
+            function (data: any) {
+                if(!data){
+                    reject("Error while retrieving Items");
+                }
+                resolve(data);
+            }, function (textStatus: string) {
+                reject(textStatus);
+            });
+        });
+    }
+
     static addBacklogItem(item: IBacklogItemRequest) {
         return new Promise((resolve, reject) => {
             HttpService.post(`${BacklogItemService.baseURL()}`, 
@@ -49,9 +63,9 @@ export default class BacklogItemService {
         });
     }
 
-    static updateBacklogItem(item: IBacklogItem) {
+    static updateBacklogItem(itemID: string, item: IBacklogItemUpdateProps) {
         return new Promise((resolve, reject) => {
-            HttpService.put(`${BacklogItemService.baseURL()}${item.id}`, 
+            HttpService.put(`${BacklogItemService.baseURL()}${itemID}`, 
             item,
             function (data: any) {
                 if(!data){

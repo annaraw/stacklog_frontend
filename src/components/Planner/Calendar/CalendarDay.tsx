@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { IBacklogItem, Column, ICalendarItem } from '../../../models/models'
-import {CalendarItem} from './CalendarItem';
-import {Hour} from './Hour';
-import { Droppable } from 'react-beautiful-dnd'
+import { Hour } from './Hour';
 import styled from 'styled-components'
 
 
@@ -12,8 +10,6 @@ interface BoardColumnProps {
   items: IBacklogItem[]
   calEvents: ICalendarItem[][]
 }
-
-
 
 const BoardColumnWrapper = styled.div`
   flex: 1;
@@ -39,30 +35,27 @@ const BoardColumnContent = styled.div`
 
 export const CalendarDay: React.FC<BoardColumnProps> = (props) => {
 
-{/*"2020-07-13T12:00:00.000Z"
-events={props.calEvents.map((calItem:ICalendarItem)=> calItem.dtStart.getHours)}*/}
-    return (
-      <BoardColumnWrapper>
-        <BoardColumnTitle>
-          {props.day}
-          {/*console.log("calEvents",props.calEvents[0] ? props.calEvents[0].map((calItem:ICalendarItem)=> new Date(calItem.dtStart).getHours()): [])*/}
-        </BoardColumnTitle>
-            <BoardColumnContent>
-              {props.columns.map((col,index) => {
-                return (
-                  <Hour
-                      key={col.id}
-                      column={col}
-                      index= {index}
-                      items={props.items}
-                      events = {props.calEvents[0] ? props.calEvents[0]
-                        .filter((calItem:ICalendarItem)=> new Date(calItem.dtStart).getHours() == index)
-                        .map((calItem: ICalendarItem)=> calItem ): []}
-                    />
-                )
-              })}
-            </BoardColumnContent>
-      </BoardColumnWrapper>
-    );
+  return (
+    <BoardColumnWrapper>
+      <BoardColumnTitle>
+        {props.day}
+      </BoardColumnTitle>
+      <BoardColumnContent>
+        {props.columns.map((col, index) => {
+          return (
+            <Hour
+              key={col.id}
+              column={col}
+              index={index}
+              items={props.items}
+              events={props.calEvents[0] ? props.calEvents[0]
+                .filter((calItem: ICalendarItem) => new Date(calItem.dtStart).getHours() === index)
+                .map((calItem: ICalendarItem) => calItem) : []}
+            />
+          )
+        })}
+      </BoardColumnContent>
+    </BoardColumnWrapper>
+  );
 
 };

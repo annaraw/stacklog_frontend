@@ -1,4 +1,4 @@
-import { Colors } from "../util/constants";
+import { Colors } from "../../../util/constants";
 
 export const projectViewStyles = () => ({
     root: {

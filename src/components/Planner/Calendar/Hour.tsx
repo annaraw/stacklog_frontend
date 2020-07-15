@@ -24,7 +24,7 @@ const BoardColumnWrapper = styled.div<BoardWrapperContentStylesProps>`
   display:flex;
   background-color: #e5eff5;
   border-radius: 4px;
-  height:${props => props.items != 0 ? props.items*24+'px' : '28px'};
+  height:${props => props.items !== 0 ? props.items*24+'px' : '28px'};
   border: solid;
   border-color: grey;
   border-width: 0.5px;
@@ -34,9 +34,6 @@ const BoardColumnWrapper = styled.div<BoardWrapperContentStylesProps>`
 const QuarterWrapper = styled.div`
   display:flex;
 `
-
-const EventWrapper = styled.div`
-  `
 
 const BoardColumnTitle = styled.div`
   font: 14px sans-serif;
@@ -68,7 +65,7 @@ export const Hour: React.FC<BoardColumnProps> = (props) => {
             >
               {props.column.itemsIds.map((id: String, index: number) => {
 
-                const item = props.items.filter((item) => item.id == id)[0]
+                const item = props.items.filter((item) => item.id === id)[0]
 
                 return (
                     <CalendarItem

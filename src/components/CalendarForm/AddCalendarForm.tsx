@@ -3,15 +3,16 @@ import { useState, FunctionComponent } from 'react';
 import { useBoolean } from '@uifabric/react-hooks';
 import Button from '@material-ui/core/Button';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
-import { RadioGroup, FormControl, FormControlLabel, Radio, TextField, Checkbox, Drawer, IconButton, Box } from '@material-ui/core';
+import { RadioGroup, FormControl, FormControlLabel, Radio, TextField, Checkbox } from '@material-ui/core';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
-import { ICalendarItem } from '../../models/models'
-import CalendarImportService from '../../services/CalendarImportService'
-import CloseIcon from '@material-ui/icons/Close';
 import GetAppIcon from '@material-ui/icons/GetApp';
+import Snackbar from '@material-ui/core/Snackbar';
+
+import { ICalendarItem, ICalendar } from '../../models/models'
+import CalendarImportService from '../../services/CalendarImportService'
 import { addCalendarFormStyles } from './AddCalendarFormStyles';
 import UserService from '../../services/UserService';
-import Snackbar from '@material-ui/core/Snackbar';
+import DrawerForm from '../Form/DrawerForm';
 
 export enum UploadState {
     Empty,
@@ -37,11 +38,13 @@ const AddCalendarForm: FunctionComponent<any> = props => {
     const [calendarFilename, setCalendarFilename] = useState("");
     const [uploadState, setUploadState] = useState(UploadState.Empty);
     const [success, setSuccess] = useState(false);
+    const [loading, setLoading] = useState(false)
 
     const classes = addCalendarFormStyles()
 
     const openPanel = (() => setIsOpen(true));
     const dismissPanel = (() => {
+        setCalendarFilename("")
         setIsOpen(false);
         setCalendarTitle("");
         setCalendarUrl("");
@@ -49,41 +52,47 @@ const AddCalendarForm: FunctionComponent<any> = props => {
         setShowFileUpload(false);
         setShowSync(false);
         setUploadState(UploadState.Empty)
+        setUploadError(false)
+        setSuccess(false)
+        setLoading(false)
 
-        console.log(calendarItems)
+        console.log(loading)
     });
 
     const submit = () => {
-        var cal
-        if (calendarUrl !== "") {
-            cal = {
-                name: calendarTitle,
-                items: calendarItems,
-                owner: UserService.getCurrentUser().id,
-                url: calendarUrl
-            };
-        } else {
-            cal = {
-                name: calendarTitle,
-                items: calendarItems,
-                owner: UserService.getCurrentUser().id
-            };
-        }
-        if(uploadState === UploadState.Empty || uploadState === UploadState.Fail || calendarTitle === "")  {
+        setUploadError(false)
+        if (uploadState === UploadState.Empty || uploadState === UploadState.Fail || calendarTitle === "") {
             setUploadError(true);
         } else {
+            setLoading(true)
+            var cal: ICalendar
+            if (calendarUrl !== "") {
+                cal = {
+                    name: calendarTitle,
+                    items: calendarItems,
+                    owner: UserService.getCurrentUser().id,
+                    url: calendarUrl
+                };
+            } else {
+                cal = {
+                    name: calendarTitle,
+                    items: calendarItems,
+                    owner: UserService.getCurrentUser().id
+                };
+            }
             CalendarImportService.addCalendar(cal).then((data) => {
                 setUploadError(false);
                 dismissPanel();
                 setSuccess(true);
+                setLoading(false);
             }).catch((e) => {
-                console.log(e);
+                setLoading(false);
                 setUploadError(true);
             });
         }
     }
 
-    const convertIcal = (icalString:any) => {
+    const convertIcal = (icalString: any) => {
         const ical = require('ical');
         const data = ical.parseICS(icalString)
         var calItems = []
@@ -157,62 +166,54 @@ const AddCalendarForm: FunctionComponent<any> = props => {
 
     const handleCloseSuccessAlert = (event?: React.SyntheticEvent, reason?: string) => {
         if (reason === 'clickaway') {
-          return;
+            return;
         }
-    
+
         setSuccess(false);
-      };
+    };
 
     return (
         <div>
             <Button onClick={openPanel}>{formTitle}</Button>
-            <Drawer
-                anchor="left"
-                open={isOpen}
-                onClose={dismissPanel}
-                className={classes.drawer}
+            <DrawerForm
+                formTitle={formTitle}
+                isOpen={isOpen}
+                loading={loading}
+                formType={"Import"}
+                onSubmit={submit}
+                dismissPanel={dismissPanel}
             >
-                <Box className={classes.box}>
-                    <div className={classes.drawerHeading}>
-                        <p><strong>{formTitle}</strong></p>
-                        <IconButton
-                            aria-label="close"
-                            className={classes.closeButton}
-                            onClick={dismissPanel}
-                        >
-                            <CloseIcon fontSize="inherit" />
-                        </IconButton>
-                    </div>
-                    <TextField
-                        id="outlined-basic"
-                        label="Calendar Title"
-                        variant="outlined"
-                        required
-                        fullWidth
-                        value={calendarTitle}
-                        onChange={(e) => { setCalendarTitle(e.target.value) }}
-                        error={uploadError && !calendarTitle}
-                    />
-                    <FormControl component="fieldset">
-                        <RadioGroup onChange={uploadCalendarFile}>
-                            <FormControlLabel
-                                value="url"
-                                control={<Radio color="default" />}
-                                label="Sync from URL"
-                                onChange={(e) => { setShowSync(true); setShowFileUpload(false); setCalendarItems([]); setUploadState(UploadState.Empty); setCalendarFilename("")  }}
-                            />
-                            <FormControlLabel
-                                value="upload"
-                                control={<Radio color="default" />}
-                                label="Upload ical File"
-                                defaultChecked={true}
-                                onChange={(e) => { setShowSync(false); setShowFileUpload(true); setCalendarItems([]); setUploadState(UploadState.Empty); setCalendarFilename("") }}
-                            />
-                        </RadioGroup>
-                    </FormControl>
+                <TextField
+                    id="outlined-basic"
+                    label="Calendar Title"
+                    variant="outlined"
+                    required
+                    fullWidth
+                    value={calendarTitle}
+                    onChange={(e) => { setCalendarTitle(e.target.value); setUploadError(false) }}
+                    error={uploadError && !calendarTitle}
+                />
+                <FormControl component="fieldset">
+                    <RadioGroup onChange={uploadCalendarFile}>
+                        <FormControlLabel
+                            value="url"
+                            control={<Radio color="default" />}
+                            label="Sync from URL"
+                            onChange={(e) => { setShowSync(true); setShowFileUpload(false); setCalendarItems([]); setUploadState(UploadState.Empty); setCalendarFilename("") }}
+                        />
+                        <FormControlLabel
+                            value="upload"
+                            control={<Radio color="default" />}
+                            label="Upload ical File"
+                            defaultChecked={true}
+                            onChange={(e) => { setShowSync(false); setShowFileUpload(true); setCalendarItems([]); setUploadState(UploadState.Empty); setCalendarFilename("") }}
+                        />
+                    </RadioGroup>
+                </FormControl>
 
-                    {showSync &&
+                {showSync &&
                     <div className={classes.borderBox}>
+                        <div className={classes.text}>Please insert an URL and check if it contains a valid ical format:</div>
                         <TextField
                             id="outlined-basic"
                             label="Calendar URL"
@@ -259,75 +260,59 @@ const AddCalendarForm: FunctionComponent<any> = props => {
                             label="Calendar is public"
                         />
                     </div>
-                    }
-                    {showFileUpload &&
-                        <div className={classes.borderBox}>
-                            <input
-                                id="contained-button-file"
-                                accept=".ics"
-                                type="file"
-                                onChange={(e) => uploadCalendarFile(e)}
-                                style={{ display: "none" }}
-                            />
-                            <label htmlFor="contained-button-file">
-                                <Button
-                                    variant="contained"
-                                    component="span"
-                                    color="default"
-                                    startIcon={<CloudUploadIcon />}
-                                    className={classes.button}
-                                    disableElevation
-                                >
-                                    Select File
+                }
+                {showFileUpload &&
+                    <div className={classes.borderBox}>
+                        <div className={classes.text}>Please select an .ics calendar file from your computer:</div>
+                        <input
+                            id="contained-button-file"
+                            accept=".ics"
+                            type="file"
+                            onChange={(e) => uploadCalendarFile(e)}
+                            style={{ display: "none" }}
+                        />
+                        <label htmlFor="contained-button-file">
+                            <Button
+                                variant="contained"
+                                component="span"
+                                color="default"
+                                startIcon={<CloudUploadIcon />}
+                                className={classes.button}
+                                disableElevation
+                            >
+                                Select File
                                 </Button>
-                            </label>
-                            {
-                                (uploadState === UploadState.Success) &&
-                                <Alert severity="success" onClose={handleClose} elevation={0}>
-                                    <strong>{calendarFilename}</strong> ({calendarItems.length} items) selected.
+                        </label>
+                        {
+                            (uploadState === UploadState.Success) &&
+                            <Alert severity="success" onClose={handleClose} elevation={0}>
+                                <strong>{calendarFilename}</strong> ({calendarItems.length} calendar items) selected.
                                 </Alert>
-                            }
-                            {
-                                (uploadState === UploadState.Fail) &&
-                                <Alert severity="warning" onClose={handleClose} elevation={0}>
-                                    <strong>{calendarFilename}</strong> selected. The file does not contain any events.
+                        }
+                        {
+                            (uploadState === UploadState.Fail) &&
+                            <Alert severity="warning" onClose={handleClose} elevation={0}>
+                                <strong>{calendarFilename}</strong> selected. The file does not contain any events.
                                 </Alert>
-                            }
-                        </div>
-                    }
-                    {(uploadError ?
-                        <Alert
-                            severity="error"
-                            onClose={() => setUploadError(false)}
-                        >
-                            <strong>Error: Could not upload calendar.</strong>
-                            
-                            {calendarTitle === "" && <li>"Missing calendar title"</li>} 
-                            {((uploadState === (UploadState.Empty)) || (uploadState === (UploadState.Fail))) && <li>"Missing/empty calendar"</li> }
-                        </Alert>
-                        : <span></span>
-                    )}
-                    <div className={classes.drawerFooter}>
-                        <Button
-                            variant="contained"
-                            className={classes.secondaryButton}
-                            onClick={dismissPanel}
-                        >
-                            Cancel
-                        </Button>
-                        <Button
-                            variant="contained"
-                            className={classes.primaryButton}
-                            onClick={submit}
-                        >
-                            Import
-                        </Button>
+                        }
                     </div>
-                </Box>
-            </Drawer>
+                }
+                {(uploadError ?
+                    <Alert
+                        severity="error"
+                        onClose={() => setUploadError(false)}
+                    >
+                        <strong>Error: Could not upload calendar.</strong>
+
+                        {calendarTitle === "" && <li>"Missing calendar title"</li>}
+                        {((uploadState === (UploadState.Empty)) || (uploadState === (UploadState.Fail))) && <li>"Missing/empty calendar"</li>}
+                    </Alert>
+                    : <span></span>
+                )}
+            </DrawerForm>
             <Snackbar open={success} autoHideDuration={6000} onClose={handleCloseSuccessAlert}>
                 <Alert onClose={handleCloseSuccessAlert} severity="success">
-                Calendar successfully imported
+                    Calendar successfully imported
                 </Alert>
             </Snackbar>
         </div>

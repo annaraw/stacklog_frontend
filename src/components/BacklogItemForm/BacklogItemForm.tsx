@@ -1,20 +1,31 @@
 import React from 'react';
 import { useState, FunctionComponent } from 'react';
-import { TextField, Button, IconButton, Tooltip, Snackbar } from '@material-ui/core';
+import { TextField, Snackbar } from '@material-ui/core';
 import { Autocomplete, Alert } from '@material-ui/lab';
-import { Grid, Paper, Drawer, List, ListItem, Box } from '@material-ui/core';
-import CloseIcon from '@material-ui/icons/Close';
+import { createFilterOptions } from '@material-ui/lab/Autocomplete';
+import { Grid } from '@material-ui/core';
 import 'date-fns';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
-import { IBacklogItem, IBacklogItemRequest, Priority } from '../../models/models';
+import { IBacklogItem, IBacklogItemRequest, Priority, Project } from '../../models/models';
 import UserService from '../../services/UserService';
 import TaskCreationFormStyles from './BacklogItemFormStyles';
 import DrawerForm from '../Form/DrawerForm';
 import BacklogItemService from '../../services/BacklogItemService';
 
+const filter = createFilterOptions<CategoryOption>();
 
-const AddBacklogItemForm: FunctionComponent<{
+interface CategoryOption {
+    inputValue?: string;
+    category: string;
+}
+
+interface AssigneeOption {
+    inputValue?: string;
+    id: string;
+}
+
+interface BacklogItemFormProps {
     isOpen: boolean
     setIsOpen: (isOpen: boolean) => void
     formTitle: string
@@ -22,21 +33,27 @@ const AddBacklogItemForm: FunctionComponent<{
     setBacklogItems: (backlogItem: IBacklogItem[]) => void
     formType: string
     item?: IBacklogItem
-    isProjectTask?: boolean
-}> = props => {
+    project?: Project
+    selfAssigned?: boolean
+}
+
+const BacklogItemForm: FunctionComponent<BacklogItemFormProps> = props => {
     const { isOpen, setIsOpen, formTitle, items,
-        setBacklogItems, formType, item, isProjectTask } = props
+        setBacklogItems, formType, item, project, selfAssigned } = props
 
     const classes = TaskCreationFormStyles()
 
     const [title, setTitle] = useState("")
-    const [category, setCategory] = useState("")
+    const [category, setCategory] = useState<CategoryOption | null>(null)
     const [dueDate, setDueDate] = useState(new Date())
     const [priority, setPriority] = useState<string>("medium")
     const [reminder, setReminder] = useState<number | undefined>(undefined)
     const [estimatedH, setEstimatedH] = useState<number>(1)
     const [estimatedMIN, setEstimatedMIN] = useState<number>(0)
     const [description, setDescription] = useState("")
+
+    //project stuff
+    const [assignee, setAssignee] = useState<string | null>(!project || selfAssigned ? UserService.getCurrentUser().id : null)
 
     const [error, setError] = useState(false)
     const [loading, setLoading] = useState(false)
@@ -45,14 +62,23 @@ const AddBacklogItemForm: FunctionComponent<{
 
     const dismissPanel = (() => setIsOpen(false));
 
-    const categories: string[] = [];
-
-    items.map(item => {
-        if (item.category && !categories.includes(item.category)) {
-            categories.push(item.category)
+    // get list of all categories
+    let categories: CategoryOption[] = [];
+    items.forEach(item => {
+        if (item.category && categories.filter(entry => entry.category === item.category).length === 0) {
+            categories.push({ category: item.category })
         }
     })
 
+    let members: AssigneeOption[] = [];
+    if (project) {
+        project.team.forEach(member => {
+            members.push({
+                inputValue: member.name + " " + member.lastName,
+                id: member.id
+            })
+        })
+    }
 
 
     const submit = async (): Promise<void> => {
@@ -60,11 +86,7 @@ const AddBacklogItemForm: FunctionComponent<{
             setError(true)
             return
         }
-
-
-
         setLoading(true)
-
         try {
             if (formType === "Create") {
                 await sendItemToDataBase()
@@ -81,7 +103,7 @@ const AddBacklogItemForm: FunctionComponent<{
             //reset input
             setTitle("");
             setDescription("");
-            setCategory("")
+            setCategory(null)
             setPriority("medium")
             setDueDate(new Date())
             setReminder(undefined)
@@ -90,6 +112,7 @@ const AddBacklogItemForm: FunctionComponent<{
             setError(false)
             setIsOpen(false);
         } catch (err) {
+            setError(true)
             setLoading(false)
             setFeedbackMessage(err)
             setShowFeedback(true)
@@ -97,60 +120,58 @@ const AddBacklogItemForm: FunctionComponent<{
         }
     }
 
-    /* const submit = (): void => {
-        if (!checkInput()) {
-            setError(true)
-            return
-        }
-        const newTask: BacklogSingleTaskItem = {
-
-            author: UserService.getCurrentUser().id,
-            assignee: UserService.getCurrentUser().id,
-            title: title,
-            category: category,
-            dueDate: dueDate,
-            priority: priority,
-            reminder: reminder,
-            estimation: estimatedMIN,
-            description: description,
-            completed: completed,
-        }
-        tasks.push(newTask)
-        setTasks(tasks)
-
-        setError(false)
-        setTitle("")
-        setCategory("")
-        setDueDate(new Date)
-        setPriority("")
-        setReminder(Number) // kann ich das so machen?
-        setDescription("")
-        setCompleted(false)
-    } */
-
     const sendItemToDataBase = async () => {
         const newBacklogItem: IBacklogItemRequest = {
             author: UserService.getCurrentUser().id,
-            assignee: UserService.getCurrentUser().id,
+            assignee: assignee ? assignee : "",
             title: title,
-            category: category,
+            category: category ? category.category : "",
             dueDate: dueDate,
             priority: priority,
             reminder: reminder,
             estimation: (estimatedH * 60 + estimatedMIN),
             description: description,
+            team: project ? project.id : "",
             completed: false,
         }
         let response = await BacklogItemService.addBacklogItem(newBacklogItem)
+
+        let newTask: IBacklogItem = {
+            //@ts-ignore
+            id: response.item.id,
+            //@ts-ignore
+            author: response.item.author,
+            //@ts-ignore
+            assignee: response.item.assignee,
+            //@ts-ignore
+            title: response.item.title,
+            //@ts-ignore
+            description: response.item.description,
+            //@ts-ignore
+            priority: response.item.priority,
+            //@ts-ignore
+            reminder: response.item.reminder,
+            //@ts-ignore
+            estimation: response.item.estimation,
+            //@ts-ignore
+            completed: response.item.completed,
+            //@ts-ignore
+            startDate: response.item.startDate ? new Date(response.item.startDate) : null,
+            //@ts-ignore
+            dueDate: response.item.dueDate ? new Date(response.item.dueDate) : null,
+            //@ts-ignore
+            category: response.item.category,
+            //@ts-ignore
+            team: response.item.team
+        }
+
         //@ts-ignore
         setFeedbackMessage(response.message)
-        console.log(response)
-        //@ts-ignore
-        setBacklogItems([...items, response.item])
+        setBacklogItems([...items, newTask])
     }
 
     const checkInput = (): boolean => {
-        if (!title) {
+        if (!title || !description) {
             return false
         }
         return true
@@ -208,6 +229,8 @@ const AddBacklogItemForm: FunctionComponent<{
                     id='task-title'
                     fullWidth
                     label="Title"
+                    error={(!title) && error}
+                    helperText={(!title && error) ? "Needs to be filled out" : ""}
                     defaultValue={item?.title ? item.title : title}
                     placeholder="Enter the task title"
                     onChange={(event) => setTitle(event.target.value)}
@@ -215,23 +238,63 @@ const AddBacklogItemForm: FunctionComponent<{
                 />
 
                 <Autocomplete
+                    renderInput={(params) => <TextField {...params} label="Enter or choose a category" variant="outlined" />}
+                    fullWidth
                     id="category-combobox"
                     className={classes.textField}
-                    defaultValue={item?.category ? item.category : category}
-                    fullWidth
-                    options={categories}
-                    onChange={(event, value) => setCategory(value ? value : "")}
-                    //style = {styles}
-                    renderInput={(params) => <TextField {...params} label="Enter or choose a category" variant="outlined" />}
-                />
+                    value={category}
+                    onChange={(event, newValue) => {
+                        if (typeof newValue === 'string') {
+                            setCategory({
+                                category: newValue,
+                            });
+                        } else if (newValue && newValue.inputValue) {
+                            // Create a new value from the user input
+                            setCategory({
+                                category: newValue.inputValue,
+                            });
+                        } else {
+                            setCategory(newValue);
+                        }
+                    }}
+                    filterOptions={(options, params) => {
+                        const filtered = filter(options, params);
 
+                        // Suggest the creation of a new value
+                        if (params.inputValue !== '') {
+                            filtered.push({
+                                inputValue: params.inputValue,
+                                category: `Add "${params.inputValue}"`,
+                            });
+                        }
+                        return filtered;
+                    }}
+                    selectOnFocus
+                    clearOnBlur
+                    handleHomeEndKeys
+                    options={categories}
+                    getOptionLabel={(option) => {
+                        // Value selected with enter, right from the input
+                        if (typeof option === 'string') {
+                            return option;
+                        }
+                        // Add "xxx" option created dynamically
+                        if (option.inputValue) {
+                            return option.inputValue;
+                        }
+                        // Regular option
+                        return option.category;
+                    }}
+                    renderOption={(option) => option.category}
+                    freeSolo
+                />
 
                 <MuiPickersUtilsProvider utils={DateFnsUtils}>
                     <KeyboardDatePicker
                         className={classes.textField}
                         variant="inline"
                         inputVariant="outlined"
-                        label="With keyboard"
+                        label="Due Date"
                         format="dd/MM/yyyy"
                         value={dueDate}
                         defaultValue={item?.dueDate ? item.dueDate : dueDate}
@@ -269,9 +332,9 @@ const AddBacklogItemForm: FunctionComponent<{
                                     id='hours-box'
                                     placeholder="0"
                                     variant="outlined"
-                                    type="number"
                                     onChange={(event) => setEstimatedH(Number(event.target.value))}
                                     inputProps={{ style: { textAlign: "right" } }}
+                                    InputProps={{ inputProps: { min: 0 } }}
                                 />
 
                             </Grid>
@@ -291,6 +354,7 @@ const AddBacklogItemForm: FunctionComponent<{
                                     type="number"
                                     onChange={(event) => setEstimatedMIN(Number(event.target.value))}
                                     inputProps={{ style: { textAlign: "right" } }}
+                                    InputProps={{ inputProps: { min: 0 } }}
                                 />
                             </Grid>
                             <Grid item>
@@ -304,14 +368,56 @@ const AddBacklogItemForm: FunctionComponent<{
                     id="description-box"
                     className={classes.textField}
                     label="Description"
-                    placeholder="Enter an optional to-do description"
+                    required
+                    placeholder="Enter a description..."
                     fullWidth
                     defaultValue={item?.description ? item.description : description}
+                    error={(!description) && error}
+                    helperText={(!description && error) ? "Needs to be filled out" : ""}
                     multiline
                     rows={4}
                     onChange={(e) => setDescription(e.target.value)}
                     variant="outlined"
                 />
+
+                {project &&
+                    <div>
+                        <p><strong>Project Settings</strong></p>
+                        <Autocomplete
+                            id="assignee"
+                            disabled={selfAssigned}
+                            defaultValue={selfAssigned
+                                ?
+                                project.team.filter(member => member.id === UserService.getCurrentUser().id)
+                                    .map(member => {
+                                        return {
+                                            inputValue: member.name + " " + member.lastName,
+                                            id: UserService.getCurrentUser().id
+                                        }
+                                    })[0]
+                                : null
+                            }
+                            options={members}
+                            getOptionLabel={(option) => {
+                                // Value selected with enter, right from the input
+                                if (typeof option === 'string') {
+                                    return option;
+                                }
+                                // Add "xxx" option created dynamically
+                                if (option.inputValue) {
+                                    return option.inputValue;
+                                }
+                                // Regular option
+                                return option.id;
+                            }}
+                            renderOption={(option) => option.inputValue}
+                            onChange={(event, value) => setAssignee(value ? value.id : "")}
+                            renderInput={(params) => (
+                                <TextField {...params} label="Assignee" margin="normal" variant="outlined" />
+                            )}
+                        />
+                    </div>
+                }
             </DrawerForm>
             <Snackbar open={showFeedback} autoHideDuration={6000} onClose={handleClose}>
                 <Alert onClose={handleClose} severity={(error) ? "error" : "success"}>
@@ -322,4 +428,4 @@ const AddBacklogItemForm: FunctionComponent<{
     );
 }
 
-export default AddBacklogItemForm;
+export default BacklogItemForm;

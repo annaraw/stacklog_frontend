@@ -57,6 +57,21 @@ export interface IBacklogItem {
     hour: number
 }
 
+export interface IBacklogItemUpdateProps {
+    assignee?: string,
+    title?: string,
+    description?: string,
+    priority?: Priority,
+    reminder?: number,
+    estimation?: number,
+    completed?: boolean,
+    startDate?: Date | null,
+    dueDate?: Date,
+    category?: string,
+    team?: string,
+    index?: number
+}
+
 export interface IBacklogItemRequest {
     author: string,
     assignee: string,
@@ -139,7 +154,7 @@ export interface ICalendarItem {
     END:VEVENT
     END:VCALENDAR
     */
-    
+
     id: string,
     uid?: string,
     summary: string,
@@ -158,9 +173,9 @@ export interface ICalendar {
 }
 
 export enum Priority {
-    "high",
-    "medium",
-    "low"
+    "high" = 2,
+    "medium" = 1,
+    "low" = 0
 }
 
 export interface Category {
@@ -170,7 +185,7 @@ export interface Category {
 }
 
 export interface Column {
-	id: string,
-	title: string,
-	itemsIds: string[]
+    id: string,
+    title: string,
+    itemsIds: string[]
 }
