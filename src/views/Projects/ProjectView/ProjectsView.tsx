@@ -3,7 +3,6 @@ import { Component } from 'react';
 
 import ProjectCard from '../../../components/Projects/ProjectCard/ProjectCard';
 import { Project, Member } from '../../../models/models'
-import { projectsDummy } from '../../../data/dummyData'
 import ProjectService from '../../../services/ProjectService';
 import MenuBar from '../../../components/MenuBar';
 import { projectViewStyles } from './ProjectsViewStyles';
@@ -23,7 +22,7 @@ class ProjectScreen extends Component<{}, ProjectState> {
     constructor(props: any) {
         super(props)
         this.state = {
-            projects: projectsDummy,
+            projects: [],
             collegues: [],
             loading: false,
             formIsOpen: false
