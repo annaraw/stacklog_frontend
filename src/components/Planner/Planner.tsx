@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { DragDropContext } from 'react-beautiful-dnd'
 import styled from "styled-components";
-import BacklogComponent from './Backlog/BacklogComponent';
+import { BacklogComponent } from './Backlog/BacklogComponent';
 import { Calendar } from './Calendar/Calendar';
 import { sortTypes } from '../../util/constants';
 import { IBacklogItem, Column, ICalendar, Category, Priority, IBacklogItemUpdateProps } from '../../models/models';

@@ -4,6 +4,7 @@ import { Draggable } from 'react-beautiful-dnd'
 import styled from 'styled-components'
 
 import './BacklogItem.css'
+import { backlogItemStyles } from './BacklogItemStyles';
 
 type BoardItemStylesProps = {
   isDragging: boolean
@@ -44,6 +45,8 @@ const BacklogItem: FunctionComponent<{ title: String, description: string, categ
 
     const { title, description, category, priority, id, index } = props;
 
+    const classes = backlogItemStyles()
+
     /* const colorStyle = {
         backgroundColor: category.color
     } */
@@ -57,11 +60,10 @@ const BacklogItem: FunctionComponent<{ title: String, description: string, categ
                    ref={provided.innerRef}
                    isDragging={snapshot.isDragging}
                 >
-                {!snapshot.isDragging ? <div className="header">
+                {!snapshot.isDragging ? <div className={classes.header}>
                         <div className="header-title">{title} ({category})<span style={{float:"right"}}>Prio: {priority}</span></div>
-                        <div className="description"  >{description}</div>
+                        <div className={classes.description}  >{description}</div>
                     </div> : title}
-                    
                 </BoardItemEl>
             )}
         </Draggable>
