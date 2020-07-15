@@ -41,6 +41,7 @@ export const menuBarStyles = makeStyles((theme) => ({
     loginBtn: {
         position: "absolute",
         right: "20px",
-        color: "white"
-    }
+        color: "white",
+        borderColor: "white "
+  }
 }));

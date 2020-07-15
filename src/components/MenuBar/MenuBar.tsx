@@ -38,10 +38,10 @@ function MenuBar(props: MenuBarProps) {
                         <MenuIcon />
                     </IconButton>
                     <IconButton edge="start" color="inherit" aria-label="menu" size='medium'
-                        onClick={() => { window.location.href = "/home" }}>
+                        onClick={() => { window.location.href = "/" }}>
                         <img src="./assets/logo_white.svg"  className={classes.image} />
                     </IconButton>
-                    <Button className={classes.loginBtn}
+                    <Button variant =  "outlined" className={classes.loginBtn}
                         onClick={() => { !UserService.getCurrentUser().id ? window.location.href = "/login" : UserService.logout() }}>
                         {UserService.getCurrentUser().id ? <span>Logout</span> : <span>Login</span>}
                     </Button>

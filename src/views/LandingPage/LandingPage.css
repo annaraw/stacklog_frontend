@@ -1,0 +1,17 @@
+
+
+
+.text-description-start {
+    
+    position: absolute;
+    top: 36.3%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: black;
+    padding-left: 20px;
+    padding-right: 20px;
+    font-size: 1vw;
+}
+@media only screen and (max-width: 320px) {
+    body {font-size: 12px}
+}
