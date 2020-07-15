@@ -1,72 +1,67 @@
 import * as React from 'react';
 import { FunctionComponent } from 'react';
 import { Draggable } from 'react-beautiful-dnd'
-import styled from 'styled-components'
+import { Card, CardHeader, IconButton, CardContent, Typography, Menu, MenuItem, ListItemText, Snackbar, Button, CardActions, Chip, Tooltip } from '@material-ui/core';
+import EditIcon from '@material-ui/icons/Edit';
+import DoneIcon from '@material-ui/icons/Done';
 
 import { backlogItemStyles } from './BacklogItemStyles';
 
-type BoardItemStylesProps = {
-  isDragging: boolean
-}
+const BacklogItem: FunctionComponent<{ title: String, description: string, category: string, priority: number, id: any, index: number }> = props => {
 
-const BoardItemEl = styled.div<BoardItemStylesProps>`
-  ${(props) => {if (props.isDragging) {return ('padding:0px')}}};
+  const { title, description, category, priority, id, index } = props;
 
-  background-color: ${(props) => props.isDragging ? '#6AFFA1' : '#fff'};
-  
-  ${(props) => {if (props.isDragging) {return ('border-radius: 4px;')}}};
-  ${(props) => {if (props.isDragging) {return ('width: 85px;')}}};
-  
-  ${(props) => {if (props.isDragging) {return ('height: 20px;')}}};
-  
-  ${(props) => {if (props.isDragging) {return ('z-index:3')}}};
-  
-  ${(props) => {if (props.isDragging) {return ('position:relative;')}}};
-  
-  ${(props) => {if (props.isDragging) {return ('text-overflow: ellipsis;')}}};
-  
-  ${(props) => {if (props.isDragging) {return ('overflow: hidden;')}}};
-  
-  ${(props) => {if (props.isDragging) {return ('white-space: nowrap;')}}};
-  
-  ${(props) => {if (props.isDragging) {return ('margin-top: 4px;')}}};
-  
-  ${(props) => {if (props.isDragging) {return ('margin-bottom: 4px;')}}};
-  
-  ${(props) => {if (props.isDragging) {return ('transition: background-color .25s ease-out;')}}};
+  const classes = backlogItemStyles()
 
-  &:hover {
-    background-color: #0099FF;
-  }
-`
-
-const BacklogItem: FunctionComponent<{ title: String, description: string, category: string, priority: number, id:any , index:number}> = props => {
-
-    const { title, description, category, priority, id, index } = props;
-
-    const classes = backlogItemStyles()
-
-    /* const colorStyle = {
-        backgroundColor: category.color
-    } */
-
-    return (
-        <Draggable draggableId={id} index={index}>
-            {(provided, snapshot) => (
-                <BoardItemEl
-                   {...provided.draggableProps}
-                   {...provided.dragHandleProps}
-                   ref={provided.innerRef}
-                   isDragging={snapshot.isDragging}
-                >
-                {!snapshot.isDragging ? <div className={classes.header}>
-                        <div className="header-title">{title} ({category})<span style={{float:"right"}}>Prio: {priority}</span></div>
-                        <div className={classes.description}  >{description}</div>
-                    </div> : title}
-                </BoardItemEl>
-            )}
-        </Draggable>
-    );
+  return (
+    <Draggable draggableId={id} index={index}>
+      {(provided, snapshot) => (
+        <div
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
+          ref={provided.innerRef}
+        >
+          <Card className={classes.root} key={id}>
+            <CardHeader
+              title={
+                <>
+                  <Typography className={classes.cardHeaderFont}>
+                    <p className={classes.ellipsis}>{title}</p>
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary" component="div" className={classes.description}>
+                    <p className={classes.ellipsis}>{description ? description : ""}</p>
+                  </Typography>
+                </>
+              }
+              className={classes.cardHeader}
+            />
+            <CardContent className={classes.cardContent}>
+              <div className={classes.chipBox}>
+                <Chip className={classes.chip} label={category ? category : "No Category"} />
+                <Chip className={classes.chip} label={priority} />
+              </div>
+              <div className={classes.buttonBox}>
+                <Tooltip title="Edit">
+                  <IconButton aria-controls="simple-menu" aria-haspopup="true" className={classes.button}>
+                    <EditIcon />
+                  </IconButton>
+                </Tooltip>
+                {<Tooltip title="Mark as completed">
+                  <IconButton
+                    aria-controls="simple-menu"
+                    aria-haspopup="true"
+                    className={classes.button}
+                  >
+                    <DoneIcon />
+                  </IconButton>
+                </Tooltip>}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+    </Draggable>
+  );
 };
 
 export default BacklogItem;
