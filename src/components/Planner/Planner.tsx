@@ -551,22 +551,6 @@ export class Planner extends React.Component<{}, BacklogState> {
 							Faild to update item
                                 </Alert>
 					</Snackbar>
-
-					<Button
-						//className={classes.createProjectBtn}
-						onClick={() => this.setFormIsOpen(true)}
-						variant="contained">
-						Create Task
-                    </Button>
-					<BacklogItemForm
-						isOpen={this.state.formIsOpen}
-						setIsOpen={this.setFormIsOpen}
-						formTitle="Create Task"
-						items={this.state.items}
-						//TODO not rerendering
-						setBacklogItems={this.setBacklogItems.bind(this)}
-						formType={"Create"}
-					/>
 				</React.Fragment>
 
 			)
