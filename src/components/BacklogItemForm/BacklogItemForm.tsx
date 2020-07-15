@@ -120,37 +120,6 @@ const BacklogItemForm: FunctionComponent<BacklogItemFormProps> = props => {
         }
     }
 
-    /* const submit = (): void => {
-        if (!checkInput()) {
-            setError(true)
-            return
-        }
-        const newTask: BacklogSingleTaskItem = {
-
-            author: UserService.getCurrentUser().id,
-            assignee: UserService.getCurrentUser().id,
-            title: title,
-            category: category,
-            dueDate: dueDate,
-            priority: priority,
-            reminder: reminder,
-            estimation: estimatedMIN,
-            description: description,
-            completed: completed,
-        }
-        tasks.push(newTask)
-        setTasks(tasks)
-
-        setError(false)
-        setTitle("")
-        setCategory("")
-        setDueDate(new Date)
-        setPriority("")
-        setReminder(Number) // kann ich das so machen?
-        setDescription("")
-        setCompleted(false)
-    } */
-
     const sendItemToDataBase = async () => {
         const newBacklogItem: IBacklogItemRequest = {
             author: UserService.getCurrentUser().id,
@@ -196,15 +165,13 @@ const BacklogItemForm: FunctionComponent<BacklogItemFormProps> = props => {
             team: response.item.team
         }
 
-        debugger
         //@ts-ignore
         setFeedbackMessage(response.message)
-        //@ts-ignore
         setBacklogItems([...items, newTask])
     }
 
     const checkInput = (): boolean => {
-        if (!title) {
+        if (!title || !description) {
             return false
         }
         return true
@@ -262,6 +229,8 @@ const BacklogItemForm: FunctionComponent<BacklogItemFormProps> = props => {
                     id='task-title'
                     fullWidth
                     label="Title"
+                    error={(!title) && error}
+                    helperText={(!title && error) ? "Needs to be filled out" : ""}
                     defaultValue={item?.title ? item.title : title}
                     placeholder="Enter the task title"
                     onChange={(event) => setTitle(event.target.value)}
@@ -399,9 +368,12 @@ const BacklogItemForm: FunctionComponent<BacklogItemFormProps> = props => {
                     id="description-box"
                     className={classes.textField}
                     label="Description"
+                    required
                     placeholder="Enter a description..."
                     fullWidth
                     defaultValue={item?.description ? item.description : description}
+                    error={(!description) && error}
+                    helperText={(!description && error) ? "Needs to be filled out" : ""}
                     multiline
                     rows={4}
                     onChange={(e) => setDescription(e.target.value)}
