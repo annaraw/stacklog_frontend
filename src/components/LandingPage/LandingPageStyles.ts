@@ -1,6 +1,5 @@
 import { makeStyles } from '@material-ui/core';
-import LandingPagePic from './Images/LandingPagePic.png'
-import { url } from 'inspector';
+
 
 export const LandingPageStyles = makeStyles ((theme) =>({
 
@@ -9,14 +8,7 @@ export const LandingPageStyles = makeStyles ((theme) =>({
         
     },
     
-    appBar: {
-       // margin-bottom: theme.spacing(2),
-    },
-
-    homeButton: {
-        marginRight: theme.spacing(2),
-        //background: 'url(${LandingPagePic})'
-    },
+    
     title: {
         flexGrow: 1,
     },

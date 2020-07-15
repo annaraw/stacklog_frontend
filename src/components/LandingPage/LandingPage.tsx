@@ -1,8 +1,7 @@
 import React from 'react';
 import { AppBar, Box, Button, Toolbar, IconButton, ButtonGroup,
-    Typography, makeStyles, Grid } from '@material-ui/core';
-import MenuIcon from '@material-ui/icons/Menu';
-import UserService from '../../services/UserService';
+     Grid } from '@material-ui/core';
+
 import LandingPagePic from './Images/LandingPagePic.png';
 import Logo from './Images/Logo.png';
 import { LandingPageStyles } from "./LandingPageStyles";
@@ -59,7 +58,7 @@ function LandingPage () {
             
 
             <div className = 'container'>
-                <img src = {LandingPagePic} alt="" className ='landingPagePic'/>
+                <img src = {LandingPagePic} alt="landing-page-pic" className ='landingPagePic'/>
                 
                 <div className = 'text-header-start' >
                     <h2>WELCOME TO STACKLOG</h2>
@@ -82,7 +81,7 @@ function LandingPage () {
                 
                     <Box className ='box' >
                         <div>
-                            <img src= {SingleWorker} alt="" className = 'icons'/>
+                            <img src= {SingleWorker} alt="single-worker-pic" className = 'icons'/>
                         </div>
                         <div >
                             <h2>Relieve the clutter in your head</h2>
@@ -96,7 +95,7 @@ function LandingPage () {
                     </Box>
                     <Box className ='box'>
                         <div>
-                            <img src = {TeamWorkers} alt= "" className = 'icons'/>
+                            <img src = {TeamWorkers} alt= "team-worker-pic" className = 'icons'/>
                         </div>
                         <div>
                             <h2>Increase your team's efficiency</h2> 
