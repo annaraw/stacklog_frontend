@@ -432,6 +432,11 @@ export class Planner extends React.Component<{}, BacklogState> {
 		if (destination.droppableId === source.droppableId && destination.index === source.index) {
 			return
 		}
+		// source: backlog -> destination: backlog NO CHANGE
+		if (destination.droppableId === source.droppableId && destination.droppableId === "backlog") {
+			return
+		}
+		//TODO: block index backend calls when dropping something into backlog
 
 		const columnStart = this.state.columns.filter((column) => column.id === source.droppableId)[0] // Find column from which the item was dragged from
 		console.log("COL ID", source.droppableId)
