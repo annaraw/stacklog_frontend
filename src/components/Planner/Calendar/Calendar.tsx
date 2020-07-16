@@ -62,10 +62,7 @@ export const Calendar: React.FC<BoardColumnProps> = (props) => {
           </div>
         </div>
         <div className={classes.calendarContent}>
-          <Scrollbar className={classes.schedule}
-            style={{
-              margin: "0 20px",
-            }}>
+          <Scrollbar className={classes.schedule}>
             <div className={classes.weekdays}>
 
 
