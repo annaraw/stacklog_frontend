@@ -34,12 +34,12 @@ export const BacklogComponent: FunctionComponent<BoardColumnProps> = props => {
   const classes = backlogComponentStyles()
 
   const { column, items } = props
-  const [displayedBacklog, setDisplayedBacklog] = useState<IBacklogItem[]>(items)
+
   const [searchInput, setSearchInput] = useState<string>("")
   const [sortIsUp, setSortIsUp] = useState<boolean>(true)
   const [sortType, setSortType] = useState<string>(sortTypes.priority)
   const [selectedFilters, setSelectedFilters] = useState<string[]>([])
-  
+
   const initCategories = () => {
     //initialize categories
     let temp: string[] = []
@@ -59,47 +59,31 @@ export const BacklogComponent: FunctionComponent<BoardColumnProps> = props => {
 
   const [categories, setCategories] = useState<Category[]>(initCategories)
 
-  useEffect(() => {
-    const fetchData = async () => {
-      await setDisplayedBacklog(await onUpdateDisplayedItems(items))
-    };
-
-    fetchData();
-  }, [searchInput, sortIsUp, sortType, selectedFilters]);
-
-  const setSearchInputAndUpdate = async (searchInput: string) => {
+  const setSearchInputAndUpdate = (searchInput: string) => {
     setSearchInput(searchInput)
-    var newItems = await onUpdateDisplayedItems(items)
-    setDisplayedBacklog(newItems)
   }
 
-  const setSortIsUpAndUpdate = async (isUp: boolean) => {
+  const setSortIsUpAndUpdate = (isUp: boolean) => {
     setSortIsUp(isUp)
-    var newItems = await onUpdateDisplayedItems(items)
-    setDisplayedBacklog(newItems)
   }
 
-  const setSortTypeAndUpdate = async (sortType: string) => {
+  const setSortTypeAndUpdate = (sortType: string) => {
     setSortType(sortType)
-    var newItems = await onUpdateDisplayedItems(items)
-    setDisplayedBacklog(newItems)
   }
 
-  const setSelectedFiltersAndUpdate = async (selectedFilters: string[]) => {
+  const setSelectedFiltersAndUpdate = (selectedFilters: string[]) => {
     setSelectedFilters(selectedFilters)
-    var newItems = await onUpdateDisplayedItems(items)
-    setDisplayedBacklog(newItems)
   }
 
-  const onUpdateDisplayedItems = async (displayedItems: IBacklogItem[]) => {
-    return await filter(
-      await search(
-        await sort(displayedItems)
+  const onUpdateDisplayedItems = (displayedItems: IBacklogItem[]) => {
+    return filter(
+      search(
+        sort(displayedItems)
       )
     )
   }
 
-  const filter = async (itemList: IBacklogItem[]) => {
+  const filter = (itemList: IBacklogItem[]) => {
     //create list of filtered backlog
     var temp: IBacklogItem[] = []
     //show all items if no category is selected
@@ -115,7 +99,7 @@ export const BacklogComponent: FunctionComponent<BoardColumnProps> = props => {
     return temp
   }
 
-  const sort = async (itemList: IBacklogItem[]) => {
+  const sort = (itemList: IBacklogItem[]) => {
     var temp: IBacklogItem[] = []
     if (sortType === sortTypes.priority) {
       temp =
@@ -152,7 +136,7 @@ export const BacklogComponent: FunctionComponent<BoardColumnProps> = props => {
     return temp
   }
 
-  const search = async (itemList: IBacklogItem[]) => {
+  const search = (itemList: IBacklogItem[]) => {
     //split search string into array of keywords
     var keywords: string[] = searchInput.split(' ')
     //delete the last space character in the keyword array except if it is the last remaining item in the array
@@ -205,7 +189,7 @@ export const BacklogComponent: FunctionComponent<BoardColumnProps> = props => {
               splitButtonAriaLabel="See 2 options"
               aria-roledescription="split button"
               menuProps={menuProps}
-              onClick={async (event) => await setSortIsUpAndUpdate(!sortIsUp)}
+              onClick={(event) => setSortIsUpAndUpdate(!sortIsUp)}
               iconProps={getOrderIcon()}
             />
           </div>
@@ -214,11 +198,11 @@ export const BacklogComponent: FunctionComponent<BoardColumnProps> = props => {
               placeholder="No Filter applied"
               selectedKeys={selectedFilters}
               multiSelect
-              onChange={async (_, option) => {
+              onChange={(_, option) => {
                 option && (
                   option.selected
-                    ? await setSelectedFiltersAndUpdate([...selectedFilters, option.key as string])
-                    : await setSelectedFiltersAndUpdate(selectedFilters.filter(key => key !== option.key))
+                    ? setSelectedFiltersAndUpdate([...selectedFilters, option.key as string])
+                    : setSelectedFiltersAndUpdate(selectedFilters.filter(key => key !== option.key))
                 )
               }}
               options={categories}
@@ -229,8 +213,8 @@ export const BacklogComponent: FunctionComponent<BoardColumnProps> = props => {
           <SearchBox
             placeholder="Search Backlog"
             underlined={true}
-            onChange={async (_, value) => { await setSearchInputAndUpdate(String(value)) }}
-            onClear={async (_) => { await setSearchInputAndUpdate("") }}
+            onChange={(_, value) => { setSearchInputAndUpdate(String(value)) }}
+            onClear={(_) => { setSearchInputAndUpdate("") }}
           />
         </div>
         <Scrollbar style={{ width: "100%", float: "left", height: "500px" }}>
@@ -241,7 +225,7 @@ export const BacklogComponent: FunctionComponent<BoardColumnProps> = props => {
                 ref={provided.innerRef}
                 isDraggingOver={snapshot.isDraggingOver}
               >
-                {displayedBacklog.map((backlogItem: any, index: number) =>
+                {onUpdateDisplayedItems(items).map((backlogItem: any, index: number) =>
 
                   <BacklogItem
                     index={index}
