@@ -8,11 +8,11 @@ export const calendarStyles = makeStyles((theme) => ({
         height: "100%"
     },
     schedule: {
-
+        margin: "0 20px",
     },
     calendar: {
         backgroundColor: "white",
-        marginLeft: "5%",
+        marginLeft: "20px",
         padding: "20px"
     },
     menubar: {

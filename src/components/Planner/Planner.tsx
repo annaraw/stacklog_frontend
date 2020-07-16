@@ -547,7 +547,7 @@ export class Planner extends React.Component<{}, BacklogState> {
 										categories={this.state.categories}
 									/>)
 							}
-							<div style={{ position: "relative" }}>
+							<div style={{ position: "relative", height: "calc(100vh - 120px)" }}>
 								<Calendar calendars={this.state.calendars} key='calendar' columns={this.state.columns} items={this.state.items} />
 							</div>
 						</div>
