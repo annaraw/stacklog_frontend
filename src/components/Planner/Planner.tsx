@@ -171,12 +171,13 @@ export class Planner extends React.Component<{}, BacklogState> {
 				).toDateString()
 			)
 		}
+		let today = new Date(new Date().setHours(0,0,0,0))
 		//initialize columns
 		let initialColumns: Column[] = [{
 			id: 'backlog',
 			title: 'backlog',
 			itemsIds: items.filter((item) => !item.completed && (!item.startDate
-				|| new Date(item.startDate).toDateString() <= new Date().toDateString())
+				|| new Date(item.startDate) < today)
 			).map(item => item.id)
 		}]
 		for (let i in nextDays) {
