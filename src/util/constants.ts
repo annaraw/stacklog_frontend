@@ -11,7 +11,7 @@ export const sortTypes = {
     category: "Category"
   }
 export const Colors = {
-    primaryColor: "#6AFFA1",
+    primaryColor: "#65bcdb",
     secondaryColor: "#BBBBBB",
-    calendar: "#FFE000",
+    calendar: "#ffaa00",
 }

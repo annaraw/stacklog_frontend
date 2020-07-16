@@ -6,12 +6,24 @@ import EditIcon from '@material-ui/icons/Edit';
 import DoneIcon from '@material-ui/icons/Done';
 
 import { backlogItemStyles } from './BacklogItemStyles';
+import { Priority } from '../../../models/models';
 
-const BacklogItem: FunctionComponent<{ title: String, description: string, category: string, priority: number, id: any, index: number }> = props => {
+const BacklogItem: FunctionComponent<{ title: String, description: string, category: string, priority: number, id: any, index: number, dueDate?: Date }> = props => {
 
-  const { title, description, category, priority, id, index } = props;
+  const { title, description, category, priority, id, index, dueDate } = props;
 
   const classes = backlogItemStyles()
+
+  const priorityColor = () => {
+    if (priority.toString() === "high") {
+      return "#ff928a"
+    } else if (priority.toString() === "medium") {
+      return "#c0c0c0"
+    }
+    else if (priority.toString() === "low") {
+      return "#ededed"
+    }
+  }
 
   return (
     <Draggable draggableId={id} index={index}>
@@ -37,8 +49,9 @@ const BacklogItem: FunctionComponent<{ title: String, description: string, categ
             />
             <CardContent className={classes.cardContent}>
               <div className={classes.chipBox}>
-                <Chip className={classes.chip} label={category ? category : "No Category"} />
-                <Chip className={classes.chip} label={priority} />
+                <Tooltip title="Category"><Chip className={classes.chip} label={category ? category : "No Category"} /></Tooltip>
+                <Tooltip title="Priority"><Chip className={classes.chip} label={priority} style={{backgroundColor: priorityColor()}}/></Tooltip>
+                {dueDate && <Tooltip title="Due Date"><Chip className={classes.chip} label={new Date(dueDate).getFullYear()+"-"+new Date(dueDate).getMonth()+"-"+new Date(dueDate).getDate()} /></Tooltip>}
               </div>
               <div className={classes.buttonBox}>
                 <Tooltip title="Edit">

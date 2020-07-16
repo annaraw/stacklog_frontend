@@ -57,7 +57,7 @@ export const BacklogComponent: FunctionComponent<BoardColumnProps> = props => {
     return categories
   }
 
-  const [categories, setCategories] = useState<Category[]>(initCategories)
+  const categories = initCategories()
 
   const setSearchInputAndUpdate = (searchInput: string) => {
     setSearchInput(searchInput)
@@ -238,6 +238,7 @@ export const BacklogComponent: FunctionComponent<BoardColumnProps> = props => {
                       description={backlogItem.description}
                       category={backlogItem.category}
                       priority={backlogItem.priority}
+                      dueDate={backlogItem.dueDate ? backlogItem.dueDate : null}
                     />
 
                   )}
