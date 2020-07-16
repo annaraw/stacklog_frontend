@@ -38,11 +38,11 @@ const BoardColumnContent = styled.div<BoardColumnContentStylesProps>`
   border-radius: 4px;
 `
 
-export const BacklogComponent : FunctionComponent<BoardColumnProps> = props => {
+export const BacklogComponent: FunctionComponent<BoardColumnProps> = props => {
 
   const classes = backlogComponentStyles()
 
-  const { column, items, sortType, sortIsUp, selectedFilters, categories, setSortType, setSortIsUp, setSearchInput, setSelectedFilters} = props
+  const { column, items, sortType, sortIsUp, selectedFilters, categories, setSortType, setSortIsUp, setSearchInput, setSelectedFilters } = props
 
   const getOrderIcon = () => {
     return (sortIsUp ? { iconName: 'Up' } : { iconName: 'Down' })
@@ -53,7 +53,7 @@ export const BacklogComponent : FunctionComponent<BoardColumnProps> = props => {
       {
         key: 'alphabet',
         text: sortTypes.alphabetical,
-      onClick: () => { setSortType(sortTypes.alphabetical) }
+        onClick: () => { setSortType(sortTypes.alphabetical) }
       },
       {
         key: 'priority',
@@ -66,71 +66,73 @@ export const BacklogComponent : FunctionComponent<BoardColumnProps> = props => {
   return (
     <React.Fragment>
       <div className={classes.backlogContainer}>
-        <div className={classes.containerTitle}>Backlog</div>
-        <div className={classes.containerControls}>
-          <div style={{ float: "left", margin: "5px", display: "inline-block" }}>
-            <DefaultButton
-              text={sortType}
-              split
-              splitButtonAriaLabel="See 2 options"
-              aria-roledescription="split button"
-              menuProps={menuProps}
-              onClick={(event) => setSortIsUp(!sortIsUp)}
-              iconProps={getOrderIcon()}
-            />
-          </div>
-          <div style={{ width: "200px", float: "left", margin: "5px", display: "inline-block" }}>
-            <Dropdown
-              placeholder="No Filter applied"
-              selectedKeys={selectedFilters}
-              multiSelect
-              onChange={async (_, option) => { 
-                option && (
-                  option.selected
-                  ? setSelectedFilters([...selectedFilters, option.key as string])
-                  : setSelectedFilters(selectedFilters.filter(key => key !== option.key))
+        <div style={{ height: "auto", width: "100%" }}>
+          <div className={classes.containerTitle}>Backlog</div>
+          <div className={classes.containerControls}>
+            <div style={{ float: "left", margin: "5px", display: "inline-block" }}>
+              <DefaultButton
+                text={sortType}
+                split
+                splitButtonAriaLabel="See 2 options"
+                aria-roledescription="split button"
+                menuProps={menuProps}
+                onClick={(event) => setSortIsUp(!sortIsUp)}
+                iconProps={getOrderIcon()}
+              />
+            </div>
+            <div style={{ width: "200px", float: "left", margin: "5px", display: "inline-block" }}>
+              <Dropdown
+                placeholder="No Filter applied"
+                selectedKeys={selectedFilters}
+                multiSelect
+                onChange={async (_, option) => {
+                  option && (
+                    option.selected
+                      ? setSelectedFilters([...selectedFilters, option.key as string])
+                      : setSelectedFilters(selectedFilters.filter(key => key !== option.key))
                   )
-              }}
-              options={categories}
+                }}
+                options={categories}
+              />
+            </div>
+          </div>
+          <div style={{ width: "100%", float: "right", paddingTop: "15px" }}>
+            <SearchBox
+              placeholder="Search Backlog"
+              underlined={true}
+              onChange={async (_, value) => { setSearchInput(String(value)) }}
+              onClear={async (_) => { setSearchInput("") }}
             />
           </div>
         </div>
-        <div style={{ width: "100%", float: "right", paddingTop: "15px" }}>
-          <SearchBox
-            placeholder="Search Backlog"
-            underlined={true}
-            onChange={async (_, value) => { setSearchInput(String(value)) }}
-            onClear={async (_) => { setSearchInput("") }}
-          />
-        </div>
-        <div style={{ height: "100%" }}>
-        <Scrollbar style={{ width: "100%", float: "left" }}>
-          <Droppable droppableId={column.id}>
-            {(provided, snapshot) => (
-              <BoardColumnContent
-                {...provided.droppableProps}
-                ref={provided.innerRef}
-                isDraggingOver={snapshot.isDraggingOver}
-              >
-                {items.map((backlogItem: any, index: number) => 
-                    
-                      <BacklogItem 
-                        index={index} 
-                        id={backlogItem.id} 
-                        key={backlogItem.id} 
-                        title={backlogItem.title} 
-                        description={backlogItem.description}
-                        category={backlogItem.category} 
-                        priority={backlogItem.priority}
-                      />
-                      
-                  )}
-                {provided.placeholder}
-              </BoardColumnContent>
-            )}
-          </Droppable>
+        <div style={{ height: "auto", flex: "1", width: "100%" }}>
+          <Scrollbar style={{ width: "100%", float: "left" }}>
+            <Droppable droppableId={column.id}>
+              {(provided, snapshot) => (
+                <BoardColumnContent
+                  {...provided.droppableProps}
+                  ref={provided.innerRef}
+                  isDraggingOver={snapshot.isDraggingOver}
+                >
+                  {items.map((backlogItem: any, index: number) =>
 
-        </Scrollbar></div>
+                    <BacklogItem
+                      index={index}
+                      id={backlogItem.id}
+                      key={backlogItem.id}
+                      title={backlogItem.title}
+                      description={backlogItem.description}
+                      category={backlogItem.category}
+                      priority={backlogItem.priority}
+                    />
+
+                  )}
+                  {provided.placeholder}
+                </BoardColumnContent>
+              )}
+            </Droppable>
+
+          </Scrollbar></div>
       </div>
     </React.Fragment>
   );

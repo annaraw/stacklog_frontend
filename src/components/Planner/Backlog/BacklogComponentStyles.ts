@@ -6,6 +6,8 @@ export const backlogComponentStyles = makeStyles((theme) => ({
         backgroundColor: "white",
         overflow: "hidden",
         padding: "20px",
+        flexDirection: "column",
+        display:"flex",
     },
     containerTitle: {
         float: "right",
