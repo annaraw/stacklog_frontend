@@ -383,10 +383,12 @@ export class Planner extends React.Component<{}, BacklogState> {
 							{this.state.columns.map((col) => col.id.split("-")[0])
 								.filter((item, i, ar) => ar.indexOf(item) === i)
 								.filter((col) => col === 'backlog')
-								.map((col) => <BacklogComponent
+								.map((col) => 
+								<BacklogComponent
 									key={col}
 									column={this.getDayColumns(col)[0]}
 									items={this.state.items.filter((item) => !item.startDate)} //filter for backlog items only
+									setBacklogItems={this.setBacklogItems}
 								/>)
 							}
 							<div style={{ position: "relative", height: "calc(100vh - 120px)" }}>

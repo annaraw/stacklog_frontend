@@ -5,13 +5,15 @@ export const unsortedBacklogStyles = makeStyles((theme) => ({
         position: "relative"
     },
     backlogContainer: {
-        width: "80%",
-        height: "80vh",
+        width: "90%",
+        height: "calc(100vh - 200px)",
         margin: "20px auto",
         backgroundColor: "white",
         overflow: "hidden",
         padding: "20px",
         position: "relative",
+        display: "flex",
+        flexDirection: "column"
     },
     containerTitle: {
         float: "right",
@@ -37,6 +39,6 @@ export const unsortedBacklogStyles = makeStyles((theme) => ({
     scrollbar: {
         width: "100%",
         float: "left",
-        height: "500px"
-    }
+        height: "95%"
+    },
 }));

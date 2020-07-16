@@ -71,6 +71,13 @@ export const backlogItemStyles = makeStyles((theme) => ({
         padding: "0",
         margin: "0",
         maxWidth: "350px"
+    },
+    checkbox:{
+        backgroundColor: Colors.primaryColor,
+        '&:hover': {
+            backgroundColor: Colors.primaryColor,
+            filter: "brightness(85%)",
+        }
     }
 }));
 

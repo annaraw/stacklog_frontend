@@ -13,10 +13,14 @@ import { Droppable } from 'react-beautiful-dnd'
 import styled from 'styled-components'
 import { sortTypes } from '../../../util/constants';
 import { backlogComponentStyles } from './BacklogComponentStyles';
+import { Tooltip, IconButton } from '@material-ui/core';
+import BacklogItemForm from '../../BacklogItemForm/BacklogItemForm';
+import AddIcon from '@material-ui/icons/Add';
 
 type BoardColumnProps = {
   column: Column
   items: IBacklogItem[]
+  setBacklogItems: (items: IBacklogItem[]) => void
 }
 
 type BoardColumnContentStylesProps = {
@@ -27,18 +31,20 @@ const BoardColumnContent = styled.div<BoardColumnContentStylesProps>`
   min-height: 20px;
   background-color: ${props => props.isDraggingOver ? '#aecde0' : null};
   border-radius: 4px;
+  margin-bottom: 80px;
 `
 
 export const BacklogComponent: FunctionComponent<BoardColumnProps> = props => {
 
   const classes = backlogComponentStyles()
 
-  const { column, items } = props
+  const { column, items, setBacklogItems } = props
 
   const [searchInput, setSearchInput] = useState<string>("")
   const [sortIsUp, setSortIsUp] = useState<boolean>(true)
   const [sortType, setSortType] = useState<string>(sortTypes.priority)
   const [selectedFilters, setSelectedFilters] = useState<string[]>([])
+  const [isOpen, setIsOpen] = useState<boolean>(false)
 
   const initCategories = () => {
     //initialize categories
@@ -180,6 +186,11 @@ export const BacklogComponent: FunctionComponent<BoardColumnProps> = props => {
   return (
     <React.Fragment>
       <div className={classes.backlogContainer}>
+        <Tooltip title="Add new Backlog Item" placement="left" arrow>
+          <IconButton className={classes.addButton} aria-label="add" onClick={() => setIsOpen(true)}>
+            <AddIcon />
+          </IconButton>
+        </Tooltip>
         <div style={{ height: "auto", width: "100%" }}>
           <div className={classes.containerTitle}>Backlog</div>
           <div className={classes.containerControls}>
@@ -232,13 +243,9 @@ export const BacklogComponent: FunctionComponent<BoardColumnProps> = props => {
 
                     <BacklogItem
                       index={index}
-                      id={backlogItem.id}
-                      key={backlogItem.id}
-                      title={backlogItem.title}
-                      description={backlogItem.description}
-                      category={backlogItem.category}
-                      priority={backlogItem.priority}
-                      dueDate={backlogItem.dueDate ? backlogItem.dueDate : null}
+                      item={backlogItem}
+                      items={items}
+                      setBacklogItems={setBacklogItems}
                     />
 
                   )}
@@ -246,9 +253,17 @@ export const BacklogComponent: FunctionComponent<BoardColumnProps> = props => {
                 </BoardColumnContent>
               )}
             </Droppable>
-
-          </Scrollbar></div>
+          </Scrollbar>
+        </div>
       </div>
+      <BacklogItemForm
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        formTitle={"Add Task"}
+        items={items}
+        setBacklogItems={setBacklogItems}
+        formType={"Create"}
+      />
     </React.Fragment>
   );
 };
