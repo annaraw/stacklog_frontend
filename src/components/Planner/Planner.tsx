@@ -3,8 +3,7 @@ import { DragDropContext } from 'react-beautiful-dnd'
 import styled from "styled-components";
 import { BacklogComponent } from './Backlog/BacklogComponent';
 import { Calendar } from './Calendar/Calendar';
-import { sortTypes } from '../../util/constants';
-import { IBacklogItem, Column, ICalendar, Category, Priority, IBacklogItemUpdateProps } from '../../models/models';
+import { IBacklogItem, Column, ICalendar, IBacklogItemUpdateProps } from '../../models/models';
 import BacklogItemService from '../../services/BacklogItemService';
 import BacklogItemForm from '../BacklogItemForm/BacklogItemForm';
 import { Button } from '@material-ui/core';
@@ -15,13 +14,7 @@ import { Alert } from '@material-ui/lab';
 interface BacklogState {
 	calendars: ICalendar[],
 	items: IBacklogItem[],
-	displayedItems: IBacklogItem[],
 	columns: Column[],
-	searchInput: string,
-	sortIsUp: boolean,
-	sortType: string,
-	selectedFilters: string[],
-	categories: Category[],
 	loading: boolean,
 	loadingError: boolean,
 	error: boolean,
@@ -36,15 +29,7 @@ export class Planner extends React.Component<{}, BacklogState> {
 		this.state = {
 			calendars: [],
 			items: [], // all items in every column
-			displayedItems: [],
 			columns: [], // column objects (backlog + schedule + calendar days)
-
-			// states for search, sort, filter:
-			searchInput: "",
-			sortIsUp: false,
-			sortType: sortTypes.priority,
-			selectedFilters: [],
-			categories: [],
 
 			loading: true,
 			formIsOpen: false,
@@ -83,26 +68,10 @@ export class Planner extends React.Component<{}, BacklogState> {
 					})
 				}
 
-				//initialize categories
-				let temp: string[] = []
-				let categories: Category[] = []
-				for (var i = 0; i < itemsFromBackend.length; i++) {
-					if (temp.includes((itemsFromBackend[i].category))) continue;
-					temp.push(itemsFromBackend[i].category);
-					var c: Category = {
-						key: itemsFromBackend[i].category ? itemsFromBackend[i].category : "No Category",
-						text: itemsFromBackend[i].category ? itemsFromBackend[i].category : "No Category",
-						color: itemsFromBackend[i].category ? "#c0c0c0" : "#ffffff"
-					}
-					categories.push(c)
-				}
-
 				this.setState({
 					items: itemsFromBackend,
-					displayedItems: itemsFromBackend.filter((item) => !item.startDate),
 					columns: this.setInitialColumns(itemsFromBackend),
 					loading: false,
-					categories: categories
 				})
 			} else {
 				this.setState({
@@ -154,11 +123,6 @@ export class Planner extends React.Component<{}, BacklogState> {
 
 	updateBacklogItem = (itemID: string, itemProps: IBacklogItemUpdateProps) => {
 		return BacklogItemService.updateBacklogItem(itemID, itemProps)
-	}
-
-	getCalendars = async () => {
-		var allBacklogItems = await this.state.items.filter((item) => !item.startDate)
-		this.setDisplayedItems(await this.filter(await this.search(await this.sort(allBacklogItems))))
 	}
 
 	setInitialColumns = (items: IBacklogItem[]) => {
@@ -225,117 +189,6 @@ export class Planner extends React.Component<{}, BacklogState> {
 		let newItems = [...this.state.items]
 		newItems[index] = item
 		this.setState({ items: newItems })
-	}
-
-	setSearchInput = async (searchInput: string) => {
-		this.setState({ searchInput: searchInput })
-		var allBacklogItems = await this.state.items.filter((item) => !item.startDate)
-		this.setDisplayedItems(await this.onUpdateDisplayedItems(allBacklogItems))
-	}
-
-	setSortIsUp = async (isUp: boolean) => {
-		this.setState({ sortIsUp: isUp })
-		var allBacklogItems = await this.state.items.filter((item) => !item.startDate)
-		this.setDisplayedItems(await this.onUpdateDisplayedItems(allBacklogItems))
-	}
-
-	setSortType = async (sortType: string) => {
-		this.setState({ sortType: sortType })
-		var allBacklogItems = await this.state.items.filter((item) => !item.startDate)
-		this.setDisplayedItems(await this.onUpdateDisplayedItems(allBacklogItems))
-	}
-
-	setSelectedFilters = async (selectedFilters: string[]) => {
-		this.setState({ selectedFilters: selectedFilters })
-		var allBacklogItems = await this.state.items.filter((item) => !item.startDate)
-		this.setDisplayedItems(await this.onUpdateDisplayedItems(allBacklogItems))
-	}
-
-	setDisplayedItems = (displayedItems: IBacklogItem[]) => {
-		this.setState({ displayedItems: displayedItems })
-	}
-
-	onUpdateDisplayedItems = async (displayedItems: IBacklogItem[]) => {
-		return await this.filter(
-			await this.search(
-				await this.sort(displayedItems)
-			)
-		)
-	}
-
-	filter = async (itemList: IBacklogItem[]) => {
-		//create list of filtered backlog
-		var temp: IBacklogItem[] = []
-		//show all items if no category is selected
-		if (this.state.selectedFilters.length === 0) {
-			temp = itemList
-		} else {
-			itemList.forEach(backlogItem => {
-				if (this.state.selectedFilters.includes(backlogItem.category) || (backlogItem.category === null && this.state.selectedFilters.includes("No Category"))) {
-					temp.push(backlogItem)
-				}
-			})
-		}
-		return temp
-	}
-
-	sort = async (itemList: IBacklogItem[]) => {
-		var temp: IBacklogItem[] = []
-		if (this.state.sortType === sortTypes.priority) {
-			temp =
-				this.state.sortIsUp ? (itemList.sort(
-					function (a, b) {
-						if (Priority[a.priority] > Priority[b.priority]) { return -1; }
-						if (Priority[a.priority] < Priority[b.priority]) { return 1; }
-						return 0;
-					}
-				)) : (itemList.sort(
-					function (a, b) {
-						if (Priority[a.priority] < Priority[b.priority]) { return -1; }
-						if (Priority[a.priority] > Priority[b.priority]) { return 1; }
-						return 0;
-					}
-				))
-		}
-		else if (this.state.sortType === sortTypes.alphabetical) {
-			temp =
-				this.state.sortIsUp ? (itemList.sort(
-					function (a, b) {
-						if (a.title.toLowerCase() > b.title.toLowerCase()) { return -1; }
-						if (a.title.toLowerCase() < b.title.toLowerCase()) { return 1; }
-						return 0;
-					}
-				)) : (itemList.sort(
-					function (a, b) {
-						if (a.title.toLowerCase() < b.title.toLowerCase()) { return -1; }
-						if (a.title.toLowerCase() > b.title.toLowerCase()) { return 1; }
-						return 0;
-					}
-				))
-		}
-		return temp
-	}
-
-	search = async (itemList: IBacklogItem[]) => {
-		//split search string into array of keywords
-		var searchInput: string[] = this.state.searchInput.split(' ')
-		//delete the last space character in the keyword array except if it is the last remaining item in the array
-		if (searchInput.length !== 1) {
-			searchInput = searchInput.filter(function (element) { return element !== ""; })
-		}
-		//select all backlog items that contain one of the keywords
-		var temp: IBacklogItem[] = []
-		searchInput.forEach(keyword => {
-			itemList.forEach(backlogItem => {
-				if (backlogItem.title.toLowerCase().includes(keyword.toLowerCase())) {
-					//item not already in the list
-					if (!temp.includes(backlogItem)) {
-						temp.push(backlogItem)
-					}
-				}
-			})
-		})
-		return temp
 	}
 
 	updateStartColumn(columnStart: any, newColumnStart: any, columnFinish: any, undo: boolean) {
@@ -488,7 +341,6 @@ export class Planner extends React.Component<{}, BacklogState> {
 			this.updateFinishColumn(newDate, columnStart, newColumnFinish, columnFinish, false)
 
 		}
-		this.setDisplayedItems(await this.onUpdateDisplayedItems(this.state.items.filter((item) => !item.startDate)))
 	};
 
 	handleClose = (event?: React.SyntheticEvent, reason?: string) => {
@@ -531,21 +383,11 @@ export class Planner extends React.Component<{}, BacklogState> {
 							{this.state.columns.map((col) => col.id.split("-")[0])
 								.filter((item, i, ar) => ar.indexOf(item) === i)
 								.filter((col) => col === 'backlog')
-								.map((col) =>
-									<BacklogComponent
-										key={col}
-										column={this.getDayColumns(col)[0]}
-										items={this.state.displayedItems}
-										sortType={this.state.sortType}
-										sortIsUp={this.state.sortIsUp}
-										searchInput={this.state.searchInput}
-										selectedFilters={this.state.selectedFilters}
-										setSortType={this.setSortType}
-										setSortIsUp={this.setSortIsUp}
-										setSearchInput={this.setSearchInput}
-										setSelectedFilters={this.setSelectedFilters}
-										categories={this.state.categories}
-									/>)
+								.map((col) => <BacklogComponent
+									key={col}
+									column={this.getDayColumns(col)[0]}
+									items={this.state.items.filter((item) => !item.startDate)} //filter for backlog items only
+								/>)
 							}
 							<div style={{ position: "relative", height: "calc(100vh - 120px)" }}>
 								<Calendar calendars={this.state.calendars} key='calendar' columns={this.state.columns} items={this.state.items} />
