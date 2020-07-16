@@ -4,8 +4,9 @@ export const calendarStyles = makeStyles((theme) => ({
     calendars: {
         display: "grid",
         position: "absolute",
-        gridTemplateColumns: "1fr 3fr",
-        height: "100%"
+        gridTemplateColumns: "0fr 3fr",
+        height: "100%",
+        width: "100%"
     },
     schedule: {
         margin: "0 20px",
@@ -13,7 +14,7 @@ export const calendarStyles = makeStyles((theme) => ({
     calendar: {
         backgroundColor: "white",
         marginLeft: "20px",
-        padding: "20px"
+        padding: "20px",
     },
     menubar: {
         height: "40px",
