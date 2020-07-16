@@ -1,6 +1,11 @@
 import * as React from 'react'
 import { Draggable } from 'react-beautiful-dnd'
 import styled from 'styled-components'
+import { Card, CardHeader, Typography, CardContent, Chip, Tooltip, IconButton, Popover } from '@material-ui/core'
+import { title } from 'process'
+import EditIcon from '@material-ui/icons/Edit';
+import DoneIcon from '@material-ui/icons/Done';
+import { calendarItemStyles } from './CalendarItemStyles'
 
 // Define types for board item element properties
 type BoardItemProps = {
@@ -57,19 +62,125 @@ const BoardItemEl = styled.div<BoardItemStylesProps>`
 // isDragDisabled
 // Create and export the BoardItem component
 export const CalendarItem = (props: BoardItemProps) => {
-  return <Draggable  draggableId={props.item.id} index={props.index}>
+  const { item } = props
+
+  const classes = calendarItemStyles()
+
+  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
+
+  const handlePopoverOpen = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+
+  return <Draggable draggableId={props.item.id} index={props.index}>
     {(provided, snapshot) => (
-      <BoardItemEl
+      <div
         {...provided.draggableProps}
         {...provided.dragHandleProps}
         ref={provided.innerRef}
-        isDragging={snapshot.isDragging}
-        index={props.index}
-        /*height='100px'*/
+      //isDragging={snapshot.isDragging}
+      //index={props.index}
+      /*height='100px'*/
       >
-        {/* The content of the BoardItem */}
-        {props.item.title}
-      </BoardItemEl>
+        <Card className={classes.root} key={item.id}>
+          <CardHeader
+            title={
+              <>
+                <Typography className={classes.cardHeaderFont}>
+                  <p className={classes.ellipsis}>{item.title}</p>
+                </Typography>
+              </>
+            }
+            className={classes.cardHeader}
+          />
+          <CardContent className={classes.cardContent}>
+            <div className={classes.buttonBox}>
+              <Tooltip title="Edit">
+                <IconButton
+                  aria-controls="simple-menu"
+                  aria-haspopup="true"
+                  className={classes.button}
+                  onMouseEnter={handlePopoverOpen}
+                  onMouseLeave={() => setTimeout(() => {
+                    handlePopoverClose()
+                  }, 200)}
+                >
+                  <EditIcon className={classes.icon} />
+                </IconButton>
+              </Tooltip>
+              {<Tooltip title="Mark as completed">
+                <IconButton
+                  aria-controls="simple-menu"
+                  aria-haspopup="true"
+                  className={classes.button}
+                >
+                  <DoneIcon className={classes.icon} />
+                </IconButton>
+              </Tooltip>}
+            </div>
+          </CardContent>
+        </Card>
+        {/* <Popover
+          id="mouse-over-popover"
+          className={classes.popover}
+          open={open}
+          anchorEl={anchorEl}
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
+          }}
+          transformOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+          onClose={handlePopoverClose}
+          disableRestoreFocus
+        >
+          <Card className={classes.root} key={item.id}>
+            <CardHeader
+              title={
+                <>
+                  <Typography className={classes.cardHeaderFont}>
+                    <p className={classes.ellipsis}>{item.title}</p>
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary" component="div" className={classes.description}>
+                    <p className={classes.ellipsis}>{item.description ? item.description : ""}</p>
+                  </Typography>
+                </>
+              }
+              className={classes.cardHeader}
+            />
+            <CardContent className={classes.cardContent}>
+              <div className={classes.chipBox}>
+                <Chip className={classes.chip} label={item.category ? item.category : "No Category"} />
+                <Chip className={classes.chip} label={item.priority} />
+              </div>
+              <div className={classes.buttonBox}>
+                <Tooltip title="Edit">
+                  <IconButton aria-controls="simple-menu" aria-haspopup="true" className={classes.button}>
+                    <EditIcon />
+                  </IconButton>
+                </Tooltip>
+                {<Tooltip title="Mark as completed">
+                  <IconButton
+                    aria-controls="simple-menu"
+                    aria-haspopup="true"
+                    className={classes.button}
+                  >
+                    <DoneIcon />
+                  </IconButton>
+                </Tooltip>}
+              </div>
+            </CardContent>
+          </Card>
+        </Popover> */}
+      </div>
     )}
   </Draggable>
 }
