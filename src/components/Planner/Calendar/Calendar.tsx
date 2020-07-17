@@ -32,7 +32,10 @@ export const Calendar: React.FC<BoardColumnProps> = (props) => {
     return calendars
       .map((cal: ICalendar) => cal ? cal.items
         .filter((calItem: ICalendarItem) => sameDay(new Date(calItem.dtStart), new Date(day)))
-        .map((calItem: ICalendarItem) => calItem) : []
+        .map((calItem: ICalendarItem) => {
+          if (!calItem.color) {calItem.color = cal.color}
+            return calItem
+        }) : []
       )
   }
 

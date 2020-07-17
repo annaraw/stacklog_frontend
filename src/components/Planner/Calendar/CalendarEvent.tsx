@@ -54,6 +54,7 @@ export const CalendarEvent = (props: BoardItemProps) => {
         className={classes.event}
         style={{ 
           height: getHeight(props.calItem),
+          backgroundColor: props.calItem.color ? props.calItem.color : 'red'
         }}
       >
       </div>

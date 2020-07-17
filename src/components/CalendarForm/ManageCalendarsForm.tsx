@@ -99,8 +99,8 @@ const ManageCalendarsForm: FunctionComponent<any> = props => {
             <List>
             {props.calendars.map((c:ICalendar) => {
              return (
-               <ListItem >
-                  <ListItemIcon>{<CalendarTodayIcon/>}</ListItemIcon>
+               <ListItem key={"cal"+c.id} >
+                  <ListItemIcon>{<CalendarTodayIcon style={{"color":c.color}}/>}</ListItemIcon>
                   <ListItemText primary={c.name}/>
                   <ListItemIcon onClick={() =>{
                               setShowDeleteDialog(true)
