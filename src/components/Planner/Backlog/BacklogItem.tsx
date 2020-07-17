@@ -59,8 +59,6 @@ const BacklogItem: FunctionComponent<BacklogItemProps> = props => {
     }
   }
 
-  debugger
-
   return (
     <>
       <Draggable draggableId={item.id} index={index}>
