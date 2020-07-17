@@ -54,8 +54,8 @@ export const BacklogComponent: FunctionComponent<BoardColumnProps> = props => {
       if (temp.includes((items[i].category))) continue;
       temp.push(items[i].category);
       var c: Category = {
-        key: items[i].category ? items[i].category : "No Category",
-        text: items[i].category ? items[i].category : "No Category",
+        key: items[i].category ? items[i].category : "<No Category>",
+        text: items[i].category ? items[i].category : "<No Category>",
         color: items[i].category ? "#c0c0c0" : "#ffffff"
       }
       categories.push(c)
@@ -63,7 +63,13 @@ export const BacklogComponent: FunctionComponent<BoardColumnProps> = props => {
     return categories
   }
 
-  const categories = initCategories()
+  //set categories and sort by alphabet
+  var categories = initCategories().slice(0);
+  categories.sort(function (a, b) {
+    var x = a.text.toLowerCase();
+    var y = b.text.toLowerCase();
+    return x < y ? -1 : x > y ? 1 : 0;
+  });
 
   const setSearchInputAndUpdate = (searchInput: string) => {
     setSearchInput(searchInput)
@@ -97,7 +103,7 @@ export const BacklogComponent: FunctionComponent<BoardColumnProps> = props => {
       temp = itemList
     } else {
       itemList.forEach(backlogItem => {
-        if (selectedFilters.includes(backlogItem.category) || (backlogItem.category === null && selectedFilters.includes("No Category"))) {
+        if (selectedFilters.includes(backlogItem.category) || (backlogItem.category === null && selectedFilters.includes("<No Category>"))) {
           temp.push(backlogItem)
         }
       })
