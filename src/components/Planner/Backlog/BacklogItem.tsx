@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FunctionComponent, useState } from 'react';
+import { FunctionComponent, useState, useEffect } from 'react';
 import { Draggable } from 'react-beautiful-dnd'
 import {
   Card, CardHeader, IconButton, CardContent, Typography,
@@ -13,6 +13,7 @@ import { IBacklogItem } from '../../../models/models';
 import BacklogItemForm from '../../BacklogItemForm/BacklogItemForm';
 import BacklogItemService from '../../../services/BacklogItemService';
 import { Alert } from '@material-ui/lab';
+import { Colors } from '../../../util/constants';
 
 interface BacklogItemProps {
   item: IBacklogItem,
@@ -29,16 +30,20 @@ const BacklogItem: FunctionComponent<BacklogItemProps> = props => {
   const [complete, setComplete] = useState<boolean>(item.completed)
   const [error, setError] = useState<boolean>(false)
 
+  useEffect(() => {
+    setComplete(item.completed)
+  }, [item]);
+
   const classes = backlogItemStyles()
 
   const priorityColor = () => {
     if (item.priority.toString() === "high") {
-      return "#ff928a"
+      return Colors.red
     } else if (item.priority.toString() === "medium") {
-      return "#c0c0c0"
+      return Colors.grey
     }
     else if (item.priority.toString() === "low") {
-      return "#ededed"
+      return Colors.lightgrey
     }
   }
 
@@ -53,6 +58,8 @@ const BacklogItem: FunctionComponent<BacklogItemProps> = props => {
       setError(true)
     }
   }
+
+  debugger
 
   return (
     <>
@@ -84,8 +91,14 @@ const BacklogItem: FunctionComponent<BacklogItemProps> = props => {
                   {item.dueDate &&
                     <Tooltip title="Due Date">
                       <Chip
-                        className={classes.chip}
-                        label={new Date(item.dueDate).getFullYear() + "-" + new Date(item.dueDate).getMonth() + "-" + new Date(item.dueDate).getDate()}
+                        className={classes.chip + " " +
+                          (new Date(new Date().setHours(0, 0, 0, 0)) > new Date(item.dueDate)
+                            ? classes.dueDateOverdue
+                            : (new Date(new Date().setHours(0, 0, 0, 0)) > new Date(new Date(item.dueDate).getDate() - 6))
+                              ? classes.dueDateUpComing
+                              : "")
+                        }
+                        label={new Date(item.dueDate).getFullYear() + "-" + (new Date(item.dueDate).getMonth() + 1) + "-" + new Date(item.dueDate).getDate()}
                       />
                     </Tooltip>}
                 </div>

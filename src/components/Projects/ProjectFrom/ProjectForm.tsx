@@ -98,9 +98,11 @@ const ProjectForm: FunctionComponent<{
         }
         if (title !== project.title) {
             updateProps.title = title
-        } else if (description !== project.description) {
+        }
+        if (description !== project.description) {
             updateProps.description = description
-        } else if (team !== project.team) {
+        }
+        if (team !== project.team) {
             updateProps.team = team.map(member => member.id)
         }
         try {

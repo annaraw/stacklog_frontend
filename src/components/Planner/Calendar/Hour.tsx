@@ -4,6 +4,7 @@ import { CalendarItem } from './CalendarItem';
 import { CalendarEvent } from './CalendarEvent';
 import { Droppable } from 'react-beautiful-dnd'
 import { hoursStyles } from './HoursStyles';
+import { dayStart } from '../../../util/constants';
 
 interface HourProps {
   column: Column
@@ -22,7 +23,7 @@ export const Hour: React.FC<HourProps> = (props) => {
   return (
     <div className={classes.hours}>
       <span className={classes.title}>
-        {index + ":00"}
+        {index + dayStart + ":00"}
       </span>
       <div
         className={classes.boardWrapper}

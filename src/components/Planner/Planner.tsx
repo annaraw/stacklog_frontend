@@ -7,6 +7,7 @@ import BacklogItemService from '../../services/BacklogItemService';
 import CalendarImportService from '../../services/CalendarImportService'
 import { Backdrop, CircularProgress, Snackbar } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
+import { dayStart } from '../../util/constants';
 
 interface BacklogState {
 	calendars: ICalendar[],
@@ -142,7 +143,7 @@ export class Planner extends React.Component<{}, BacklogState> {
 			).map(item => item.id)
 		}]
 		for (let i in nextDays) {
-			for (let hour = 0; hour < 24; hour++) {
+			for (let hour = dayStart; hour < 24; hour++) {
 				initialColumns.push({
 					id: nextDays[i] + "-" + hour,
 					title: nextDays[i] + "-" + hour,

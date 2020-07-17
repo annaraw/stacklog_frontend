@@ -7,15 +7,16 @@ export const calendarEventStyles = makeStyles((theme) => ({
         width: "20px",
         textOverflow: "ellipsis",
         overflow: "hidden",
-        //borderRadius: "1px",
-        //borderStyle: "dotted",
         borderRadius: "8px",
-        borderWidth: "1px",
+        border: "1px solid rgba(0,0,0, 0.25)",
         zIndex: 0,
         transition: "background-color .25s ease-out",
-        boxShadow: "1px 1px 3px -2px rgba(0,0,0,0.75)",
+        boxShadow: "2px 2px 3px -2px rgba(0,0,0,0.75)",
         '&:hover': {
             cursor: "pointer",
+            zIndex: 99,
+            filter: "brightness(75%)",
+            borderColor: "black"
         }
 
     },
@@ -25,7 +26,7 @@ export const calendarEventStyles = makeStyles((theme) => ({
     paper: {
         padding: theme.spacing(1),
     },
-    eventCard:{
+    eventCard: {
         width: "250px",
     }
 }));

@@ -181,21 +181,29 @@ const BacklogItemForm: FunctionComponent<BacklogItemFormProps> = props => {
         }
         if (title !== item.title) {
             updateProps.title = title
-        } else if (description !== item.description) {
+        }
+        if (description !== item.description) {
             updateProps.description = description
-        } else if (priority !== item.priority.toString()) {
+        }
+        if (priority !== item.priority.toString()) {
             updateProps.priority = priority
-        } else if (reminder !== item.reminder) {
+        }
+        if (reminder && reminder !== item.reminder) {
             updateProps.reminder = reminder
-        } else if ((estimatedH * 60 + estimatedMIN) !== item.estimation) {
+        }
+        if ((estimatedH * 60 + estimatedMIN) !== item.estimation) {
             updateProps.estimation = (estimatedH * 60 + estimatedMIN)
-        } else if (dueDate !== item.dueDate && dueDate) {
+        }
+        if (dueDate !== item.dueDate && dueDate) {
             updateProps.dueDate = dueDate
-        } else if (category?.category  && category.category !== item.category) {
+        }
+        if (category?.category  && category.category !== item.category) {
             updateProps.category = category.category
-        } else if (assignee && assignee !== item.assignee) {
+        }
+        if (assignee && assignee !== item.assignee) {
             updateProps.assignee = assignee
         } 
+        debugger
         try {
             let response = await BacklogItemService.updateBacklogItem(item.id, updateProps)
             let updatedItems = [...items]

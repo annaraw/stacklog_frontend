@@ -52,7 +52,9 @@ export const CalendarEvent = (props: BoardItemProps) => {
           handlePopoverClose()
         }, 200)}
         className={classes.event}
-        style={{ height: getHeight(props.calItem) }}
+        style={{ 
+          height: getHeight(props.calItem),
+        }}
       >
       </div>
       <Popover

@@ -49,7 +49,13 @@ export const backlogItemStyles = makeStyles((theme) => ({
     },
     chip: {
         marginRight: "5px",
-        marginBottom: "5px"
+        marginBottom: "5px",
+    },
+    dueDateOverdue: {
+        backgroundColor: Colors.red
+    },
+    dueDateUpComing: {
+        backgroundColor: Colors.orange
     },
     chipBox: {
         float: "left"

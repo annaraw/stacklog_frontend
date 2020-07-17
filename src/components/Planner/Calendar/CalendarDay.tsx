@@ -2,6 +2,7 @@ import * as React from 'react';
 import { IBacklogItem, Column, ICalendarItem } from '../../../models/models'
 import { Hour } from './Hour';
 import { calendarDayStyles } from './CalendarDayStyles';
+import { dayStart } from '../../../util/constants';
 
 
 interface BoardColumnProps {
@@ -35,7 +36,7 @@ export const CalendarDay: React.FC<BoardColumnProps> = (props) => {
               items={items}
               setBacklogItems={setBacklogItems}
               events={calEvents[0] ? calEvents[0]
-                .filter((calItem: ICalendarItem) => new Date(calItem.dtStart).getHours() === index)
+                .filter((calItem: ICalendarItem) => new Date(calItem.dtStart).getHours() === index + dayStart)
                 .map((calItem: ICalendarItem) => calItem) : []}
             />
           )
