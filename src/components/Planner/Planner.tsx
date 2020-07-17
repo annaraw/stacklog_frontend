@@ -5,9 +5,10 @@ import { Calendar } from './Calendar/Calendar';
 import { IBacklogItem, Column, ICalendar, IBacklogItemUpdateProps } from '../../models/models';
 import BacklogItemService from '../../services/BacklogItemService';
 import CalendarImportService from '../../services/CalendarImportService'
-import { Backdrop, CircularProgress, Snackbar } from '@material-ui/core';
+import { Backdrop, CircularProgress, Snackbar, Theme } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { dayStart } from '../../util/constants';
+import { withStyles } from '@material-ui/styles';
 
 interface BacklogState {
 	calendars: ICalendar[],
@@ -19,7 +20,14 @@ interface BacklogState {
 	formIsOpen: boolean,
 }
 
-export class Planner extends React.Component<{}, BacklogState> {
+const useStyles = (theme:Theme) => ({
+	content: {
+		flexGrow: 1,
+		padding: theme.spacing(7),
+	  },
+});
+
+export class Planner extends React.Component<{classes: any}, BacklogState> {
 
 	constructor(props: any) {
 		super(props)
@@ -355,6 +363,7 @@ export class Planner extends React.Component<{}, BacklogState> {
 	}
 
 	render() {
+		const { classes } = this.props;
 		if (this.state.loading) {
 			return (
 				<React.Fragment >
@@ -371,6 +380,7 @@ export class Planner extends React.Component<{}, BacklogState> {
 			)
 		} else {
 			return (
+				<div className={classes.content}>
 				<React.Fragment>
 
 					<DragDropContext onDragEnd={this.onDragEnd} >
@@ -406,6 +416,7 @@ export class Planner extends React.Component<{}, BacklogState> {
                         </Alert>
 					</Snackbar>
 				</React.Fragment>
+				</div>
 
 			)
 		}
@@ -413,4 +424,4 @@ export class Planner extends React.Component<{}, BacklogState> {
 	}
 }
 
-export default Planner
+export default withStyles(useStyles)(Planner)

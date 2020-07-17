@@ -44,7 +44,7 @@ function MenuBar(props: MenuBarProps) {
                     [classes.appBarShift]: open,
                 })}
             >
-                <Toolbar style={{ backgroundColor: Colors.primaryColor }}>
+                <Toolbar style={{ backgroundColor: Colors.primaryColor, color: "white" }}>
                     <IconButton
                         color="inherit"
                         aria-label="open drawer"
@@ -125,12 +125,6 @@ function MenuBar(props: MenuBarProps) {
                     </ListItem>
                 </List>
             </Drawer>
-            <main className={classes.content}>
-                <div className={classes.toolbar} />
-                <Typography paragraph>
-                    Hier ist der Inhalt
-                </Typography>
-            </main>
         </div>
 
     )
