@@ -122,7 +122,7 @@ const ManageCalendarsForm: FunctionComponent<any> = props => {
             </Snackbar>
             <Snackbar open={deleteError} autoHideDuration={6000} onClose={handleClose}>
                 <Alert onClose={handleClose} severity="error">
-                    Could not delete Project
+                    Could not delete Calendar
                 </Alert>
             </Snackbar>
             <DialogForm
