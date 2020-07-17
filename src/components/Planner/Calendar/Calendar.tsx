@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { IBacklogItem, Column, ICalendar, ICalendarItem } from '../../../models/models'
-import styled from 'styled-components'
 import { CalendarDay } from './CalendarDay';
 import { calendarStyles } from './CalendarStyles';
 import Scrollbar from 'react-scrollbars-custom';
@@ -10,14 +9,16 @@ interface BoardColumnProps {
   columns: Column[],
   items: IBacklogItem[]
   calendars: ICalendar[]
+  setBacklogItems: (items: IBacklogItem[]) => void
 }
 
 export const Calendar: React.FC<BoardColumnProps> = (props) => {
 
+  const { columns, items, calendars, setBacklogItems } = props
   const classes = calendarStyles();
 
   function getDayColumns(day: string) {
-    return props.columns.filter((col) => col.id.split("-")[0] === day)
+    return columns.filter((col) => col.id.split("-")[0] === day)
   }
 
   function sameDay(a: Date, b: Date) {
@@ -27,7 +28,7 @@ export const Calendar: React.FC<BoardColumnProps> = (props) => {
   }
 
   function getEventsOfDay(day: string) {
-    return props.calendars
+    return calendars
       .map((cal: ICalendar) => cal ? cal.items
         .filter((calItem: ICalendarItem) => sameDay(new Date(calItem.dtStart), new Date(day)))
         .map((calItem: ICalendarItem) => calItem) : []
@@ -46,10 +47,18 @@ export const Calendar: React.FC<BoardColumnProps> = (props) => {
               width: "400px",
             }}>
             {
-              props.columns.map((col) => col.id.split("-")[0])
+              columns.map((col) => col.id.split("-")[0])
                 .filter((item, i, ar) => ar.indexOf(item) === i)
                 .filter((col) => col !== 'backlog' && col === new Date().toDateString())
-                .map((col) => <CalendarDay key={col} columns={getDayColumns(col)} day={col} items={props.items} calEvents={getEventsOfDay(col)} />)
+                .map((col) =>
+                  <CalendarDay
+                    key={col}
+                    columns={getDayColumns(col)}
+                    day={col}
+                    items={items}
+                    calEvents={getEventsOfDay(col)}
+                    setBacklogItems={setBacklogItems}
+                  />)
             }
           </Scrollbar>
         </div>
@@ -67,10 +76,18 @@ export const Calendar: React.FC<BoardColumnProps> = (props) => {
 
 
               {
-                props.columns.map((col) => col.id.split("-")[0])
+                columns.map((col) => col.id.split("-")[0])
                   .filter((item, i, ar) => ar.indexOf(item) === i)
                   .filter((col) => col !== 'backlog' && col !== new Date().toDateString())
-                  .map((col) => <CalendarDay key={col} columns={getDayColumns(col)} day={col} items={props.items} calEvents={getEventsOfDay(col)} />)
+                  .map((col) =>
+                    <CalendarDay
+                      key={col}
+                      columns={getDayColumns(col)}
+                      day={col}
+                      items={items}
+                      calEvents={getEventsOfDay(col)}
+                      setBacklogItems={setBacklogItems}
+                    />)
               }
 
             </div>

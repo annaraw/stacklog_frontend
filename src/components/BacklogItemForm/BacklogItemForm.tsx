@@ -7,7 +7,7 @@ import { Grid } from '@material-ui/core';
 import 'date-fns';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
-import { IBacklogItem, IBacklogItemRequest, Priority, Project, IBacklogItemUpdateProps } from '../../models/models';
+import { IBacklogItem, IBacklogItemRequest, Project, IBacklogItemUpdateProps } from '../../models/models';
 import UserService from '../../services/UserService';
 import TaskCreationFormStyles from './BacklogItemFormStyles';
 import DrawerForm from '../Form/DrawerForm';
