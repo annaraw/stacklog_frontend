@@ -107,7 +107,7 @@ function MenuBar(props: MenuBarProps) {
                 </div>
                 <Divider />
                 <List>
-                    <ListItem button key="text2" onClick={() => { window.location.href = "/planner" }}>
+                    <ListItem button key="text2" onClick={() => { window.location.href = "/home" }}>
                         <ListItemIcon> <HomeIcon /></ListItemIcon>
                         <ListItemText primary="Planner Overview" />
                     </ListItem>
@@ -115,11 +115,11 @@ function MenuBar(props: MenuBarProps) {
                         <ListItemIcon> <PeopleIcon /></ListItemIcon>
                         <ListItemText primary="My Projects" />
                     </ListItem>
-                    <ListItem button key="text2" onClick={() => { window.location.href = "/home" }}>
+                    <ListItem button key="text2" onClick={() => { window.location.href = "#" }}>
                         <ListItemIcon> <ChatIcon /></ListItemIcon>
                         <ListItemText primary="Contact Us" />
                     </ListItem>
-                    <ListItem button key="text2" onClick={() => { window.location.href = "/home" }}>
+                    <ListItem button key="text2" onClick={() => { window.location.href = "#" }}>
                         <ListItemIcon> <SettingsIcon /></ListItemIcon>
                         <ListItemText primary="Settings" />
                     </ListItem>
