@@ -179,136 +179,17 @@ const ManageCalendarsForm: FunctionComponent<any> = props => {
                 formTitle={formTitle}
                 isOpen={isOpen}
                 loading={loading}
-                formType={"Import"}
+                formType={"Update"}
                 onSubmit={submit}
                 dismissPanel={dismissPanel}
             >
-                <TextField
-                    id="outlined-basic"
-                    label="Calendar Title"
-                    variant="outlined"
-                    required
-                    fullWidth
-                    value={calendarTitle}
-                    onChange={(e) => { setCalendarTitle(e.target.value); setUploadError(false) }}
-                    error={uploadError && !calendarTitle}
-                />
-                <FormControl component="fieldset">
-                    <RadioGroup onChange={uploadCalendarFile}>
-                        <FormControlLabel
-                            value="url"
-                            control={<Radio color="default" />}
-                            label="Sync from URL"
-                            onChange={(e) => { setShowSync(true); setShowFileUpload(false); setCalendarItems([]); setUploadState(UploadState.Empty); setCalendarFilename("") }}
-                        />
-                        <FormControlLabel
-                            value="upload"
-                            control={<Radio color="default" />}
-                            label="Upload ical File"
-                            defaultChecked={true}
-                            onChange={(e) => { setShowSync(false); setShowFileUpload(true); setCalendarItems([]); setUploadState(UploadState.Empty); setCalendarFilename("") }}
-                        />
-                    </RadioGroup>
-                </FormControl>
-
-                {showSync &&
-                    <div className={classes.borderBox}>
-                        <div className={classes.text}>Please insert an URL and check if it contains a valid ical format:</div>
-                        <TextField
-                            id="outlined-basic"
-                            label="Calendar URL"
-                            variant="outlined"
-                            required
-                            fullWidth
-                            value={calendarUrl}
-                            onChange={(e) => { setCalendarUrl(e.target.value) }}
-                            className={classes.textField}
-                            error={uploadError && !calendarUrl}
-                        />
-                        <Button
-                            variant="contained"
-                            color="default"
-                            startIcon={<GetAppIcon />}
-                            className={classes.button}
-                            disableElevation
-                            onClick={fetchCalendarFile}
-                        >
-                            Check File
-                        </Button>
-                        {
-                            (uploadState === UploadState.Success) &&
-                            <Alert severity="success" onClose={handleClose} elevation={0}>
-                                ({calendarItems.length} items) selected.
-                            </Alert>
-                        }
-                        {
-                            (uploadState === UploadState.Fail) &&
-                            <Alert severity="warning" onClose={handleClose} elevation={0}>
-                                The file does not contain any events or the URL does not provide an ICS calendar file.
-                            </Alert>
-                        }
-                        <FormControlLabel
-                            control={
-                                <Checkbox
-                                    checked={isPublic}
-                                    onChange={toggleIsPublic}
-                                    name="public"
-                                    color="default"
-                                    disabled
-                                />
-                            }
-                            label="Calendar is public"
-                        />
-                    </div>
-                }
-                {showFileUpload &&
-                    <div className={classes.borderBox}>
-                        <div className={classes.text}>Please select an .ics calendar file from your computer:</div>
-                        <input
-                            id="contained-button-file"
-                            accept=".ics"
-                            type="file"
-                            onChange={(e) => uploadCalendarFile(e)}
-                            style={{ display: "none" }}
-                        />
-                        <label htmlFor="contained-button-file">
-                            <Button
-                                variant="contained"
-                                component="span"
-                                color="default"
-                                startIcon={<CloudUploadIcon />}
-                                className={classes.button}
-                                disableElevation
-                            >
-                                Select File
-                                </Button>
-                        </label>
-                        {
-                            (uploadState === UploadState.Success) &&
-                            <Alert severity="success" onClose={handleClose} elevation={0}>
-                                <strong>{calendarFilename}</strong> ({calendarItems.length} calendar items) selected.
-                                </Alert>
-                        }
-                        {
-                            (uploadState === UploadState.Fail) &&
-                            <Alert severity="warning" onClose={handleClose} elevation={0}>
-                                <strong>{calendarFilename}</strong> selected. The file does not contain any events.
-                                </Alert>
-                        }
-                    </div>
-                }
-                {(uploadError ?
-                    <Alert
-                        severity="error"
-                        onClose={() => setUploadError(false)}
-                    >
-                        <strong>Error: Could not upload calendar.</strong>
-
-                        {calendarTitle === "" && <li>"Missing calendar title"</li>}
-                        {((uploadState === (UploadState.Empty)) || (uploadState === (UploadState.Fail))) && <li>"Missing/empty calendar"</li>}
-                    </Alert>
-                    : <span></span>
-                )}
+            <ul>
+            {props.calendars.map((c:any)=> {
+                return (
+                    <li>{c.name}</li>
+                    )
+            })}
+            </ul>
             </DrawerForm>
             <Snackbar open={success} autoHideDuration={6000} onClose={handleCloseSuccessAlert}>
                 <Alert onClose={handleCloseSuccessAlert} severity="success">

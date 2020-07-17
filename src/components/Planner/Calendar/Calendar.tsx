@@ -71,7 +71,7 @@ export const Calendar: React.FC<BoardColumnProps> = (props) => {
             <AddCalendarForm />
           </div>
           <div>
-            <ManageCalendarsForm />
+            <ManageCalendarsForm calendars={calendars}/>
           </div>
         </div>
         <div className={classes.calendarContent}>
