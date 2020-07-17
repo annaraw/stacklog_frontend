@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { IBacklogItem, Column, ICalendarItem } from '../../../models/models'
 import { Hour } from './Hour';
-import styled from 'styled-components'
+import { calendarDayStyles } from './CalendarDayStyles';
+import { dayStart } from '../../../util/constants';
 
 
 interface BoardColumnProps {
@@ -9,53 +10,43 @@ interface BoardColumnProps {
   day: string
   items: IBacklogItem[]
   calEvents: ICalendarItem[][]
+  setBacklogItems: (items: IBacklogItem[]) => void
 }
-
-const BoardColumnWrapper = styled.div`
-  flex: 1;
-  padding: 8px;
-  background-color: #FFFFFF;
-  border-radius: 4px;
-  width: 150px;
-
-  & + & {
-    margin-left: 12px;
-  }
-`
-
-const BoardColumnTitle = styled.h2`
-  font: 14px sans-serif;
-  margin-bottom: 12px;
-`
-
-const BoardColumnContent = styled.div`
-  min-height: 20px;
-  border-radius: 4px;
-`
 
 export const CalendarDay: React.FC<BoardColumnProps> = (props) => {
 
+  const { columns, items, day, calEvents, setBacklogItems } = props
+  const classes = calendarDayStyles();
+  new Date().toDateString()
+
+  let empty: ICalendarItem[] = []
+  let eventList = empty.concat.apply([], calEvents) // merge items of multiple cals into one list
+
   return (
-    <BoardColumnWrapper>
-      <BoardColumnTitle>
-        {props.day}
-      </BoardColumnTitle>
-      <BoardColumnContent>
-        {props.columns.map((col, index) => {
+    <div className={classes.day + (day !== new Date().toDateString()
+      ? " " + classes.weekday
+      : "")
+    }>
+      <p className={classes.title}>
+        {day}
+      </p>
+      <div>
+        {columns.map((col, index) => {
           return (
             <Hour
               key={col.id}
               column={col}
               index={index}
-              items={props.items}
-              events={props.calEvents[0] ? props.calEvents[0]
-                .filter((calItem: ICalendarItem) => new Date(calItem.dtStart).getHours() === index)
+              items={items}
+              setBacklogItems={setBacklogItems}
+              events={eventList ? eventList
+                .filter((calItem: ICalendarItem) => new Date(calItem.dtStart).getHours() === index + dayStart)
                 .map((calItem: ICalendarItem) => calItem) : []}
             />
           )
         })}
-      </BoardColumnContent>
-    </BoardColumnWrapper>
+      </div>
+    </div>
   );
 
 };
