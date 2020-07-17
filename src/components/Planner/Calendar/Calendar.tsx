@@ -4,6 +4,7 @@ import { CalendarDay } from './CalendarDay';
 import { calendarStyles } from './CalendarStyles';
 import Scrollbar from 'react-scrollbars-custom';
 import AddCalendarForm from '../../CalendarForm/AddCalendarForm';
+import ManageCalendarsForm from '../../CalendarForm/ManageCalendarsForm';
 
 interface BoardColumnProps {
   columns: Column[],
@@ -68,6 +69,9 @@ export const Calendar: React.FC<BoardColumnProps> = (props) => {
           <div className={classes.calendarTitle}>Calendar</div>
           <div className={classes.importButton}>
             <AddCalendarForm />
+          </div>
+          <div>
+            <ManageCalendarsForm />
           </div>
         </div>
         <div className={classes.calendarContent}>

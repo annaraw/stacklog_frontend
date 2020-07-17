@@ -21,7 +21,8 @@ export const calendarStyles = makeStyles((theme) => ({
         position: "relative",
         marginLeft: "20px",
         marginRight: "20px",
-        borderBottom: "3px solid black"
+        borderBottom: "3px solid black",
+        display: "flex"
     },
     calendarTitle: {
         fontSize: "25px",
@@ -32,9 +33,10 @@ export const calendarStyles = makeStyles((theme) => ({
         top: "0px"
     },
     importButton: {
-        position: "absolute",
+        position: "relative",
         left: "0px",
-        top: "0px"
+        top: "0px",
+        paddingRight: "5px"
     },
     weekdays: {
         display: "grid",
