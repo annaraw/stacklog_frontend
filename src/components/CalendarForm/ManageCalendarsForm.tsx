@@ -2,16 +2,12 @@ import * as React from 'react';
 import { useState, FunctionComponent } from 'react';
 import { useBoolean } from '@uifabric/react-hooks';
 import Button from '@material-ui/core/Button';
-import CloudUploadIcon from '@material-ui/icons/CloudUpload';
-import { RadioGroup, FormControl, FormControlLabel, Radio, TextField, Checkbox } from '@material-ui/core';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
-import GetAppIcon from '@material-ui/icons/GetApp';
 import Snackbar from '@material-ui/core/Snackbar';
 
 import { ICalendarItem, ICalendar } from '../../models/models'
 import CalendarImportService from '../../services/CalendarImportService'
 import { addCalendarFormStyles } from './AddCalendarFormStyles';
-import UserService from '../../services/UserService';
 import DrawerForm from '../Form/DrawerForm';
 import DialogForm from '../Form/Dialog';
 
@@ -22,8 +18,6 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
 import DeleteIcon from '@material-ui/icons/Delete';
-import VisibilityIcon from '@material-ui/icons/Visibility';
-import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
 
 
 
@@ -106,11 +100,8 @@ const ManageCalendarsForm: FunctionComponent<any> = props => {
             {props.calendars.map((c:ICalendar) => {
              return (
                <ListItem >
-                  {/*<ListItemIcon>{<CalendarTodayIcon style={{ 'color': 'green' }}/>}</ListItemIcon>*/}
-                  <ListItemText style={{ 'color': 'green' }} primary={c.name}/>
-                  <ListItemIcon onClick={handleHide}>{
-                    true ? <VisibilityIcon/> : <VisibilityOffIcon/>
-                  }</ListItemIcon>
+                  <ListItemIcon>{<CalendarTodayIcon/>}</ListItemIcon>
+                  <ListItemText primary={c.name}/>
                   <ListItemIcon onClick={() =>{
                               setShowDeleteDialog(true)
                               setCalendar(c)
