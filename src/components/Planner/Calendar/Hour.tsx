@@ -5,63 +5,56 @@ import { CalendarEvent } from './CalendarEvent';
 import { Droppable } from 'react-beautiful-dnd'
 import { hoursStyles } from './HoursStyles';
 
-interface BoardColumnProps {
-  column: Column,
-  index: number,
+interface HourProps {
+  column: Column
+  index: number
   items: IBacklogItem[]
   events: ICalendarItem[]
+  setBacklogItems: (items: IBacklogItem[]) => void
 }
 
-type BoardColumnContentStylesProps = {
-  isDraggingOver: boolean
-}
-type BoardWrapperContentStylesProps = {
-  items: number
-  events: number
-}
+export const Hour: React.FC<HourProps> = (props) => {
 
-export const Hour: React.FC<BoardColumnProps> = (props) => {
-
+  const { column, items, events, index, setBacklogItems } = props
   const classes = hoursStyles();
-  const bodyHeight = (props.column.itemsIds.length !== 0) ? props.column.itemsIds.length * 24 + 'px' : '28px'
+  const bodyHeight = (column.itemsIds.length !== 0) ? column.itemsIds.length * 24 + 'px' : '28px'
 
   return (
     <div className={classes.hours}>
       <span className={classes.title}>
-        {props.index + ":00"}
+        {index + ":00"}
       </span>
       <div
         className={classes.boardWrapper}
         style={{ height: bodyHeight }}
       >
 
-        <Droppable droppableId={props.column.id}>
+        <Droppable droppableId={column.id}>
           {(provided, snapshot) => (
             <div
               {...provided.droppableProps}
               ref={provided.innerRef}
               className={snapshot.isDraggingOver ? classes.contentHover : classes.content}
             >
-              {props.column.itemsIds.map((id: String, index: number) => {
+              {column.itemsIds.map((id: String, index: number) => {
 
-                const item = props.items.filter((item) => item.id === id)[0]
+                const item = items.filter((item) => item.id === id)[0]
 
                 return (
                   <CalendarItem
                     key={item.id}
                     index={index}
                     item={item}
+                    setBacklogItems={setBacklogItems}
+                    items={items}
                   />
                 )
-              }
-
-              )}
+              })}
               {provided.placeholder}
-
             </div>
           )}
         </Droppable>
-        {props.events.map((calItem: ICalendarItem, index: number) => {
+        {events.map((calItem: ICalendarItem, index: number) => {
           return (
             <CalendarEvent
               key={calItem.uid}

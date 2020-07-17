@@ -1,15 +1,15 @@
 import * as React from 'react';
-import { FunctionComponent, useState, useEffect } from 'react';
+import { FunctionComponent, useState } from 'react';
 import { Draggable } from 'react-beautiful-dnd'
 import {
   Card, CardHeader, IconButton, CardContent, Typography,
-  Snackbar, Button, CardActions, Chip, Tooltip
+  Snackbar, Chip, Tooltip
 } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import DoneIcon from '@material-ui/icons/Done';
 
 import { backlogItemStyles } from './BacklogItemStyles';
-import { Priority, IBacklogItem } from '../../../models/models';
+import { IBacklogItem } from '../../../models/models';
 import BacklogItemForm from '../../BacklogItemForm/BacklogItemForm';
 import BacklogItemService from '../../../services/BacklogItemService';
 import { Alert } from '@material-ui/lab';
@@ -127,7 +127,6 @@ const BacklogItem: FunctionComponent<BacklogItemProps> = props => {
           formType={"Update"}
         />
       }
-
       <Snackbar open={error} autoHideDuration={6000} onClose={() => setError(false)}>
         <Alert onClose={() => setError(false)} severity={"error"}>
           An Error occurred while updating the item

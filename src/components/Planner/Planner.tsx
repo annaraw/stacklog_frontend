@@ -1,12 +1,9 @@
 import * as React from 'react'
 import { DragDropContext } from 'react-beautiful-dnd'
-import styled from "styled-components";
 import { BacklogComponent } from './Backlog/BacklogComponent';
 import { Calendar } from './Calendar/Calendar';
 import { IBacklogItem, Column, ICalendar, IBacklogItemUpdateProps } from '../../models/models';
 import BacklogItemService from '../../services/BacklogItemService';
-import BacklogItemForm from '../BacklogItemForm/BacklogItemForm';
-import { Button } from '@material-ui/core';
 import CalendarImportService from '../../services/CalendarImportService'
 import { Backdrop, CircularProgress, Snackbar } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
@@ -135,7 +132,7 @@ export class Planner extends React.Component<{}, BacklogState> {
 				).toDateString()
 			)
 		}
-		let today = new Date(new Date().setHours(0,0,0,0))
+		let today = new Date(new Date().setHours(0, 0, 0, 0))
 		//initialize columns
 		let initialColumns: Column[] = [{
 			id: 'backlog',
@@ -383,23 +380,29 @@ export class Planner extends React.Component<{}, BacklogState> {
 							{this.state.columns.map((col) => col.id.split("-")[0])
 								.filter((item, i, ar) => ar.indexOf(item) === i)
 								.filter((col) => col === 'backlog')
-								.map((col) => 
-								<BacklogComponent
-									key={col}
-									column={this.getDayColumns(col)[0]}
-									items={this.state.items.filter((item) => !item.startDate)} //filter for backlog items only
-									setBacklogItems={this.setBacklogItems}
-								/>)
+								.map((col) =>
+									<BacklogComponent
+										key={col}
+										column={this.getDayColumns(col)[0]}
+										items={this.state.items.filter((item) => !item.startDate)} //filter for backlog items only
+										setBacklogItems={this.setBacklogItems}
+									/>)
 							}
 							<div style={{ position: "relative", height: "calc(100vh - 120px)" }}>
-								<Calendar calendars={this.state.calendars} key='calendar' columns={this.state.columns} items={this.state.items} />
+								<Calendar
+									calendars={this.state.calendars}
+									key='calendar'
+									columns={this.state.columns}
+									items={this.state.items}
+									setBacklogItems={this.setBacklogItems}
+								/>
 							</div>
 						</div>
 					</DragDropContext>
 					<Snackbar open={this.state.error} autoHideDuration={6000} onClose={this.handleClose}>
 						<Alert onClose={this.handleClose} severity="error">
 							Faild to update item
-                                </Alert>
+                        </Alert>
 					</Snackbar>
 				</React.Fragment>
 

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FunctionComponent, useState, useEffect } from 'react';
+import { FunctionComponent, useState } from 'react';
 
 import { IBacklogItem, Column, Category, Priority } from '../../../models/models'
 import BacklogItem from './BacklogItem';

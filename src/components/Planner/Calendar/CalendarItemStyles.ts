@@ -55,7 +55,7 @@ export const calendarItemStyles = makeStyles((theme) => ({
         fontSize: "24px",
         padding: "5px",
         marginBottom: "5px",
-        backgroundColor:"#e0e0e0",
+        backgroundColor: "#e0e0e0",
         marginLeft: "5px"
     },
     ellipsis: {
@@ -75,5 +75,12 @@ export const calendarItemStyles = makeStyles((theme) => ({
     paper: {
         padding: theme.spacing(1),
     },
+    checkbox: {
+        backgroundColor: Colors.primaryColor,
+        '&:hover': {
+            backgroundColor: Colors.primaryColor,
+            filter: "brightness(85%)",
+        }
+    }
 }));
 

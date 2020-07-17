@@ -1,24 +1,14 @@
 import * as React from 'react'
-import styled from 'styled-components'
 import { ICalendarItem } from '../../../models/models'
 import { hourHeight_int } from '../../../util/constants'
 import { calendarEventStyles } from './CalendarEventStyles'
-import { Popover, Link } from '@material-ui/core'
+import { Popover } from '@material-ui/core'
 
 // Define types for board item element properties
-type BoardItemProps = {
+interface BoardItemProps {
   index: number
   calItem: ICalendarItem
 }
-
-// Define types for board item element style properties
-// This is necessary for TypeScript to accept the 'isDragging' prop.
-type BoardItemStylesProps = {
-  index: number
-  height: string
-}
-
-
 
 // isDragDisabled
 // Create and export the BoardItem component
