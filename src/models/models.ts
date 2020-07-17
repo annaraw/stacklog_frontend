@@ -170,6 +170,7 @@ export interface ICalendar {
     owner: string,
     url?: string,
     items: ICalendarItem[]
+    id?: string,
 }
 
 export enum Priority {

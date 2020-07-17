@@ -9,7 +9,7 @@ const DrawerForm: FunctionComponent<{
     formTitle: string,
     isOpen: boolean,
     loading: boolean,
-    formType: "Create" | "Update" | "Import",
+    formType: "Create" | "Update" | "Import"| "Plain",
     onSubmit: () => void,
     dismissPanel: () => void,
 }> = props => {
@@ -42,23 +42,24 @@ const DrawerForm: FunctionComponent<{
                 {loading ?
                     <CircularProgress />
                     : <span></span>}
-
-                <div className={classes.buttonContainer}>
-                    <Button
-                        variant="contained"
-                        className={classes.defaultButton}
-                        onClick={dismissPanel}
-                    >
-                        Cancel
+                {formType !== "Plain" && 
+                    <div className={classes.buttonContainer}>
+                        <Button
+                            variant="contained"
+                            className={classes.defaultButton}
+                            onClick={dismissPanel}
+                        >
+                            Cancel
+                            </Button>
+                        <Button
+                            variant="contained"
+                            className={classes.primaryButton}
+                            onClick={onSubmit}
+                        >
+                            {formType}
                         </Button>
-                    <Button
-                        variant="contained"
-                        className={classes.primaryButton}
-                        onClick={onSubmit}
-                    >
-                        {formType}
-                    </Button>
-                </div>
+                    </div>
+                }
             </div>
         </Drawer>
     );

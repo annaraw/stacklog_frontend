@@ -13,6 +13,20 @@ import CalendarImportService from '../../services/CalendarImportService'
 import { addCalendarFormStyles } from './AddCalendarFormStyles';
 import UserService from '../../services/UserService';
 import DrawerForm from '../Form/DrawerForm';
+import DialogForm from '../Form/Dialog';
+
+
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
+import DeleteIcon from '@material-ui/icons/Delete';
+import VisibilityIcon from '@material-ui/icons/Visibility';
+import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
+
+
+
 
 export enum UploadState {
     Empty,
@@ -28,140 +42,40 @@ const ManageCalendarsForm: FunctionComponent<any> = props => {
     const formTitle = "Manage Calendars";
     //Hooks
     const [isOpen, setIsOpen] = useState(false);
-    const [uploadError, setUploadError] = useState(false);
-    const [showSync, setShowSync] = useState(false);
-    const [showFileUpload, setShowFileUpload] = useState(false);
-    const [isPublic, { toggle: toggleIsPublic }] = useBoolean(true);
-    const [calendarTitle, setCalendarTitle] = useState("");
-    const [calendarUrl, setCalendarUrl] = useState("");
-    const [calendarItems, setCalendarItems] = useState<ICalendarItem[] | []>([]);
-    const [calendarFilename, setCalendarFilename] = useState("");
-    const [uploadState, setUploadState] = useState(UploadState.Empty);
-    const [success, setSuccess] = useState(false);
+    const [showDeleteDialog, setShowDeleteDialog] = useState<boolean>(false)
+    const [calendar, setCalendar] = useState<any>(null)
     const [loading, setLoading] = useState(false)
+    const [success, setSuccess] = useState(false);
+    const [deleteError, setdeleteError] = useState<boolean>(false)
+
+
 
     const classes = addCalendarFormStyles()
 
     const openPanel = (() => setIsOpen(true));
     const dismissPanel = (() => {
-        setCalendarFilename("")
         setIsOpen(false);
-        setCalendarTitle("");
-        setCalendarUrl("");
-        setCalendarItems([])
-        setShowFileUpload(false);
-        setShowSync(false);
-        setUploadState(UploadState.Empty)
-        setUploadError(false)
-        setSuccess(false)
-        setLoading(false)
-
-        console.log(loading)
+        setCalendar(null)
+        setShowDeleteDialog(false)
     });
 
-    const submit = () => {
-        setUploadError(false)
-        if (uploadState === UploadState.Empty || uploadState === UploadState.Fail || calendarTitle === "") {
-            setUploadError(true);
-        } else {
-            setLoading(true)
-            var cal: ICalendar
-            if (calendarUrl !== "") {
-                cal = {
-                    name: calendarTitle,
-                    items: calendarItems,
-                    owner: UserService.getCurrentUser().id,
-                    url: calendarUrl
-                };
-            } else {
-                cal = {
-                    name: calendarTitle,
-                    items: calendarItems,
-                    owner: UserService.getCurrentUser().id
-                };
-            }
-            CalendarImportService.addCalendar(cal).then((data) => {
-                setUploadError(false);
+    const handleDelete = (cal:any) => {
+        CalendarImportService.removeCalendar(cal.id).then((data) => {
                 dismissPanel();
-                setSuccess(true);
-                setLoading(false);
+                setSuccess(true)
+                window.location.reload()
             }).catch((e) => {
-                setLoading(false);
-                setUploadError(true);
+                setdeleteError(true)
             });
-        }
+
     }
 
-    const convertIcal = (icalString: any) => {
-        const ical = require('ical');
-        const data = ical.parseICS(icalString)
-        var calItems = []
-        for (let k in data) {
-            if (data.hasOwnProperty(k)) {
-                var ev = data[k];
-                if (data[k].type === 'VEVENT') {
-                    const calItem: ICalendarItem = {
-                        id: ev.id,
-                        uid: ev.uid,
-                        summary: ev.summary,
-                        description: ev.description,
-                        url: ev.url,
-                        dtStart: ev.start,
-                        dtEnd: ev.end,
-                        location: ev.location
-                    }
-                    calItems.push(calItem)
-                }
-            }
-        }
-        return calItems
+    const submit = () => {
+        {/*Do NOTHING*/}
     }
 
-    const fetchCalendarFile = async () => {
-        //https://campus.tum.de/tumonlinej/ws/termin/ical?pStud=408917D318E7CE33&pToken=9ECCFD276B854295B32B4E20E1154FE1E741E10B7022E05CC5062FBA53D39F82
-        let data = await CalendarImportService.fetchCalendarFile(calendarUrl)
-        let calItems = convertIcal(data)
-        setCalendarItems(calItems)
-        if (calItems.length !== 0) {
-            setUploadState(UploadState.Success)
-        }
-        else {
-            setUploadState(UploadState.Fail)
-        }
-        setUploadError(false)
-    }
-
-    const uploadCalendarFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files) {
-            var reader = new FileReader();
-            var calItems: ICalendarItem[] = []
-            var filename = e.target.files[0].name
-            reader.onload = function () {
-                calItems = convertIcal(reader.result)
-                setCalendarItems(calItems)
-                setCalendarFilename(filename)
-                if (calItems.length !== 0) {
-                    setUploadState(UploadState.Success)
-                }
-                else {
-                    setUploadState(UploadState.Fail)
-                }
-
-            };
-            var file = e.target.files[0]
-            reader.readAsText(file)
-        }
-        setUploadError(false)
-    }
-
-    const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-
-        setUploadState(UploadState.Empty)
-        setCalendarItems([])
-        setCalendarFilename("")
+    const handleClose = () => {
+        setdeleteError(false)
     };
 
     const handleCloseSuccessAlert = (event?: React.SyntheticEvent, reason?: string) => {
@@ -172,6 +86,11 @@ const ManageCalendarsForm: FunctionComponent<any> = props => {
         setSuccess(false);
     };
 
+
+    function handleHide(){
+      console.log("HIDE")
+    }
+
     return (
         <div>
             <Button onClick={openPanel} variant="outlined">{formTitle}</Button>
@@ -179,23 +98,51 @@ const ManageCalendarsForm: FunctionComponent<any> = props => {
                 formTitle={formTitle}
                 isOpen={isOpen}
                 loading={loading}
-                formType={"Update"}
+                formType={"Plain"}
                 onSubmit={submit}
                 dismissPanel={dismissPanel}
             >
-            <ul>
-            {props.calendars.map((c:any)=> {
-                return (
-                    <li>{c.name}</li>
-                    )
-            })}
-            </ul>
+            <List>
+            {props.calendars.map((c:ICalendar) => {
+             return (
+               <ListItem >
+                  {/*<ListItemIcon>{<CalendarTodayIcon style={{ 'color': 'green' }}/>}</ListItemIcon>*/}
+                  <ListItemText style={{ 'color': 'green' }} primary={c.name}/>
+                  <ListItemIcon onClick={handleHide}>{
+                    true ? <VisibilityIcon/> : <VisibilityOffIcon/>
+                  }</ListItemIcon>
+                  <ListItemIcon onClick={() =>{
+                              setShowDeleteDialog(true)
+                              setCalendar(c)
+                          } 
+                      }
+                  >
+                  {<DeleteIcon style={{ 'color': 'red' }}/>}
+                  </ListItemIcon>
+                </ListItem>
+               )
+             })}
+            </List>
             </DrawerForm>
             <Snackbar open={success} autoHideDuration={6000} onClose={handleCloseSuccessAlert}>
                 <Alert onClose={handleCloseSuccessAlert} severity="success">
                     Calendar successfully imported
                 </Alert>
             </Snackbar>
+            <Snackbar open={deleteError} autoHideDuration={6000} onClose={handleClose}>
+                <Alert onClose={handleClose} severity="error">
+                    Could not delete Project
+                </Alert>
+            </Snackbar>
+            <DialogForm
+                isOpen={showDeleteDialog}
+                formTitle={"Delete Calendar"}
+                formType={"Delete"}
+                onSubmit={() => handleDelete(calendar)}
+                dismissPanel={() => setShowDeleteDialog(false)}
+            >
+                Are you sure you want to delete the calendar?
+            </DialogForm>
         </div>
     );
 };
