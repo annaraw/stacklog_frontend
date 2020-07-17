@@ -56,33 +56,31 @@ export const UnsortedBacklog: FunctionComponent<BacklogItemFormProps> = props =>
           </IconButton>
         </Tooltip>
         <div className={classes.containerTitle}>{title}</div>
-        <Scrollbar className={classes.scrollbar}>
-          <Droppable droppableId={column.id}>
-            {(provided, snapshot) => (
-              <BoardColumnContent
-                {...provided.droppableProps}
-                ref={provided.innerRef}
-                isDraggingOver={snapshot.isDraggingOver}
-              >
-                {items.map((backlogItem: IBacklogItem, index: number) =>
+        <div style={{ position: "relative", flex: "1" }}>
+          <Scrollbar className={classes.scrollbar}>
+            <Droppable droppableId={column.id}>
+              {(provided, snapshot) => (
+                <BoardColumnContent
+                  {...provided.droppableProps}
+                  ref={provided.innerRef}
+                  isDraggingOver={snapshot.isDraggingOver}
+                >
+                  {items.map((backlogItem: IBacklogItem, index: number) =>
 
-                  <BacklogItem
-                    index={index}
-                    id={backlogItem.id}
-                    key={backlogItem.id}
-                    title={backlogItem.title}
-                    description={backlogItem.description ? backlogItem.description : ""}
-                    category={backlogItem.category}
-                    priority={backlogItem.priority}
-                  />
+                    <BacklogItem
+                      index={index}
+                      item={backlogItem}
+                      items={projectItems}
+                      setBacklogItems={setBacklogItems}
+                    />
 
-                )}
-                {provided.placeholder}
-              </BoardColumnContent>
-            )}
-          </Droppable>
-
-        </Scrollbar>
+                  )}
+                  {provided.placeholder}
+                </BoardColumnContent>
+              )}
+            </Droppable>
+          </Scrollbar>
+        </div>
       </div>
       <BacklogItemForm
         isOpen={isOpen}

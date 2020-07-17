@@ -7,7 +7,7 @@ import { Grid } from '@material-ui/core';
 import 'date-fns';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
-import { IBacklogItem, IBacklogItemRequest, Priority, Project } from '../../models/models';
+import { IBacklogItem, IBacklogItemRequest, Project, IBacklogItemUpdateProps } from '../../models/models';
 import UserService from '../../services/UserService';
 import TaskCreationFormStyles from './BacklogItemFormStyles';
 import DrawerForm from '../Form/DrawerForm';
@@ -43,14 +43,16 @@ const BacklogItemForm: FunctionComponent<BacklogItemFormProps> = props => {
 
     const classes = TaskCreationFormStyles()
 
-    const [title, setTitle] = useState("")
-    const [category, setCategory] = useState<CategoryOption | null>(null)
-    const [dueDate, setDueDate] = useState(new Date())
-    const [priority, setPriority] = useState<string>("medium")
-    const [reminder, setReminder] = useState<number | undefined>(undefined)
-    const [estimatedH, setEstimatedH] = useState<number>(1)
-    const [estimatedMIN, setEstimatedMIN] = useState<number>(0)
-    const [description, setDescription] = useState("")
+    const [title, setTitle] = useState(item ? item.title : "")
+    const [category, setCategory] = useState<CategoryOption | null>(item?.category ?
+        { category: item.category }
+        : null)
+    const [dueDate, setDueDate] = useState(item?.dueDate ? item.dueDate : null)
+    const [priority, setPriority] = useState<string>(item?.priority ? item.priority.toString() : "medium")
+    const [reminder, setReminder] = useState<number | undefined>(item?.reminder ? item.reminder : undefined)
+    const [estimatedH, setEstimatedH] = useState<number>(item?.estimation ? ~~(item.estimation / 60) : 1)
+    const [estimatedMIN, setEstimatedMIN] = useState<number>(item?.estimation ? item.estimation % 60 : 0)
+    const [description, setDescription] = useState(item?.description ? item.description : "")
 
     //project stuff
     const [assignee, setAssignee] = useState<string | null>(!project || selfAssigned ? UserService.getCurrentUser().id : null)
@@ -91,7 +93,7 @@ const BacklogItemForm: FunctionComponent<BacklogItemFormProps> = props => {
             if (formType === "Create") {
                 await sendItemToDataBase()
             } else if (formType === "Update") {
-                //await updateItemInDataBase()
+                await updateItemInDataBase()
             } else {
                 setFeedbackMessage("Fatal error")
                 setShowFeedback(true)
@@ -170,8 +172,60 @@ const BacklogItemForm: FunctionComponent<BacklogItemFormProps> = props => {
         setBacklogItems([...items, newTask])
     }
 
+    const updateItemInDataBase = async () => {
+        let updateProps: IBacklogItemUpdateProps = {}
+        if (!item) {
+            setFeedbackMessage("No item to update")
+            setShowFeedback(true)
+            return
+        }
+        if (title !== item.title) {
+            updateProps.title = title
+        }
+        if (description !== item.description) {
+            updateProps.description = description
+        }
+        if (priority !== item.priority.toString()) {
+            updateProps.priority = priority
+        }
+        if (reminder && reminder !== item.reminder) {
+            updateProps.reminder = reminder
+        }
+        if ((estimatedH * 60 + estimatedMIN) !== item.estimation) {
+            updateProps.estimation = (estimatedH * 60 + estimatedMIN)
+        }
+        if (dueDate !== item.dueDate && dueDate) {
+            updateProps.dueDate = dueDate
+        }
+        if (category?.category  && category.category !== item.category) {
+            updateProps.category = category.category
+        }
+        if (assignee && assignee !== item.assignee) {
+            updateProps.assignee = assignee
+        } 
+        debugger
+        try {
+            let response = await BacklogItemService.updateBacklogItem(item.id, updateProps)
+            let updatedItems = [...items]
+            const itemIndex = updatedItems.findIndex(BItem => BItem.id === item.id)
+            if (itemIndex) {
+                //@ts-ignore
+                updatedItems[itemIndex] = response.item
+                setBacklogItems([...updatedItems])
+            } else {
+                setFeedbackMessage("No item found to update")
+                setError(true)
+            }
+            //@ts-ignore
+            setFeedbackMessage(response.message)
+        } catch (error) {
+            setFeedbackMessage(error)
+            setError(true)
+        }
+    }
+
     const checkInput = (): boolean => {
-        if (!title || !description) {
+        if (!title || !description) {
             return false
         }
         return true
@@ -231,7 +285,7 @@ const BacklogItemForm: FunctionComponent<BacklogItemFormProps> = props => {
                     label="Title"
                     error={(!title) && error}
                     helperText={(!title && error) ? "Needs to be filled out" : ""}
-                    defaultValue={item?.title ? item.title : title}
+                    defaultValue={title}
                     placeholder="Enter the task title"
                     onChange={(event) => setTitle(event.target.value)}
                     variant="outlined"
@@ -243,6 +297,7 @@ const BacklogItemForm: FunctionComponent<BacklogItemFormProps> = props => {
                     id="category-combobox"
                     className={classes.textField}
                     value={category}
+                    defaultValue={category}
                     onChange={(event, newValue) => {
                         if (typeof newValue === 'string') {
                             setCategory({
@@ -297,7 +352,8 @@ const BacklogItemForm: FunctionComponent<BacklogItemFormProps> = props => {
                         label="Due Date"
                         format="dd/MM/yyyy"
                         value={dueDate}
-                        defaultValue={item?.dueDate ? item.dueDate : dueDate}
+                        defaultValue={dueDate}
+                        placeholder="Select a date"
                         InputAdornmentProps={{ position: "start" }}
                         onChange={handleDateChange}
                     />
@@ -307,7 +363,7 @@ const BacklogItemForm: FunctionComponent<BacklogItemFormProps> = props => {
                     className={classes.textField}
                     id="priority-combobox"
                     fullWidth
-                    defaultValue={item?.priority ? Priority[item.priority] : priority}
+                    defaultValue={priority}
                     options={["low", "medium", "high"]}
                     onChange={(event, value) => setPriority(value ? value : "")}
                     // style = {styles}

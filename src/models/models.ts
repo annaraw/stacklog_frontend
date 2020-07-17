@@ -61,7 +61,7 @@ export interface IBacklogItemUpdateProps {
     assignee?: string,
     title?: string,
     description?: string,
-    priority?: Priority,
+    priority?: string,
     reminder?: number,
     estimation?: number,
     completed?: boolean,
@@ -82,7 +82,7 @@ export interface IBacklogItemRequest {
     estimation?: number,
     completed: boolean,
     startDate?: Date | null,
-    dueDate?: Date,
+    dueDate?: Date | null,
     category: string,
     team?: string
 }
