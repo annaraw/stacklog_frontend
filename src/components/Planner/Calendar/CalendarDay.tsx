@@ -18,6 +18,10 @@ export const CalendarDay: React.FC<BoardColumnProps> = (props) => {
   const { columns, items, day, calEvents, setBacklogItems } = props
   const classes = calendarDayStyles();
   new Date().toDateString()
+
+  let empty: ICalendarItem[] = []
+  let eventList = empty.concat.apply([], calEvents) // merge items of multiple cals into one list
+
   return (
     <div className={classes.day + (day !== new Date().toDateString()
       ? " " + classes.weekday
@@ -35,7 +39,7 @@ export const CalendarDay: React.FC<BoardColumnProps> = (props) => {
               index={index}
               items={items}
               setBacklogItems={setBacklogItems}
-              events={calEvents[0] ? calEvents[0]
+              events={eventList ? eventList
                 .filter((calItem: ICalendarItem) => new Date(calItem.dtStart).getHours() === index + dayStart)
                 .map((calItem: ICalendarItem) => calItem) : []}
             />
