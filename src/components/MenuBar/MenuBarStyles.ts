@@ -1,32 +1,26 @@
-import { makeStyles } from "@material-ui/core";
+import { makeStyles, Theme, createStyles } from "@material-ui/core";
 
-const drawerWidth = 200;
+const drawerWidth = 240;
 
-export const menuBarStyles = makeStyles((theme) => ({
+export const menuBarStyles = makeStyles((theme: Theme) =>
+  createStyles({
     root: {
-        flexGrow: 1,
-        display: 'flex',
-    },
-    image: {
-        width: '120px',
-        marginBottom: "-4px",
-        marginTop:"4px"
-    },
-    menuOption: {
-        width: "drawerWidth",
-        marginTop: "10px",
-        marginBottom: "10px",
-        marginLeft: "6px",
-        marginRight: "20px",
+      display: 'flex',
     },
     menuIcon: {
-        marginLeft: "10px"
+      marginLeft: "10px",
+      backgroundColor: 'transparent'
     },
     loginBtn: {
-        position: "absolute",
-        right: "20px",
-        color: "white",
-        borderColor: "white "
+      color: "white",
+      borderColor: "white ",
+      float: "right",
+      margin: "6px"
+    },
+    image: {
+      width: '120px',
+      marginBottom: "-4px",
+      marginTop: "4px",
     },
     appBar: {
       zIndex: theme.zIndex.drawer + 1,
@@ -42,6 +36,9 @@ export const menuBarStyles = makeStyles((theme) => ({
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.enteringScreen,
       }),
+    },
+    menuButton: {
+      marginRight: 36,
     },
     hide: {
       display: 'none',
@@ -66,7 +63,7 @@ export const menuBarStyles = makeStyles((theme) => ({
       overflowX: 'hidden',
       width: theme.spacing(7) + 1,
       [theme.breakpoints.up('sm')]: {
-        width: theme.spacing(8) + 1,
+        width: theme.spacing(7) + 1,
       },
     },
     toolbar: {
