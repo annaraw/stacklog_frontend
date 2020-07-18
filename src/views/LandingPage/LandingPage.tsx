@@ -10,23 +10,26 @@ function LandingPage() {
     return (
         <React.Fragment >
 
-            <div className= {classes.container}>
-                <img src="./assets/LandingPagePic.png" alt="landing-page-pic" className={classes.landingPagePic} />
+            <div className={classes.container}>
+                <div className={classes.landingPagePic}>
+                    {/* <img src="./assets/LandingPagePic.png" alt="landing-page-pic" className={classes.landingPagePic} /> */}
 
-                <div className= {classes.headerText} >
-                    <h2>WELCOME TO STACKLOG</h2>
-                </div>
-                <div className= {classes.headerDescription}>
-                    <h2> Become a more organized individual</h2>
-                </div>
-                <div>
-                    <Button variant="outlined" className={classes.loginButton}
-                    
-                        onClick={() => {
-                            window.location.href = "/login"
-                        }}>
-                        <p>Get started </p>
-                    </Button>
+                    <div className={classes.headerBox} >
+                        <span className={classes.headerText}>WELCOME TO STACKLOG</span>
+                        <div className={classes.headerDescription}>
+                            <h2>Become a more organized individual.</h2>
+                        </div>
+                        <div>
+                            <Button variant="outlined" className={classes.loginButton}
+
+                                onClick={() => {
+                                    window.location.href = "/register"
+                                }}>
+                                <strong>Get started!</strong>
+                            </Button>
+                        </div>
+
+                    </div>
                 </div>
             </div>
 
@@ -62,49 +65,49 @@ function LandingPage() {
 
             </div>
             <div className={classes.footer}>
-                
-                 
-                        <Box className={classes.footerBoxLeft}>
-                            <Link color="inherit" >
-                                {'Privacy Policy '}
-                            </Link>
+
+
+                <Box className={classes.footerBoxLeft}>
+                    <Link color="inherit" >
+                        {'Privacy Policy '}
+                    </Link>
+                </Box>
+                <Box className={classes.footerLine}>
+                    |
                         </Box>
-                        <Box className ={classes.footerLine}>
-                            |
+                <Box className={classes.boxContent}>
+                    <Link color="inherit" >
+                        {' Product '}
+                    </Link>
+                </Box>
+                <Box className={classes.footerLine}>
+                    |
                         </Box>
-                        <Box className={classes.boxContent}>
-                            <Link color="inherit" >
-                                {' Product '}
-                            </Link>
+                <Box className={classes.boxContent}>
+                    <Link color="inherit" >
+                        {' Pricing '}
+                    </Link>
+                </Box>
+                <Box className={classes.footerLine}>
+                    |
                         </Box>
-                        <Box className ={classes.footerLine}>
-                            |
+
+                <Box className={classes.boxContent}>
+                    <Link color="inherit" >
+                        {' Partners '}
+                    </Link>
+                </Box>
+                <Box className={classes.footerLine}>
+                    |
                         </Box>
-                        <Box className={classes.boxContent}>
-                            <Link color="inherit" >
-                                {' Pricing '}
-                            </Link>
-                        </Box>
-                        <Box className ={classes.footerLine}>
-                            |
-                        </Box>
-                        
-                        <Box className={classes.boxContent}>
-                            <Link color="inherit" >
-                                {' Partners '}
-                            </Link>
-                        </Box>
-                        <Box className ={classes.footerLine}>
-                            |
-                        </Box>
-                        
-                        <Box className={classes.footerBoxRight}>
-                            <Link color="inherit" >
-                                {' Contact Us'}
-                            </Link>
-                        </Box>
-                   
-                        
+
+                <Box className={classes.footerBoxRight}>
+                    <Link color="inherit" >
+                        {' Contact Us'}
+                    </Link>
+                </Box>
+
+
             </div>
 
 

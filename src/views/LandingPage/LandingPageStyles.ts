@@ -1,34 +1,50 @@
 import { makeStyles, responsiveFontSizes } from '@material-ui/core';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
+import { Colors } from '../../util/constants';
 
 
 
-export const LandingPageStyles = makeStyles ((theme) =>({
+export const LandingPageStyles = makeStyles((theme) => ({
 
     root: {
         [theme.breakpoints.down('sm')]: {
             fontSize: "8px"
         },
         [theme.breakpoints.up('md')]: {
-            fontSize:  "12px",
+            fontSize: "12px",
         },
-        
+
     },
     landingPagePic: {
-        minWidth: "100%",
-        minHeight: "100%",
+        width: "100%",
         marginBottom: "120px",
+        backgroundImage: "url('./assets/LandingPagePic.png')",
+
+        /* Set a specific height */
+        height: "100vh",
+        //opacity: "0.75",
+        /* Create the parallax scrolling effect */
+        backgroundAttachment: "fixed",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
     },
     loginButton: {
-        backgroundColor: '#6AFFA1',
-        position: "absolute",
-        paddingTop: '0.2%',
-        top: '42% ',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        "&:hover" : {
-            background: '#212121',
-          }
+        backgroundColor: Colors.primaryColor,
+        padding: "15px",
+        fontSize:"30px",
+        marginTop: "30px",
+        color: "white",
+        paddingLeft: "80px",
+        paddingRight:"80px",
+        webkitBoxShadow: "0px 0px 60px -5px rgba(0,0,0,0.75)",
+        mozBoxShadow: "0px 0px 60px -5px rgba(0,0,0,0.75)",
+        boxShadow: "0px 0px 60px -5px rgba(0,0,0,0.75)",
+        "&:hover": {
+            backgroundColor: Colors.primaryColor,
+            filter: "brightness(110%)",
+            transition: "0.5s"
+        }
     },
     container: {
         position: "relative",
@@ -36,27 +52,25 @@ export const LandingPageStyles = makeStyles ((theme) =>({
         display: "flex",
     },
     headerText: {
-        position: "absolute",
-        top: "32%",
-        left: "50%",
-        transform: "translate(-50%, -50%)", 
-        backgroundColor: "black",
-        color: "white",
-        paddingLeft: "20px",
-        paddingRight: "20px",
-        fontSize: "1vw",
+        backgroundColor: "#111",
+        color: "#fff",
+        padding: "18px",
+        fontSize: "25px",
+        letterSpacing: "10px",
+    },
+    headerBox: {
+        width: "100%",
+        textAlign: "center",
+        color: "#000",
+        marginTop:"30vh"
     },
     headerDescription: {
-        position: "absolute",
-        top: "36.3%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-        color: "black",
-        paddingLeft: "20px",
-        paddingRight: "20px",
-        fontSize: "1vw",
+        width: "100%",
+        textAlign: "center",
+        color: "#000",
+        marginTop:"50px"
     },
-    descriptionImage: {    
+    descriptionImage: {
         width: "400px",
     },
     containerBox: {
@@ -64,16 +78,16 @@ export const LandingPageStyles = makeStyles ((theme) =>({
         textAlign: "center",
         display: "flex",
         marginBottom: "100px",
-        
+
     },
     boxContent: {
         width: "100%",
         float: "left",
         paddingTop: "20px",
-        
+
     },
-    
-    footer: { 
+
+    footer: {
         bottom: 0,
         position: "relative",
         textAlign: "center",
@@ -81,13 +95,13 @@ export const LandingPageStyles = makeStyles ((theme) =>({
         height: "60px",
         width: "100%",
         backgroundColor: "gray",
-        color:" rgb(49, 48, 48)",
-        
+        color: " rgb(49, 48, 48)",
+
     },
     footerContainerBox: {
-            width: "100%",
-            float: "left",
-            alignContent: "center",
+        width: "100%",
+        float: "left",
+        alignContent: "center",
     },
     footerLine: {
         width: "100%",
@@ -95,7 +109,7 @@ export const LandingPageStyles = makeStyles ((theme) =>({
         alignContent: "center",
         fontSize: "22px",
         paddingTop: "15px",
-        
+
 
     },
     footerBox: {
@@ -104,14 +118,14 @@ export const LandingPageStyles = makeStyles ((theme) =>({
         paddingLeft: "20px",
         paddingRight: "20px",
         paddingTop: "10px",
-       
+
     },
     footerBoxLeft: {
         width: "100%",
         float: "left",
         paddingLeft: "20px",
         paddingRight: "20px",
-        marginLeft  : "40px",
+        marginLeft: "40px",
         paddingTop: "20px",
     },
     footerBoxRight: {
@@ -122,6 +136,6 @@ export const LandingPageStyles = makeStyles ((theme) =>({
         marginRight: "40px",
         paddingTop: "20px",
     },
-    
-    
+
+
 }))
