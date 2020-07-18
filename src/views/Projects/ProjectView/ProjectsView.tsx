@@ -78,25 +78,26 @@ class ProjectScreen extends Component<{}, ProjectState> {
                     <Backdrop className={classes.backdrop} open={true}>
                         <CircularProgress color="inherit" />
                     </Backdrop>
-                    : (this.state.projects.length > 0) ?
-                        <>
-                            <div className={classes.menuBar}>
-                                <Button
-                                    className={classes.createProjectBtn}
-                                    onClick={() => this.setFormIsOpen(true)}
-                                    variant="contained">
-                                    Create Project
+                    :
+                    <>
+                        <div className={classes.menuBar}>
+                            <Button
+                                className={classes.createProjectBtn}
+                                onClick={() => this.setFormIsOpen(true)}
+                                variant="contained">
+                                Create Project
                                 </Button>
-                                <ProjectForm
-                                    isOpen={this.state.formIsOpen}
-                                    setIsOpen={this.setFormIsOpen}
-                                    formTitle="Create Project"
-                                    projects={this.state.projects}
-                                    setProjects={this.setProjects}
-                                    collegues={this.state.collegues}
-                                    formType={"Create"}
-                                />
-                            </div>
+                            <ProjectForm
+                                isOpen={this.state.formIsOpen}
+                                setIsOpen={this.setFormIsOpen}
+                                formTitle="Create Project"
+                                projects={this.state.projects}
+                                setProjects={this.setProjects}
+                                collegues={this.state.collegues}
+                                formType={"Create"}
+                            />
+                        </div>
+                        {(this.state.projects.length > 0) ?
                             <div className={classes.projectsWrapper}>
                                 {this.state.projects.map(project => {
                                     return (
@@ -112,9 +113,13 @@ class ProjectScreen extends Component<{}, ProjectState> {
                                     )
                                 })}
                             </div>
-                        </>
-                        /* placeholder */
-                        : <p>no projects available</p>
+                            :
+                            <div className={classes.noItemsDialog}>
+                                <p><b>You are currently not in a project</b></p>
+                                <p>To create a new project, click the 'new Project' bottom</p>
+                            </div>
+                        }
+                    </>
                 }
 
             </React.Fragment>

@@ -10,11 +10,12 @@ interface BoardColumnProps {
   items: IBacklogItem[]
   calendars: ICalendar[]
   setBacklogItems: (items: IBacklogItem[]) => void
+  setCalendars: (calendars: ICalendar[]) => void
 }
 
 export const Calendar: React.FC<BoardColumnProps> = (props) => {
 
-  const { columns, items, calendars, setBacklogItems } = props
+  const { columns, items, calendars, setBacklogItems, setCalendars } = props
   const classes = calendarStyles();
 
   function getDayColumns(day: string) {
@@ -67,7 +68,10 @@ export const Calendar: React.FC<BoardColumnProps> = (props) => {
         <div className={classes.menubar}>
           <div className={classes.calendarTitle}>Calendar</div>
           <div className={classes.importButton}>
-            <AddCalendarForm />
+            <AddCalendarForm
+              calendars={calendars}
+              setCalendars={setCalendars}
+            />
           </div>
         </div>
         <div className={classes.calendarContent}>

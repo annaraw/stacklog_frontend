@@ -167,6 +167,10 @@ export class Planner extends React.Component<{}, BacklogState> {
 		})
 	}
 
+	setCalendars = (calendars: ICalendar[]) => {
+		this.setState({ calendars: calendars })
+	}
+
 	setFormIsOpen = (isOpen: boolean) => {
 		this.setState({ formIsOpen: isOpen })
 	}
@@ -396,6 +400,7 @@ export class Planner extends React.Component<{}, BacklogState> {
 									columns={this.state.columns}
 									items={this.state.items}
 									setBacklogItems={this.setBacklogItems}
+									setCalendars={this.setCalendars}
 								/>
 							</div>
 						</div>
