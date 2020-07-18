@@ -56,19 +56,12 @@ function MenuBar(props: MenuBarProps) {
                     >
                         <MenuIcon />
                     </IconButton>
-                    <IconButton
+                    <div
                         className={classes.menuIcon}
-                        edge="start"
-                        color="inherit"
-                        aria-label="menu"
-                        size='medium'
                         onClick={() => { window.location.href = "/" }}
-                        disableRipple={true}
-                        disableTouchRipple
-                        disableFocusRipple
                     >
                         <img src="./assets/logo_white.svg" className={classes.image} />
-                    </IconButton>
+                    </div>
                     <div style={{ right: "20px", position: "absolute" }}>
                         <Button variant="outlined" className={classes.loginBtn}
                             onClick={() => { !UserService.getCurrentUser().id ? window.location.href = "/login" : UserService.logout() }}>
@@ -109,7 +102,7 @@ function MenuBar(props: MenuBarProps) {
                 <List>
                     <ListItem button key="text2" onClick={() => { window.location.href = "/" }}>
                         <ListItemIcon> <HomeIcon /></ListItemIcon>
-                        <ListItemText primary="Planner Overview" />
+                        {UserService.getCurrentUser().id === undefined ? <ListItemText primary="Home" /> : <ListItemText primary="Planner Overview" />}
                     </ListItem>
                     {UserService.getCurrentUser().id !== undefined && <ListItem button key="text2" onClick={() => { window.location.href = "/projects" }}>
                         <ListItemIcon> <PeopleIcon /></ListItemIcon>

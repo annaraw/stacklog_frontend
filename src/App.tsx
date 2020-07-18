@@ -28,7 +28,8 @@ const useStyles = (theme: Theme) => ({
   content: {
     flexGrow: 1,
     paddingLeft: theme.spacing(7),
-    paddingTop: theme.spacing(8)
+    paddingTop: theme.spacing(8),
+    position: "relative"
   },
 });
 
