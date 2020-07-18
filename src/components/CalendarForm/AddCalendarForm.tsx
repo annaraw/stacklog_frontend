@@ -94,7 +94,6 @@ const AddCalendarForm: FunctionComponent<CalendarFormProps> = props => {
                 dismissPanel();
                 setSuccess(true);
                 setLoading(false);
-                window.location.reload()
             }).catch((e) => {
                 setLoading(false);
                 setUploadError(true);
