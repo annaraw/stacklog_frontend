@@ -61,7 +61,7 @@ const BacklogItem: FunctionComponent<BacklogItemProps> = props => {
 
   return (
     <>
-      <Draggable draggableId={item.id} index={index}>
+      <Draggable draggableId={item.id} index={index} key={index + item.title}>
         {(provided, snapshot) => (
           <div
             {...provided.draggableProps}
