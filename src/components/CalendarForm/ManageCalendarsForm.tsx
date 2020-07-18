@@ -71,59 +71,46 @@ const ManageCalendarsForm: FunctionComponent<any> = props => {
     }
 
     const handleSync = async () => {
-        const remove = await CalendarImportService.removeCalendar(calendar.id).then(() => {
-                setLoading(true)
-            }).catch((e) => {
-                setdeleteError(true)
-            })
 
-        const calItems = await CalendarImportService.fetchCalendarFile(calendar.url).then((data) => {
-                    let calItems = convertIcal(data)
-                    if (calItems.length !== 0) {
-                        return calItems
-                    }
-                    else {
-                        return []
-                    }
-                }).catch((e) => {
-                    setUploadError(true)
-                })
+        let deleteErr = false
+        try {
+            const remove = await CalendarImportService.removeCalendar(calendar.id)
+            setLoading(true)
+        } catch (e){
+            deleteErr = true
+            setdeleteError(true)
+        } 
+
+        let calItems = null
+
+        try {
+           const getCalItems = await CalendarImportService.fetchCalendarFile(calendar.url)
+           calItems = convertIcal(getCalItems)
+        } catch (e) {
+           setUploadError(true)
+        }
 
         const cal = {
                         name: calendar.name,
-                        items: calItems ? calItems : [],
+                        items: calItems ? calItems : calendar.items,
                         owner: UserService.getCurrentUser().id,
                         url: calendar.url
                     };
 
-        if (!uploadError){
-            const addNewCal = await CalendarImportService.addCalendar(cal).then((data) => {
-                            setUploadError(false);
-                            setLoading(false);
-                            setCalendar(null);
-                            dismissPanel();
-                            window.location.reload()
-                        }).catch((e) => {
-                            setLoading(false);
-                            setUploadError(true);
-                            setSuccess(false);
-                        });
-        }else if (!deleteError) {
-            const addOldCal = await CalendarImportService.addCalendar(calendar).then((data) => {
-                            setUploadError(false);
-                            setLoading(false);
-                            setCalendar(null);
-                            dismissPanel();
-                            window.location.reload()
-                        }).catch((e) => {
-                            setLoading(false);
-                            setUploadError(true);
-                            setSuccess(false);
-                        });
+        if (!deleteErr){
+            try {
+                const addNewCal = await CalendarImportService.addCalendar(cal)
+                setUploadError(false);
+                setLoading(false);
+                setCalendar(null);
+                dismissPanel();
+            } catch (e) {
+                setLoading(false);
+                setUploadError(true);
+                setSuccess(false);
+            }
         }
     }
-
-   
 
     const convertIcal = (icalString: any) => {
         const ical = require('ical');
@@ -236,7 +223,7 @@ const ManageCalendarsForm: FunctionComponent<any> = props => {
                 dismissPanel={() => setShowSyncDialog(false)}
             >
                 {loading ? <div style={{ 'textAlign': 'center' }}><CircularProgress/></div>
-                    : (deleteError || uploadError) ? "Failed to sync calendar."
+                    : (deleteError || uploadError) ? "Failed to sync calendar. Please reload and try again."
                             : showSyncDialog ? "Are you sure you want to sync the calendar?" : ''}
             </DialogForm>
         </div>
