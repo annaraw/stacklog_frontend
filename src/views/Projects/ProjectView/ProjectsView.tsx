@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { Component } from 'react';
+import AddIcon from '@material-ui/icons/Add';
 
 import ProjectCard from '../../../components/Projects/ProjectCard/ProjectCard';
 import { Project, Member } from '../../../models/models'
 import ProjectService from '../../../services/ProjectService';
-import MenuBar from '../../../components/MenuBar/MenuBar';
 import { projectViewStyles } from './ProjectsViewStyles';
-import { withStyles, Backdrop, CircularProgress, Button } from '@material-ui/core';
+import { withStyles, Backdrop, CircularProgress, Button, Tooltip, IconButton } from '@material-ui/core';
 import UserService from '../../../services/UserService';
 import ProjectForm from '../../../components/Projects/ProjectFrom/ProjectForm';
 
@@ -80,12 +80,11 @@ class ProjectScreen extends Component<{}, ProjectState> {
                     : (this.state.projects.length > 0) ?
                         <>
                             <div className={classes.menuBar}>
-                                <Button
-                                    className={classes.createProjectBtn}
-                                    onClick={() => this.setFormIsOpen(true)}
-                                    variant="contained">
-                                    Create Project
-                                </Button>
+                                <Tooltip title="Create Project" placement="left" arrow>
+                                    <IconButton className={classes.addButton} aria-label="add" onClick={() => this.setFormIsOpen(true)}>
+                                        <AddIcon />
+                                    </IconButton>
+                                </Tooltip>
                                 <ProjectForm
                                     isOpen={this.state.formIsOpen}
                                     setIsOpen={this.setFormIsOpen}
