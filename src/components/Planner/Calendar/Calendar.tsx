@@ -5,6 +5,9 @@ import { calendarStyles } from './CalendarStyles';
 import Scrollbar from 'react-scrollbars-custom';
 import AddCalendarForm from '../../CalendarForm/AddCalendarForm';
 import ManageCalendarsForm from '../../CalendarForm/ManageCalendarsForm';
+import Button from '@material-ui/core/Button';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 
 interface BoardColumnProps {
   columns: Column[],
@@ -17,6 +20,16 @@ export const Calendar: React.FC<BoardColumnProps> = (props) => {
 
   const { columns, items, calendars, setBacklogItems } = props
   const classes = calendarStyles();
+
+  const handleClick = (event:any) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
 
   function getDayColumns(day: string) {
     return columns.filter((col) => col.id.split("-")[0] === day)
@@ -70,11 +83,20 @@ export const Calendar: React.FC<BoardColumnProps> = (props) => {
       <div className={classes.calendar}>
         <div className={classes.menubar}>
           <div className={classes.calendarTitle}>Calendar</div>
-          <div className={classes.importButton}>
-            <AddCalendarForm />
-          </div>
           <div>
-            <ManageCalendarsForm calendars={calendars}/>
+            <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
+              Calendar Settings
+            </Button>
+            <Menu
+              id="simple-menu"
+              anchorEl={anchorEl}
+              keepMounted
+              open={Boolean(anchorEl)}
+              onClose={handleClose}
+            >
+              <MenuItem onClick={handleClose}><AddCalendarForm /></MenuItem>
+              <MenuItem onClick={handleClose}><ManageCalendarsForm calendars={calendars}/></MenuItem>
+            </Menu>
           </div>
         </div>
         <div className={classes.calendarContent}>

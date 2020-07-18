@@ -175,7 +175,7 @@ const AddCalendarForm: FunctionComponent<any> = props => {
 
     return (
         <div>
-            <Button onClick={openPanel} variant="outlined">{formTitle}</Button>
+            <div className={classes.button} onClick={openPanel} >{formTitle}</div>
             <DrawerForm
                 formTitle={formTitle}
                 isOpen={isOpen}
