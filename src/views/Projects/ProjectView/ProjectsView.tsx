@@ -77,8 +77,7 @@ class ProjectScreen extends Component<{}, ProjectState> {
                     <Backdrop className={classes.backdrop} open={true}>
                         <CircularProgress color="inherit" />
                     </Backdrop>
-                    : (this.state.projects.length > 0) ?
-                        <>
+                    : <>
                             <div className={classes.menuBar}>
                                 <Tooltip title="Create Project" placement="left" arrow>
                                     <IconButton className={classes.addButton} aria-label="add" onClick={() => this.setFormIsOpen(true)}>
@@ -95,6 +94,7 @@ class ProjectScreen extends Component<{}, ProjectState> {
                                     formType={"Create"}
                                 />
                             </div>
+                        {(this.state.projects.length > 0) ?
                             <div className={classes.projectsWrapper}>
                                 {this.state.projects.map(project => {
                                     return (
@@ -111,9 +111,13 @@ class ProjectScreen extends Component<{}, ProjectState> {
                                     )
                                 })}
                             </div>
-                        </>
-                        /* placeholder */
-                        : <p>no projects available</p>
+                            :
+                            <div className={classes.noItemsDialog}>
+                                <p><b>You are currently not in a project</b></p>
+                                <p>To create a new project, click the 'new Project' bottom</p>
+                            </div>
+                        }
+                    </>
                 }
 
             </React.Fragment>

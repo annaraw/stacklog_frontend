@@ -37,4 +37,11 @@ export const projectViewStyles = () => ({
         right: 10,
         position: "absolute",
     },
+    noItemsDialog: {
+        width: "300px",
+        marginLeft: "auto",
+        marginRight: "auto",
+        marginTop: "20%",
+        textAlign: "center"
+    }
 });

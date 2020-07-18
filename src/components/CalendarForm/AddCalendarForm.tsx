@@ -24,7 +24,15 @@ function Alert(props: AlertProps) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-const AddCalendarForm: FunctionComponent<any> = props => {
+interface CalendarFormProps {
+    calendars: ICalendar[]
+    setCalendars: (items: ICalendar[]) => void
+}
+
+const AddCalendarForm: FunctionComponent<CalendarFormProps> = props => {
+
+    const { calendars, setCalendars } = props
+
     const formTitle = "Import Calendar";
     //Hooks
     const [isOpen, setIsOpen] = useState(false);
@@ -55,8 +63,6 @@ const AddCalendarForm: FunctionComponent<any> = props => {
         setUploadError(false)
         setSuccess(false)
         setLoading(false)
-
-        console.log(loading)
     });
 
     const submit = () => {
@@ -82,6 +88,9 @@ const AddCalendarForm: FunctionComponent<any> = props => {
             }
             CalendarImportService.addCalendar(cal).then((data) => {
                 setUploadError(false);
+                //@ts-ignore
+                const newCalendar = data.calendar
+                setCalendars([...calendars, newCalendar])
                 dismissPanel();
                 setSuccess(true);
                 setLoading(false);
