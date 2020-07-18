@@ -99,6 +99,9 @@ const BacklogItem: FunctionComponent<BacklogItemProps> = props => {
                         label={new Date(item.dueDate).getFullYear() + "-" + (new Date(item.dueDate).getMonth() + 1) + "-" + new Date(item.dueDate).getDate()}
                       />
                     </Tooltip>}
+                    {item.team && item.assignee && 
+                      <Chip className={classes.chip} label={"Assigned"} style={{ backgroundColor: Colors.primaryColor }} />
+                    }
                 </div>
                 <div className={classes.buttonBox}>
                   <Tooltip title="Edit">

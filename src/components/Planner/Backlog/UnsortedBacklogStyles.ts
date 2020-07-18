@@ -1,19 +1,28 @@
 import { makeStyles } from "@material-ui/core";
+import { Colors } from "../../../util/constants";
 
 export const unsortedBacklogStyles = makeStyles((theme) => ({
     drawer: {
         position: "relative"
     },
     backlogContainer: {
-        width: "90%",
         height: "calc(100vh - 200px)",
-        margin: "20px auto",
+        marginLeft: "20px",
+        marginTop: "3.2%",
+        marginBottom: "5%",
         backgroundColor: "white",
         overflow: "hidden",
         padding: "20px",
         position: "relative",
         display: "flex",
-        flexDirection: "column"
+        flexDirection: "column",
+        borderStyle: "solid",
+        borderRadius: "5px",
+        borderWidth: "thin",
+        borderColor: Colors.secondaryColor,
+        '&:hover': {
+            borderColor: "black",
+        }
     },
     containerTitle: {
         float: "right",
@@ -29,11 +38,12 @@ export const unsortedBacklogStyles = makeStyles((theme) => ({
         position: "absolute",
         bottom: "0",
         right: "0",
-        background: "black",
+        background: Colors.primaryColor,
         color: "white",
-        margin: "40px",
+        margin: "20px",
         '&:hover': {
-            backgroundColor: "#333",
+            backgroundColor: Colors.primaryColor,
+            filter: "brightness(85%)"
         }
     },
     scrollbar: {

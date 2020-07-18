@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { Component } from 'react';
+import AddIcon from '@material-ui/icons/Add';
 
 import ProjectCard from '../../../components/Projects/ProjectCard/ProjectCard';
 import { Project, Member } from '../../../models/models'
 import ProjectService from '../../../services/ProjectService';
-import MenuBar from '../../../components/MenuBar/MenuBar';
 import { projectViewStyles } from './ProjectsViewStyles';
-import { withStyles, Backdrop, CircularProgress, Button } from '@material-ui/core';
+import { withStyles, Backdrop, CircularProgress, Button, Tooltip, IconButton } from '@material-ui/core';
 import UserService from '../../../services/UserService';
 import ProjectForm from '../../../components/Projects/ProjectFrom/ProjectForm';
 
@@ -77,25 +77,23 @@ class ProjectScreen extends Component<{}, ProjectState> {
                     <Backdrop className={classes.backdrop} open={true}>
                         <CircularProgress color="inherit" />
                     </Backdrop>
-                    :
-                    <>
-                        <div className={classes.menuBar}>
-                            <Button
-                                className={classes.createProjectBtn}
-                                onClick={() => this.setFormIsOpen(true)}
-                                variant="contained">
-                                Create Project
-                                </Button>
-                            <ProjectForm
-                                isOpen={this.state.formIsOpen}
-                                setIsOpen={this.setFormIsOpen}
-                                formTitle="Create Project"
-                                projects={this.state.projects}
-                                setProjects={this.setProjects}
-                                collegues={this.state.collegues}
-                                formType={"Create"}
-                            />
-                        </div>
+                    : <>
+                            <div className={classes.menuBar}>
+                                <Tooltip title="Create Project" placement="left" arrow>
+                                    <IconButton className={classes.addButton} aria-label="add" onClick={() => this.setFormIsOpen(true)}>
+                                        <AddIcon />
+                                    </IconButton>
+                                </Tooltip>
+                                <ProjectForm
+                                    isOpen={this.state.formIsOpen}
+                                    setIsOpen={this.setFormIsOpen}
+                                    formTitle="Create Project"
+                                    projects={this.state.projects}
+                                    setProjects={this.setProjects}
+                                    collegues={this.state.collegues}
+                                    formType={"Create"}
+                                />
+                            </div>
                         {(this.state.projects.length > 0) ?
                             <div className={classes.projectsWrapper}>
                                 {this.state.projects.map(project => {
@@ -107,6 +105,7 @@ class ProjectScreen extends Component<{}, ProjectState> {
                                                 projects={this.state.projects}
                                                 collegues={this.state.collegues}
                                                 setProjects={this.setProjects}
+                                                hideShowBacklog={false}
                                             />
                                         </div>
                                     )
