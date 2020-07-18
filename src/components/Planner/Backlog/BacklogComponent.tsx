@@ -244,6 +244,7 @@ export const BacklogComponent: FunctionComponent<BoardColumnProps> = props => {
                   {...provided.droppableProps}
                   ref={provided.innerRef}
                   isDraggingOver={snapshot.isDraggingOver}
+                  style={{minHeight:"400px"}}
                 >
                   {onUpdateDisplayedItems(items).map((backlogItem: any, index: number) =>
 
