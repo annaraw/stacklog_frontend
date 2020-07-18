@@ -7,12 +7,13 @@ import LoginScreen from './views/Login/LoginView';
 import HomeScreen from './views/HomeScreenView';
 import NotFound from './views/NotFoundView';
 import ProjectScreen from './views/Projects/ProjectView/ProjectsView';
-import LandingPage from './components/LandingPage/LandingPage'
+import LandingPage from './views/LandingPage/LandingPage'
 import Planner from './components/Planner/Planner';
 import RegisterScreen from './views/Register/RegisterView';
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core';
+import { MuiThemeProvider, createMuiTheme, Theme, withStyles } from '@material-ui/core';
 import { Colors } from './util/constants';
 import ProjectBacklogView from './views/Projects/ProjectBacklogView/ProjectBacklogView';
+import MenuBar from './components/MenuBar/MenuBar';
 
 interface AppState {
   title: string,
@@ -20,22 +21,29 @@ interface AppState {
 }
 
 interface AppProps {
+  classes: any,
 }
 
-export default class App extends React.Component<AppProps, AppState> {
+const useStyles = (theme: Theme) => ({
+  content: {
+    flexGrow: 1,
+    paddingLeft: theme.spacing(7),
+    paddingTop: theme.spacing(8)
+  },
+});
 
-  constructor(props: AppProps) {
+class App extends React.Component<AppProps, AppState> {
+
+  constructor(props: any) {
     super(props);
     this.state = {
       title: 'Stacklog',
       routes: [
-        { component: HomeScreen, path: '/home', exact: true },
+        { component: HomeScreen, path: '/', exact: true },
         { component: LoginScreen, path: '/login' },
         { component: ProjectScreen, path: '/projects' },
-        { component: Planner, path: '/planner' },
         { component: RegisterScreen, path: '/register' },
-        { component: ProjectBacklogView, path: '/project'},
-        { component: LandingPage, path: '/'},
+        { component: ProjectBacklogView, path: '/project' },
         //route if view is not found
         { component: NotFound }
       ]
@@ -47,13 +55,18 @@ export default class App extends React.Component<AppProps, AppState> {
   }
 
   render() {
+    //@ts-ignore
+    const { classes } = this.props;
     return (
       <div>
         <MuiThemeProvider theme={theme}>
           <Router>
-            <Switch>
-              {this.state.routes.map((route: any, i: number) => (<Route key={i} {...route} />))}
-            </Switch>
+            <MenuBar title="title" />
+            <div className={classes.content}>
+              <Switch>
+                {this.state.routes.map((route: any, i: number) => (<Route key={i} {...route} />))}
+              </Switch>
+            </div>
           </Router>
         </MuiThemeProvider>
       </div>
@@ -72,3 +85,6 @@ const theme = createMuiTheme({
     }
   }
 });
+
+//@ts-ignore
+export default withStyles(useStyles)(App)

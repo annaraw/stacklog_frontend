@@ -33,6 +33,7 @@ export default class UserService {
 
     static logout() {
         window.localStorage.removeItem('jwtToken');
+        window.location.href = "/"
     }
 
     static getCurrentUser() {

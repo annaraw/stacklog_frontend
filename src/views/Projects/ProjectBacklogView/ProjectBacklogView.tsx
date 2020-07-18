@@ -7,7 +7,7 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 import { Project, Member, IBacklogItem, Column } from '../../../models/models'
 import ProjectService from '../../../services/ProjectService';
-import MenuBar from '../../../components/MenuBar';
+import MenuBar from '../../../components/MenuBar/MenuBar';
 import UserService from '../../../services/UserService';
 import { projectBacklogViewStyles } from './ProjectBacklogViewStyles';
 import BacklogItemService from '../../../services/BacklogItemService';
@@ -242,7 +242,6 @@ class ProjectBacklogScreen extends Component<ProjectBacklogProps, ProjectBacklog
         if (this.state.loading) {
             return (
                 <React.Fragment >
-                    <MenuBar title="Loading" />
                     <Backdrop className={classes.backdrop} open={true}>
                         <CircularProgress color="inherit" />
                     </Backdrop>
@@ -251,14 +250,12 @@ class ProjectBacklogScreen extends Component<ProjectBacklogProps, ProjectBacklog
         } else if (this.state.urlError) {
             return (
                 <React.Fragment >
-                    <MenuBar title="Error" />
                     <p>Error: no url parameter provided</p>
                 </React.Fragment >
             )
         } else if (this.state.loadingError) {
             return (
                 <React.Fragment >
-                    <MenuBar title="Error" />
                     <p>Error: Server is not responding</p>
                 </React.Fragment >
             )
@@ -275,7 +272,6 @@ class ProjectBacklogScreen extends Component<ProjectBacklogProps, ProjectBacklog
 
             return (
                 <React.Fragment>
-                    <MenuBar title={this.state.project ? this.state.project.title : "Loading"} />
                     {this.state.loading ?
                         <Backdrop className={classes.backdrop} open={true}>
                             <CircularProgress color="inherit" />

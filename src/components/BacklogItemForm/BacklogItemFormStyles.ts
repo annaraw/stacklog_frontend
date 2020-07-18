@@ -65,6 +65,14 @@ export const TaskCreationFormStyles = makeStyles((theme) => ({
         right: 10,
         position: "absolute",
     },
+    deleteButton: {
+        backgroundColor: "#eb8f88",
+        border: "1px solid #e65b50",
+        textTransform: "none",
+        '&:hover': {
+            backgroundColor: "#e8948e",
+        }
+    }
 }));
 
 export default TaskCreationFormStyles
