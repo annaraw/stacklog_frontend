@@ -409,6 +409,7 @@ const BacklogItemForm: FunctionComponent<BacklogItemFormProps> = props => {
                                 <TextField
                                     id='hours-box'
                                     placeholder="0"
+                                    type="number"
                                     variant="outlined"
                                     onChange={(event) => setEstimatedH(Number(event.target.value))}
                                     inputProps={{ style: { textAlign: "right" } }}
