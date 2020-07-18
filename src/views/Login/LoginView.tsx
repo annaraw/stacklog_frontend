@@ -10,7 +10,6 @@ function LoginScreen(props: LoginProps) {
     const classes = loginViewStyle();
     return (
         <div className={classes.root}>
-            <MenuBar title="Login" disableButton = {true}/>
             <LoginForm />
         </div>
     )

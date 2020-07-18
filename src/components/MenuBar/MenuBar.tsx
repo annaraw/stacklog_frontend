@@ -107,22 +107,22 @@ function MenuBar(props: MenuBarProps) {
                 </div>
                 <Divider />
                 <List>
-                    <ListItem button key="text2" onClick={() => { window.location.href = "/home" }}>
+                    <ListItem button key="text2" onClick={() => { window.location.href = "/" }}>
                         <ListItemIcon> <HomeIcon /></ListItemIcon>
                         <ListItemText primary="Planner Overview" />
                     </ListItem>
-                    <ListItem button key="text2" onClick={() => { window.location.href = "/projects" }}>
+                    {UserService.getCurrentUser().id !== undefined && <ListItem button key="text2" onClick={() => { window.location.href = "/projects" }}>
                         <ListItemIcon> <PeopleIcon /></ListItemIcon>
                         <ListItemText primary="My Projects" />
-                    </ListItem>
+                    </ListItem>}
                     <ListItem button key="text2" onClick={() => { window.location.href = "#" }}>
                         <ListItemIcon> <ChatIcon /></ListItemIcon>
                         <ListItemText primary="Contact Us" />
                     </ListItem>
-                    <ListItem button key="text2" onClick={() => { window.location.href = "#" }}>
+                    {UserService.getCurrentUser().id !== undefined && <ListItem button key="text2" onClick={() => { window.location.href = "#" }}>
                         <ListItemIcon> <SettingsIcon /></ListItemIcon>
                         <ListItemText primary="Settings" />
-                    </ListItem>
+                    </ListItem>}
                 </List>
             </Drawer>
         </div>

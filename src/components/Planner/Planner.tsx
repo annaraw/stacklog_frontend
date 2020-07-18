@@ -20,14 +20,7 @@ interface BacklogState {
 	formIsOpen: boolean,
 }
 
-const useStyles = (theme:Theme) => ({
-	content: {
-		flexGrow: 1,
-		padding: theme.spacing(7),
-	  },
-});
-
-export class Planner extends React.Component<{classes: any}, BacklogState> {
+export class Planner extends React.Component<{}, BacklogState> {
 
 	constructor(props: any) {
 		super(props)
@@ -363,7 +356,6 @@ export class Planner extends React.Component<{classes: any}, BacklogState> {
 	}
 
 	render() {
-		const { classes } = this.props;
 		if (this.state.loading) {
 			return (
 				<React.Fragment >
@@ -380,7 +372,6 @@ export class Planner extends React.Component<{classes: any}, BacklogState> {
 			)
 		} else {
 			return (
-				<div className={classes.content}>
 				<React.Fragment>
 
 					<DragDropContext onDragEnd={this.onDragEnd} >
@@ -416,7 +407,6 @@ export class Planner extends React.Component<{classes: any}, BacklogState> {
                         </Alert>
 					</Snackbar>
 				</React.Fragment>
-				</div>
 
 			)
 		}
@@ -424,4 +414,4 @@ export class Planner extends React.Component<{classes: any}, BacklogState> {
 	}
 }
 
-export default withStyles(useStyles)(Planner)
+export default Planner

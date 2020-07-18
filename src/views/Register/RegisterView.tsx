@@ -10,7 +10,6 @@ function RegisterScreen(props: RegisterProps) {
     const classes = registerViewStyle();
     return (
         <div className={classes.root}>
-            <MenuBar title="Sign up" disableButton = {true}/>
             <RegisterForm />
         </div>
     )

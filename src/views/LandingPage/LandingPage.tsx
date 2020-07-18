@@ -4,13 +4,11 @@ import { LandingPageStyles } from "./LandingPageStyles";
 
 import './LandingPage.css'
 import Link from '@material-ui/core/Link';
-import MenuBar from '../../components/MenuBar/MenuBar';
 
 function LandingPage() {
     const classes = LandingPageStyles();
     return (
         <React.Fragment >
-            <MenuBar title="LandingPage" disableButton={true} />
 
             <div className= {classes.container}>
                 <img src="./assets/LandingPagePic.png" alt="landing-page-pic" className={classes.landingPagePic} />

@@ -73,7 +73,6 @@ class ProjectScreen extends Component<{}, ProjectState> {
 
         return (
             <React.Fragment>
-                <MenuBar title="Projects"/>
                 {this.state.loading ?
                     <Backdrop className={classes.backdrop} open={true}>
                         <CircularProgress color="inherit" />
