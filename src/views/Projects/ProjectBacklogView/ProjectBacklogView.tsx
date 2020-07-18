@@ -320,7 +320,7 @@ class ProjectBacklogScreen extends Component<ProjectBacklogProps, ProjectBacklog
                                         column={projectColumn}
                                         items={projectItems}
                                         projectItems={this.state.projectBacklogItems}
-                                        title={projectColumn.title}
+                                        title={"Project Backlog"}
                                         setBacklogItems={this.setProjectBacklogItems}
                                         project={this.state.project ? this.state.project : undefined}
                                     />
@@ -329,7 +329,7 @@ class ProjectBacklogScreen extends Component<ProjectBacklogProps, ProjectBacklog
                                         column={backlogColumn}
                                         items={backlogItems}
                                         projectItems={this.state.projectBacklogItems}
-                                        title={backlogColumn.title}
+                                        title={"Your Backlog"}
                                         setBacklogItems={this.setProjectBacklogItems}
                                         project={this.state.project ? this.state.project : undefined}
                                         selfAssigned={true}
