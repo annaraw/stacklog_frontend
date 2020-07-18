@@ -4,9 +4,11 @@ import { useBoolean } from '@uifabric/react-hooks';
 import Button from '@material-ui/core/Button';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 import Snackbar from '@material-ui/core/Snackbar';
+import { CircularProgress } from '@material-ui/core';
 
 import { ICalendarItem, ICalendar } from '../../models/models'
 import CalendarImportService from '../../services/CalendarImportService'
+import UserService from '../../services/UserService';
 import { addCalendarFormStyles } from './AddCalendarFormStyles';
 import DrawerForm from '../Form/DrawerForm';
 import DialogForm from '../Form/Dialog';
@@ -18,6 +20,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
 import DeleteIcon from '@material-ui/icons/Delete';
+import SyncIcon from '@material-ui/icons/Sync';
 
 
 
@@ -41,16 +44,19 @@ const ManageCalendarsForm: FunctionComponent<any> = props => {
     const [loading, setLoading] = useState(false)
     const [success, setSuccess] = useState(false);
     const [deleteError, setdeleteError] = useState<boolean>(false)
-
-
+    const [showSyncDialog, setShowSyncDialog] = useState<boolean>(false)
+    const [uploadError, setUploadError] = useState(false);
 
     const classes = addCalendarFormStyles()
 
     const openPanel = (() => setIsOpen(true));
+
     const dismissPanel = (() => {
         setIsOpen(false);
         setCalendar(null)
+        setdeleteError(false)
         setShowDeleteDialog(false)
+        setShowSyncDialog(false)
     });
 
     const handleDelete = (cal:any) => {
@@ -64,8 +70,88 @@ const ManageCalendarsForm: FunctionComponent<any> = props => {
 
     }
 
+    const handleSync = async () => {
+        const remove = await CalendarImportService.removeCalendar(calendar.id).then(() => {
+                setLoading(true)
+            }).catch((e) => {
+                setdeleteError(true)
+            })
+
+        const calItems = await CalendarImportService.fetchCalendarFile(calendar.url).then((data) => {
+                    let calItems = convertIcal(data)
+                    if (calItems.length !== 0) {
+                        return calItems
+                    }
+                    else {
+                        return []
+                    }
+                }).catch((e) => {
+                    setUploadError(true)
+                })
+
+        const cal = {
+                        name: calendar.name,
+                        items: calItems ? calItems : [],
+                        owner: UserService.getCurrentUser().id,
+                        url: calendar.url
+                    };
+
+        if (!uploadError){
+            const addNewCal = await CalendarImportService.addCalendar(cal).then((data) => {
+                            setUploadError(false);
+                            setLoading(false);
+                            setCalendar(null);
+                            dismissPanel();
+                            window.location.reload()
+                        }).catch((e) => {
+                            setLoading(false);
+                            setUploadError(true);
+                            setSuccess(false);
+                        });
+        }else if (!deleteError) {
+            const addOldCal = await CalendarImportService.addCalendar(calendar).then((data) => {
+                            setUploadError(false);
+                            setLoading(false);
+                            setCalendar(null);
+                            dismissPanel();
+                            window.location.reload()
+                        }).catch((e) => {
+                            setLoading(false);
+                            setUploadError(true);
+                            setSuccess(false);
+                        });
+        }
+    }
+
+   
+
+    const convertIcal = (icalString: any) => {
+        const ical = require('ical');
+        const data = ical.parseICS(icalString)
+        var calItems = []
+        for (let k in data) {
+            if (data.hasOwnProperty(k)) {
+                var ev = data[k];
+                if (data[k].type === 'VEVENT') {
+                    const calItem: ICalendarItem = {
+                        id: ev.id,
+                        uid: ev.uid,
+                        summary: ev.summary,
+                        description: ev.description,
+                        url: ev.url,
+                        dtStart: ev.start,
+                        dtEnd: ev.end,
+                        location: ev.location
+                    }
+                    calItems.push(calItem)
+                }
+            }
+        }
+        return calItems
+    }
+
     const submit = () => {
-        {/*Do NOTHING*/}
+        {/*DO NOTHING*/}
     }
 
     const handleClose = () => {
@@ -76,7 +162,6 @@ const ManageCalendarsForm: FunctionComponent<any> = props => {
         if (reason === 'clickaway') {
             return;
         }
-
         setSuccess(false);
     };
 
@@ -102,6 +187,15 @@ const ManageCalendarsForm: FunctionComponent<any> = props => {
                <ListItem key={"cal"+c.id} >
                   <ListItemIcon>{<CalendarTodayIcon style={{"color":c.color}}/>}</ListItemIcon>
                   <ListItemText primary={c.name}/>
+                  {c.url && <ListItemIcon onClick={() =>{
+                              setShowSyncDialog(true)
+                              setCalendar(c)
+                          } 
+                      }
+                  >
+                  {<SyncIcon/>}
+                  </ListItemIcon>}
+                  
                   <ListItemIcon onClick={() =>{
                               setShowDeleteDialog(true)
                               setCalendar(c)
@@ -117,7 +211,7 @@ const ManageCalendarsForm: FunctionComponent<any> = props => {
             </DrawerForm>
             <Snackbar open={success} autoHideDuration={6000} onClose={handleCloseSuccessAlert}>
                 <Alert onClose={handleCloseSuccessAlert} severity="success">
-                    Calendar successfully imported
+                    Calendar successfully synced
                 </Alert>
             </Snackbar>
             <Snackbar open={deleteError} autoHideDuration={6000} onClose={handleClose}>
@@ -133,6 +227,17 @@ const ManageCalendarsForm: FunctionComponent<any> = props => {
                 dismissPanel={() => setShowDeleteDialog(false)}
             >
                 Are you sure you want to delete the calendar?
+            </DialogForm>
+            <DialogForm
+                isOpen={showSyncDialog}
+                formTitle={"Sync Calendar"}
+                formType={"Update"}
+                onSubmit={() => handleSync()}
+                dismissPanel={() => setShowSyncDialog(false)}
+            >
+                {loading ? <div style={{ 'textAlign': 'center' }}><CircularProgress/></div>
+                    : (deleteError || uploadError) ? "Failed to sync calendar."
+                            : showSyncDialog ? "Are you sure you want to sync the calendar?" : ''}
             </DialogForm>
         </div>
     );
