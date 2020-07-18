@@ -3,9 +3,10 @@ import { Colors } from "../../../util/constants";
 
 export const registerStyles = makeStyles({
     root: {
-        maxWidth: 400,
+        width: 400,
         padding: "20px",
         margin: "20vh auto",
+        height: "max-content"
     },
     textField: {
         marginBottom: "15px",

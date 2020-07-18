@@ -10,7 +10,7 @@ function LoginScreen(props: LoginProps) {
     const classes = loginViewStyle();
     return (
         <div className={classes.root}>
-            <LoginForm />
+                <LoginForm />
         </div>
     )
 }

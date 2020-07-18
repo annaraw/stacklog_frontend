@@ -9,7 +9,14 @@ export const menuBarStyles = makeStyles((theme: Theme) =>
     },
     menuIcon: {
       marginLeft: "10px",
-      backgroundColor: 'transparent'
+      marginTop: "3px",
+      marginBottom: "-3px",
+      backgroundColor: 'transparent',
+      cursor: "pointer",
+      "&:hover": {
+        opacity:".8",
+        transition:".4s"
+      }
     },
     loginBtn: {
       color: "white",
