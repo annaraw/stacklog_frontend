@@ -14,11 +14,12 @@ interface BoardColumnProps {
   items: IBacklogItem[]
   calendars: ICalendar[]
   setBacklogItems: (items: IBacklogItem[]) => void
+  setCalendars: (calendars: ICalendar[]) => void
 }
 
 export const Calendar: React.FC<BoardColumnProps> = (props) => {
 
-  const { columns, items, calendars, setBacklogItems } = props
+  const { columns, items, calendars, setBacklogItems,setCalendars } = props
   const classes = calendarStyles();
 
   const handleClick = (event:any) => {
@@ -94,7 +95,7 @@ export const Calendar: React.FC<BoardColumnProps> = (props) => {
               open={Boolean(anchorEl)}
               onClose={handleClose}
             >
-              <MenuItem onClick={handleClose}><AddCalendarForm /></MenuItem>
+              <MenuItem onClick={handleClose}><AddCalendarForm calendars={calendars} setCalendars={setCalendars} /></MenuItem>
               <MenuItem onClick={handleClose}><ManageCalendarsForm calendars={calendars}/></MenuItem>
             </Menu>
           </div>
