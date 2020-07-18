@@ -105,6 +105,7 @@ class ProjectScreen extends Component<{}, ProjectState> {
                                                 projects={this.state.projects}
                                                 collegues={this.state.collegues}
                                                 setProjects={this.setProjects}
+                                                hideShowBacklog={false}
                                             />
                                         </div>
                                     )

@@ -3,8 +3,8 @@ import { Colors } from "../../../util/constants";
 
 export const projectCardStyles = makeStyles((theme) => ({
     root: {
-        width: "90%",
-        height: "90%",
+        width: "95%",
+        height: "95%",
         margin: "5%",
         borderStyle: "solid",
         borderRadius: "5px",

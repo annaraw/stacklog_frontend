@@ -18,9 +18,10 @@ const ProjectCard: FunctionComponent<{
     projects: Project[],
     collegues: Member[],
     setProjects: (projects: Project[]) => void,
+    hideShowBacklog?: boolean,
 }> = props => {
     const classes = projectCardStyles();
-    const { project, projects, collegues, setProjects } = props;
+    const { project, projects, collegues, setProjects, hideShowBacklog } = props;
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
     const [deleteError, setdeleteError] = useState<boolean>(false)
     const [isOpen, setIsOpen] = useState<boolean>(false)
@@ -109,15 +110,16 @@ const ProjectCard: FunctionComponent<{
                     }
                 </Typography>
             </CardContent>
-            <CardActions className={classes.actions}>
-                <Button
-                    size="small"
-                    color="secondary"
-                    onClick={() => window.location.href = "/project?projectID=" + project.id}
-                >
-                    Show Backlog
+            {!hideShowBacklog &&
+                <CardActions className={classes.actions}>
+                    <Button
+                        size="small"
+                        color="secondary"
+                        onClick={() => window.location.href = "/project?projectID=" + project.id}
+                    >
+                        Show Backlog
                 </Button>
-            </CardActions>
+                </CardActions>}
             <Snackbar open={deleteError} autoHideDuration={6000} onClose={handleClose}>
                 <Alert onClose={handleClose} severity="error">
                     Could not delete Project
