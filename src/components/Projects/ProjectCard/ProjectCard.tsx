@@ -18,13 +18,15 @@ const ProjectCard: FunctionComponent<{
     projects: Project[],
     collegues: Member[],
     setProjects: (projects: Project[]) => void,
+    hideShowBacklog?: boolean,
 }> = props => {
     const classes = projectCardStyles();
-    const { project, projects, collegues, setProjects } = props;
+    const { project, projects, collegues, setProjects, hideShowBacklog } = props;
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
     const [deleteError, setdeleteError] = useState<boolean>(false)
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const [showDeleteDialog, setShowDeleteDialog] = useState<boolean>(false)
+    const [feedbackMessage, setFeedBackMessage] = useState<string>("")
 
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
@@ -39,8 +41,14 @@ const ProjectCard: FunctionComponent<{
         ProjectService.removeProject(project.id).then(res => {
             console.log(res)
             window.location.reload()
-        }).catch(err => {
+        }).catch(error => {
             setdeleteError(true)
+            if (error === "Forbidden") {
+                setFeedBackMessage("Only the creator of the team can delete/update this project")
+            } else {
+                setFeedBackMessage(error)
+            }
+            setShowDeleteDialog(false)
         })
     }
 
@@ -109,18 +117,19 @@ const ProjectCard: FunctionComponent<{
                     }
                 </Typography>
             </CardContent>
-            <CardActions className={classes.actions}>
-                <Button
-                    size="small"
-                    color="secondary"
-                    onClick={() => window.location.href = "/project?projectID=" + project.id}
-                >
-                    Show Backlog
+            {!hideShowBacklog &&
+                <CardActions className={classes.actions}>
+                    <Button
+                        size="small"
+                        color="secondary"
+                        onClick={() => window.location.href = "/project?projectID=" + project.id}
+                    >
+                        Show Backlog
                 </Button>
-            </CardActions>
+                </CardActions>}
             <Snackbar open={deleteError} autoHideDuration={6000} onClose={handleClose}>
                 <Alert onClose={handleClose} severity="error">
-                    Could not delete Project
+                    Could not delete Project. Error: {feedbackMessage}
                 </Alert>
             </Snackbar>
             <ProjectForm
@@ -140,7 +149,7 @@ const ProjectCard: FunctionComponent<{
                 onSubmit={handleDelete}
                 dismissPanel={() => setShowDeleteDialog(false)}
             >
-                Are you sure you want to delete the project {<b>{project.title}</b>}?
+                Are you sure you want to delete the project {<b>{project.title}</b>} with the corresponding Backlog items?
             </DialogForm>
         </Card >
     );

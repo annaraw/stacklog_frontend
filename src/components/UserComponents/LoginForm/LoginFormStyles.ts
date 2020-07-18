@@ -6,6 +6,7 @@ export const loginStyles = makeStyles({
         maxWidth: 400,
         padding: "20px",
         margin: "20vh auto",
+        height: "max-content"
     },
     textField: {
         marginBottom: "15px",

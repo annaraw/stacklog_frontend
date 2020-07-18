@@ -1,17 +1,19 @@
 import * as React from 'react';
 import { Component } from 'react';
 import { DragDropContext } from 'react-beautiful-dnd';
-import { withStyles, Backdrop, CircularProgress, Snackbar, Button } from '@material-ui/core';
+import { withStyles, Backdrop, CircularProgress, Snackbar, Button, IconButton, Tooltip } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 
 import { Project, Member, IBacklogItem, Column } from '../../../models/models'
 import ProjectService from '../../../services/ProjectService';
-import MenuBar from '../../../components/MenuBar';
+import MenuBar from '../../../components/MenuBar/MenuBar';
 import UserService from '../../../services/UserService';
 import { projectBacklogViewStyles } from './ProjectBacklogViewStyles';
 import BacklogItemService from '../../../services/BacklogItemService';
 import { UnsortedBacklog } from '../../../components/Planner/Backlog/UnsortedBacklog';
+import ProjectCard from '../../../components/Projects/ProjectCard/ProjectCard';
 
 interface ProjectBacklogState {
     project: Project | null,
@@ -242,7 +244,6 @@ class ProjectBacklogScreen extends Component<ProjectBacklogProps, ProjectBacklog
         if (this.state.loading) {
             return (
                 <React.Fragment >
-                    <MenuBar title="Loading" />
                     <Backdrop className={classes.backdrop} open={true}>
                         <CircularProgress color="inherit" />
                     </Backdrop>
@@ -251,14 +252,12 @@ class ProjectBacklogScreen extends Component<ProjectBacklogProps, ProjectBacklog
         } else if (this.state.urlError) {
             return (
                 <React.Fragment >
-                    <MenuBar title="Error" />
                     <p>Error: no url parameter provided</p>
                 </React.Fragment >
             )
         } else if (this.state.loadingError) {
             return (
                 <React.Fragment >
-                    <MenuBar title="Error" />
                     <p>Error: Server is not responding</p>
                 </React.Fragment >
             )
@@ -275,8 +274,7 @@ class ProjectBacklogScreen extends Component<ProjectBacklogProps, ProjectBacklog
 
             return (
                 <React.Fragment>
-                    <MenuBar title={this.state.project ? this.state.project.title : "Loading"} />
-                    {this.state.loading ?
+                    {(this.state.loading) ?
                         <Backdrop className={classes.backdrop} open={true}>
                             <CircularProgress color="inherit" />
                         </Backdrop>
@@ -289,14 +287,40 @@ class ProjectBacklogScreen extends Component<ProjectBacklogProps, ProjectBacklog
                             >
                                 Projects
                             </Button>
-                            <DragDropContext onDragEnd={this.onDragEnd}>
-                                <div className={classes.container}>
+                            <Tooltip title={"This is the project backlog view. On the left side you " +
+                                "can see the project info and all items which are left in the project backlog." +
+                                "And on the right side you can see your own one. With a drag and drop you can assign " +
+                                "items from the project backlog to you or you can push an item assigned to you back in the backlog"}
+                                aria-label="add">
+                                <IconButton aria-label="info" className={classes.infoButton}>
+                                    <InfoOutlinedIcon />
+                                </IconButton>
+                            </Tooltip>
+
+                            <div className={classes.container}>
+                                {this.state.project &&
+                                    <ProjectCard
+                                        key={0}
+                                        project={this.state.project}
+                                        projects={[this.state.project]}
+                                        collegues={this.state.collegues}
+                                        setProjects={(projects: Project[]) => {
+                                            this.setState({
+                                                project: projects[0]
+                                            })
+                                        }}
+                                        hideShowBacklog={true}
+                                    />
+                                }
+
+                                <DragDropContext onDragEnd={this.onDragEnd}>
+
                                     <UnsortedBacklog
                                         key={projectColumn.id}
                                         column={projectColumn}
                                         items={projectItems}
                                         projectItems={this.state.projectBacklogItems}
-                                        title={projectColumn.title}
+                                        title={"Project Backlog"}
                                         setBacklogItems={this.setProjectBacklogItems}
                                         project={this.state.project ? this.state.project : undefined}
                                     />
@@ -305,14 +329,15 @@ class ProjectBacklogScreen extends Component<ProjectBacklogProps, ProjectBacklog
                                         column={backlogColumn}
                                         items={backlogItems}
                                         projectItems={this.state.projectBacklogItems}
-                                        title={backlogColumn.title}
+                                        title={"Your Backlog"}
                                         setBacklogItems={this.setProjectBacklogItems}
                                         project={this.state.project ? this.state.project : undefined}
                                         selfAssigned={true}
                                     />
-                                </div>
 
-                            </DragDropContext>
+
+                                </DragDropContext>
+                            </div>
                             <Snackbar open={this.state.error} autoHideDuration={6000} onClose={this.handleClose}>
                                 <Alert onClose={this.handleClose} severity="error">
                                     Faild to update item
@@ -327,4 +352,5 @@ class ProjectBacklogScreen extends Component<ProjectBacklogProps, ProjectBacklog
     }
 
 };
+//@ts-ignore
 export default withStyles(projectBacklogViewStyles)(ProjectBacklogScreen)

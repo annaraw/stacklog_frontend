@@ -186,6 +186,7 @@ const ProjectForm: FunctionComponent<{
                         id="projects-member-textfield"
                         className={classes.textField}
                         fullWidth
+                        value={{ title: member }}
                         options={memberOptions}
                         getOptionLabel={option => option.title}
                         onChange={(event, value) => {
@@ -201,9 +202,11 @@ const ProjectForm: FunctionComponent<{
                                     (person.name + " " + person.lastName) === member
                                 )
                                 //@ts-ignore
-                                if (!team || (newMember && !team.includes(newMember))) {
+                                if (!team || (newMember
+                                    && team.filter(member => member.id === newMember.id).length === 0)) {
                                     //@ts-ignore
                                     setTeam([...team, newMember])
+                                    setMember("")
                                 } else {
                                     setAlreadyInTeam(true)
                                 }

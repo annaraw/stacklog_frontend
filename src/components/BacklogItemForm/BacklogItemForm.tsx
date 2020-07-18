@@ -230,9 +230,10 @@ const BacklogItemForm: FunctionComponent<BacklogItemFormProps> = props => {
             let response = await BacklogItemService.updateBacklogItem(item.id, updateProps)
             let updatedItems = [...items]
             const itemIndex = updatedItems.findIndex(BItem => BItem.id === item.id)
-            if (itemIndex) {
+            if (itemIndex === 0 || itemIndex) {
                 //@ts-ignore
                 updatedItems[itemIndex] = response.item
+                debugger
                 setBacklogItems([...updatedItems])
             } else {
                 setFeedbackMessage("No item found to update")
@@ -409,6 +410,7 @@ const BacklogItemForm: FunctionComponent<BacklogItemFormProps> = props => {
                                 <TextField
                                     id='hours-box'
                                     placeholder="0"
+                                    type="number"
                                     variant="outlined"
                                     onChange={(event) => setEstimatedH(Number(event.target.value))}
                                     inputProps={{ style: { textAlign: "right" } }}
