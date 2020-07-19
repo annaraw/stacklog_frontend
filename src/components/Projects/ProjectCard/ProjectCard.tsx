@@ -98,10 +98,10 @@ const ProjectCard: FunctionComponent<{
                     {(project.backlogItems) ?
                         <div className={classes.cardInfo}>
                             <p><b>Progress</b></p>
-                            <p>{project.backlogItems} items left in the backlog</p>
+                            <p>{project.progress} items left in the backlog</p>
 
                             <div className={classes.progressBar}>
-                                <span style={{ width: project.progress + "%" }}></span>
+                                <span style={{ width: ((project.backlogItems - project.progress) / project.backlogItems)*100 + "%" }}></span>
                             </div>
                         </div>
                         : <span></span>
