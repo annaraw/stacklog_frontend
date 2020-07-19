@@ -185,6 +185,13 @@ export class Planner extends React.Component<{}, BacklogState> {
 		})
 	}
 
+	updateItems = (items: IBacklogItem[]) => {
+		let item;
+		for (item of items){
+			this.setItem(item)
+		}
+	}
+
 	setCalendars = (calendars: ICalendar[]) => {
 		this.setState({ calendars: calendars })
 	}
@@ -408,7 +415,7 @@ export class Planner extends React.Component<{}, BacklogState> {
 										key={col}
 										column={this.getDayColumns(col)[0]}
 										items={this.state.items.filter((item) => !item.startDate)} //filter for backlog items only
-										setBacklogItems={this.setBacklogItems}
+										setBacklogItems={this.updateItems}
 									/>)
 							}
 							<div style={{ position: "relative", height: "calc(100vh - 120px)" }}>
@@ -417,7 +424,7 @@ export class Planner extends React.Component<{}, BacklogState> {
 									key='calendar'
 									columns={this.state.columns}
 									items={this.state.items}
-									setBacklogItems={this.setBacklogItems}
+									setBacklogItems={this.updateItems}
 									setCalendars={this.setCalendars}
 								/>
 							</div>
