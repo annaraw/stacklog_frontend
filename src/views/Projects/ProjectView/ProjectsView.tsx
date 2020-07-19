@@ -8,7 +8,7 @@ import ProjectService from '../../../services/ProjectService';
 import { projectViewStyles } from './ProjectsViewStyles';
 import { withStyles, Backdrop, CircularProgress, Tooltip, IconButton } from '@material-ui/core';
 import UserService from '../../../services/UserService';
-import ProjectForm from '../../../components/Projects/ProjectFrom/ProjectForm';
+import ProjectForm from '../../../components/Forms/ProjectForm/ProjectForm';
 
 interface ProjectState {
     projects: Project[];

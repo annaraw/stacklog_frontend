@@ -7,12 +7,12 @@ import { Grid } from '@material-ui/core';
 import 'date-fns';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
-import { IBacklogItem, IBacklogItemRequest, Project, IBacklogItemUpdateProps } from '../../models/models';
-import UserService from '../../services/UserService';
+import { IBacklogItem, IBacklogItemRequest, Project, IBacklogItemUpdateProps } from '../../../models/models';
+import UserService from '../../../services/UserService';
 import TaskCreationFormStyles from './BacklogItemFormStyles';
-import DrawerForm from '../Form/DrawerForm';
-import BacklogItemService from '../../services/BacklogItemService';
-import DialogForm from '../Form/Dialog';
+import DrawerForm from '../DrawerForm';
+import BacklogItemService from '../../../services/BacklogItemService';
+import DialogForm from '../Dialog';
 
 const filter = createFilterOptions<CategoryOption>();
 

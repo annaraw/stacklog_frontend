@@ -1,5 +1,5 @@
 import React from 'react';
-import LoginForm from '../../components/UserComponents/LoginForm/LoginForm';
+import LoginForm from '../../components/Forms/LoginForm/LoginForm';
 import { loginViewStyle } from './LoginViewStyles';
 
 interface LoginProps {

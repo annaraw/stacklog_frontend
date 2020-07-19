@@ -8,7 +8,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import DoneIcon from '@material-ui/icons/Done';
 import { calendarItemStyles } from './CalendarItemStyles'
 import BacklogItemService from '../../../services/BacklogItemService'
-import BacklogItemForm from '../../BacklogItemForm/BacklogItemForm'
+import BacklogItemForm from '../../Forms/BacklogItemForm/BacklogItemForm'
 import { Alert } from '@material-ui/lab'
 import { IBacklogItem } from '../../../models/models'
 import { useState } from 'react'

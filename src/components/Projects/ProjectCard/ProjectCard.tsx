@@ -8,8 +8,8 @@ import { Alert } from '@material-ui/lab';
 
 import { projectCardStyles } from './ProjectCardStyles';
 import ProjectService from '../../../services/ProjectService';
-import ProjectForm from '../ProjectFrom/ProjectForm';
-import DialogForm from '../../Form/Dialog';
+import ProjectForm from '../../Forms/ProjectForm/ProjectForm';
+import DialogForm from '../../Forms/Dialog';
 import { PersonaSmall } from '../PersonaCard/PersonaSmall';
 import { Project, Member } from '../../../models/models';
 

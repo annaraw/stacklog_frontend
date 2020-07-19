@@ -4,12 +4,12 @@ import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 import Snackbar from '@material-ui/core/Snackbar';
 import { CircularProgress } from '@material-ui/core';
 
-import { ICalendarItem, ICalendar } from '../../models/models'
-import CalendarImportService from '../../services/CalendarImportService'
-import UserService from '../../services/UserService';
+import { ICalendarItem, ICalendar } from '../../../models/models'
+import CalendarImportService from '../../../services/CalendarImportService'
+import UserService from '../../../services/UserService';
 import { addCalendarFormStyles } from './AddCalendarFormStyles';
-import DrawerForm from '../Form/DrawerForm';
-import DialogForm from '../Form/Dialog';
+import DrawerForm from '../DrawerForm';
+import DialogForm from '../Dialog';
 
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';

@@ -14,7 +14,7 @@ import styled from 'styled-components'
 import { sortTypes } from '../../../util/constants';
 import { backlogComponentStyles } from './BacklogComponentStyles';
 import { Tooltip, IconButton } from '@material-ui/core';
-import BacklogItemForm from '../../BacklogItemForm/BacklogItemForm';
+import BacklogItemForm from '../../Forms/BacklogItemForm/BacklogItemForm';
 import AddIcon from '@material-ui/icons/Add';
 
 type BoardColumnProps = {

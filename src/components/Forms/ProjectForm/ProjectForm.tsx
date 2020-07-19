@@ -6,9 +6,9 @@ import AddIcon from '@material-ui/icons/Add';
 
 import { Project, Member, IProjectRequest, IProjectUpdateProps } from '../../../models/models';
 import { projectFormStyles } from './ProjectFormStyles';
-import { PersonaComponent } from '../PersonaCard/PersonaLarge';
+import { PersonaComponent } from '../../Projects/PersonaCard/PersonaLarge';
 import UserService from '../../../services/UserService';
-import DrawerForm from '../../Form/DrawerForm';
+import DrawerForm from '../DrawerForm';
 import ProjectService from '../../../services/ProjectService';
 
 /**

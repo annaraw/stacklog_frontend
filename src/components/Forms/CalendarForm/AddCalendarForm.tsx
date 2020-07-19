@@ -8,11 +8,11 @@ import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import Snackbar from '@material-ui/core/Snackbar';
 
-import { ICalendarItem, ICalendar } from '../../models/models'
-import CalendarImportService from '../../services/CalendarImportService'
+import { ICalendarItem, ICalendar } from '../../../models/models'
+import CalendarImportService from '../../../services/CalendarImportService'
 import { addCalendarFormStyles } from './AddCalendarFormStyles';
-import UserService from '../../services/UserService';
-import DrawerForm from '../Form/DrawerForm';
+import UserService from '../../../services/UserService';
+import DrawerForm from '../DrawerForm';
 
 export enum UploadState {
     Empty,

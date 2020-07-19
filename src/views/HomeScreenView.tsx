@@ -1,6 +1,6 @@
 import React from 'react';
 import UserService from '../services/UserService';
-import Planner from '../components/Planner/Planner';
+import Planner from './Planner/Planner';
 import LandingPage from './LandingPage/LandingPage';
 
 

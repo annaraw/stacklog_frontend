@@ -10,7 +10,7 @@ import DoneIcon from '@material-ui/icons/Done';
 
 import { backlogItemStyles } from './BacklogItemStyles';
 import { IBacklogItem } from '../../../models/models';
-import BacklogItemForm from '../../BacklogItemForm/BacklogItemForm';
+import BacklogItemForm from '../../Forms/BacklogItemForm/BacklogItemForm';
 import BacklogItemService from '../../../services/BacklogItemService';
 import { Alert } from '@material-ui/lab';
 import { Colors } from '../../../util/constants';

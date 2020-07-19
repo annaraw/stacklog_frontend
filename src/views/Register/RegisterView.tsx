@@ -1,5 +1,5 @@
 import React from 'react';
-import RegisterForm from '../../components/UserComponents/RegisterForm/RegisterForm';
+import RegisterForm from '../../components/Forms/RegisterForm/RegisterForm';
 import { registerViewStyle } from './RegisterViewStyles';
 
 interface RegisterProps {

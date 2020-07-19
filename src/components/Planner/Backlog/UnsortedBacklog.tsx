@@ -9,7 +9,7 @@ import { IconButton, Tooltip } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 
 import { unsortedBacklogStyles } from './UnsortedBacklogStyles';
-import BacklogItemForm from '../../BacklogItemForm/BacklogItemForm';
+import BacklogItemForm from '../../Forms/BacklogItemForm/BacklogItemForm';
 import { FunctionComponent, useState } from 'react';
 
 interface BoardColumnProps {

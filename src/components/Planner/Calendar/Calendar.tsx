@@ -3,8 +3,8 @@ import { IBacklogItem, Column, ICalendar, ICalendarItem } from '../../../models/
 import { CalendarDay } from './CalendarDay';
 import { calendarStyles } from './CalendarStyles';
 import Scrollbar from 'react-scrollbars-custom';
-import AddCalendarForm from '../../CalendarForm/AddCalendarForm';
-import ManageCalendarsForm from '../../CalendarForm/ManageCalendarsForm';
+import AddCalendarForm from '../../Forms/CalendarForm/AddCalendarForm';
+import ManageCalendarsForm from '../../Forms/CalendarForm/ManageCalendarsForm';
 import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
