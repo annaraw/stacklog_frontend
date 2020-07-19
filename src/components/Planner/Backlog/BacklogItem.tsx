@@ -92,7 +92,7 @@ const BacklogItem: FunctionComponent<BacklogItemProps> = props => {
                         className={classes.chip + " " +
                           (new Date(new Date().setHours(0, 0, 0, 0)) > new Date(item.dueDate)
                             ? classes.dueDateOverdue
-                            : (new Date(new Date().setHours(0, 0, 0, 0)) > new Date(new Date(item.dueDate).getDate() - 6))
+                            : (new Date(new Date().setHours(0, 0, 0, 0)) > new Date(new Date(item.dueDate).setDate(new Date(item.dueDate).getDate() - 6)))
                               ? classes.dueDateUpComing
                               : "")
                         }
