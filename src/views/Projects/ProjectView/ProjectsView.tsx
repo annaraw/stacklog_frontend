@@ -6,7 +6,7 @@ import ProjectCard from '../../../components/Projects/ProjectCard/ProjectCard';
 import { Project, Member } from '../../../models/models'
 import ProjectService from '../../../services/ProjectService';
 import { projectViewStyles } from './ProjectsViewStyles';
-import { withStyles, Backdrop, CircularProgress, Button, Tooltip, IconButton } from '@material-ui/core';
+import { withStyles, Backdrop, CircularProgress, Tooltip, IconButton } from '@material-ui/core';
 import UserService from '../../../services/UserService';
 import ProjectForm from '../../../components/Projects/ProjectFrom/ProjectForm';
 

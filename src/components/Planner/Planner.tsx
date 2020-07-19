@@ -5,10 +5,9 @@ import { Calendar } from './Calendar/Calendar';
 import { IBacklogItem, Column, ICalendar, IBacklogItemUpdateProps } from '../../models/models';
 import BacklogItemService from '../../services/BacklogItemService';
 import CalendarImportService from '../../services/CalendarImportService'
-import { Backdrop, CircularProgress, Snackbar, Theme } from '@material-ui/core';
+import { Backdrop, CircularProgress, Snackbar } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { dayStart } from '../../util/constants';
-import { withStyles } from '@material-ui/styles';
 
 interface BacklogState {
 	calendars: ICalendar[],
@@ -173,7 +172,6 @@ export class Planner extends React.Component<{}, BacklogState> {
 				})
 			}
 		}
-		console.log("INIT COLUMNS", initialColumns)
 		return initialColumns
 	}
 

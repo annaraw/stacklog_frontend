@@ -72,7 +72,7 @@ const BacklogItem: FunctionComponent<BacklogItemProps> = props => {
               <CardHeader
                 title={
                   <>
-                    <Typography className={classes.cardHeaderFont}>
+                    <Typography className={classes.cardHeaderFont} component="div" >
                       <p className={classes.ellipsis}>{item.title}</p>
                     </Typography>
                     <Typography variant="body2" color="textSecondary" component="div" className={classes.description}>

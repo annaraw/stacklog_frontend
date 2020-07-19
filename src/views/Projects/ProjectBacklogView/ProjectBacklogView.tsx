@@ -8,7 +8,6 @@ import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 
 import { Project, Member, IBacklogItem, Column } from '../../../models/models'
 import ProjectService from '../../../services/ProjectService';
-import MenuBar from '../../../components/MenuBar/MenuBar';
 import UserService from '../../../services/UserService';
 import { projectBacklogViewStyles } from './ProjectBacklogViewStyles';
 import BacklogItemService from '../../../services/BacklogItemService';

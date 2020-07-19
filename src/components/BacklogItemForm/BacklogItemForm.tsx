@@ -64,7 +64,6 @@ const BacklogItemForm: FunctionComponent<BacklogItemFormProps> = props => {
     const [feedbackMessage, setFeedbackMessage] = useState("")
     const [deleteError, setdeleteError] = useState<boolean>(false)
     const [showDeleteDialog, setShowDeleteDialog] = useState<boolean>(false)
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
     const dismissPanel = (() => setIsOpen(false));
 
@@ -86,12 +85,7 @@ const BacklogItemForm: FunctionComponent<BacklogItemFormProps> = props => {
         })
     }
 
-    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
-
     const handleCloseDialog = () => {
-        setAnchorEl(null);
         setdeleteError(false)
     };
 
@@ -523,6 +517,11 @@ const BacklogItemForm: FunctionComponent<BacklogItemFormProps> = props => {
             <Snackbar open={showFeedback} autoHideDuration={6000} onClose={handleCloseDialog}>
                 <Alert onClose={handleClose} severity={(error) ? "error" : "success"}>
                     {feedbackMessage}
+                </Alert>
+            </Snackbar>
+            <Snackbar open={deleteError} autoHideDuration={6000} onClose={handleClose}>
+                <Alert onClose={handleClose} severity="error">
+                    Could not delete Project. Error: {feedbackMessage}
                 </Alert>
             </Snackbar>
         </>

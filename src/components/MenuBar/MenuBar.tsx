@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import { useState } from 'react'
 import {
     AppBar, Toolbar, Drawer,
-    IconButton, Typography, CssBaseline, ListItem, ListItemText, List, Divider, ListItemIcon, useTheme, Button
+    IconButton, CssBaseline, ListItem, ListItemText, List, Divider, ListItemIcon, useTheme, Button
 } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import HomeIcon from '@material-ui/icons/Home';
@@ -60,7 +60,7 @@ function MenuBar(props: MenuBarProps) {
                         className={classes.menuIcon}
                         onClick={() => { window.location.href = "/" }}
                     >
-                        <img src="./assets/logo_white.svg" className={classes.image} />
+                        <img src="./assets/logo_white.svg" className={classes.image} alt="stacklog_logo" />
                     </div>
                     <div style={{ right: "20px", position: "absolute" }}>
                         <Button variant="outlined" className={classes.loginBtn}
@@ -100,19 +100,19 @@ function MenuBar(props: MenuBarProps) {
                 </div>
                 <Divider />
                 <List>
-                    <ListItem button key="text2" onClick={() => { window.location.href = "/" }}>
+                    <ListItem button key="home" onClick={() => { window.location.href = "/" }}>
                         <ListItemIcon> <HomeIcon /></ListItemIcon>
                         {UserService.getCurrentUser().id === undefined ? <ListItemText primary="Home" /> : <ListItemText primary="Planner Overview" />}
                     </ListItem>
-                    {UserService.getCurrentUser().id !== undefined && <ListItem button key="text2" onClick={() => { window.location.href = "/projects" }}>
+                    {UserService.getCurrentUser().id !== undefined && <ListItem button key="projects" onClick={() => { window.location.href = "/projects" }}>
                         <ListItemIcon> <PeopleIcon /></ListItemIcon>
                         <ListItemText primary="My Projects" />
                     </ListItem>}
-                    <ListItem button key="text2" onClick={() => { window.location.href = "#" }}>
+                    <ListItem button key="contact" onClick={() => { window.location.href = "#" }}>
                         <ListItemIcon> <ChatIcon /></ListItemIcon>
                         <ListItemText primary="Contact Us" />
                     </ListItem>
-                    {UserService.getCurrentUser().id !== undefined && <ListItem button key="text2" onClick={() => { window.location.href = "#" }}>
+                    {UserService.getCurrentUser().id !== undefined && <ListItem button key="settings" onClick={() => { window.location.href = "#" }}>
                         <ListItemIcon> <SettingsIcon /></ListItemIcon>
                         <ListItemText primary="Settings" />
                     </ListItem>}

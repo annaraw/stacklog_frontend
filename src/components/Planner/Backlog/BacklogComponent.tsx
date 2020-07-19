@@ -249,6 +249,7 @@ export const BacklogComponent: FunctionComponent<BoardColumnProps> = props => {
                   {onUpdateDisplayedItems(items).map((backlogItem: any, index: number) =>
 
                     <BacklogItem
+                      key={backlogItem.id+"key"}
                       index={index}
                       item={backlogItem}
                       items={items}

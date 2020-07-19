@@ -1,5 +1,4 @@
-import { makeStyles, responsiveFontSizes } from '@material-ui/core';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
+import { makeStyles } from '@material-ui/core';
 import { Colors } from '../../util/constants';
 
 
@@ -19,11 +18,7 @@ export const LandingPageStyles = makeStyles((theme) => ({
         width: "100%",
         marginBottom: "120px",
         backgroundImage: "url('./assets/LandingPagePic.png')",
-
-        /* Set a specific height */
         height: "100vh",
-        //opacity: "0.75",
-        /* Create the parallax scrolling effect */
         backgroundAttachment: "fixed",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",

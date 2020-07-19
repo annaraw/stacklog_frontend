@@ -1,7 +1,5 @@
 import * as React from 'react';
 import { useState, FunctionComponent } from 'react';
-import { useBoolean } from '@uifabric/react-hooks';
-import Button from '@material-ui/core/Button';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 import Snackbar from '@material-ui/core/Snackbar';
 import { CircularProgress } from '@material-ui/core';
@@ -13,7 +11,6 @@ import { addCalendarFormStyles } from './AddCalendarFormStyles';
 import DrawerForm from '../Form/DrawerForm';
 import DialogForm from '../Form/Dialog';
 
-
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -21,9 +18,6 @@ import ListItemText from '@material-ui/core/ListItemText';
 import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
 import DeleteIcon from '@material-ui/icons/Delete';
 import SyncIcon from '@material-ui/icons/Sync';
-
-
-
 
 export enum UploadState {
     Empty,
@@ -74,7 +68,7 @@ const ManageCalendarsForm: FunctionComponent<any> = props => {
 
         let deleteErr = false
         try {
-            const remove = await CalendarImportService.removeCalendar(calendar.id)
+            await CalendarImportService.removeCalendar(calendar.id)
             setLoading(true)
         } catch (e){
             deleteErr = true
@@ -99,7 +93,7 @@ const ManageCalendarsForm: FunctionComponent<any> = props => {
 
         if (!deleteErr){
             try {
-                const addNewCal = await CalendarImportService.addCalendar(cal)
+                await CalendarImportService.addCalendar(cal)
                 setUploadError(false);
                 setLoading(false);
                 setCalendar(null);
@@ -137,10 +131,6 @@ const ManageCalendarsForm: FunctionComponent<any> = props => {
         return calItems
     }
 
-    const submit = () => {
-        {/*DO NOTHING*/}
-    }
-
     const handleClose = () => {
         setdeleteError(false)
     };
@@ -152,11 +142,6 @@ const ManageCalendarsForm: FunctionComponent<any> = props => {
         setSuccess(false);
     };
 
-
-    function handleHide(){
-      console.log("HIDE")
-    }
-
     return (
         <div>
             <div className={classes.button} onClick={openPanel}>{formTitle}</div>
@@ -165,7 +150,7 @@ const ManageCalendarsForm: FunctionComponent<any> = props => {
                 isOpen={isOpen}
                 loading={loading}
                 formType={"Plain"}
-                onSubmit={submit}
+                onSubmit={() => {}}
                 dismissPanel={dismissPanel}
             >
             <List>

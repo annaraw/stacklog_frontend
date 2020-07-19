@@ -60,7 +60,7 @@ export const CalendarItem = (props: CalendarItemProps) => {
               <CardHeader
                 title={
                   <>
-                    <Typography className={classes.cardHeaderFont}>
+                    <Typography className={classes.cardHeaderFont} component="div" >
                       <p className={classes.ellipsis}>{item.title}</p>
                     </Typography>
                   </>

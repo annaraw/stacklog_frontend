@@ -1,5 +1,4 @@
 import { makeStyles } from "@material-ui/core";
-import { Colors } from "../../util/constants";
 
 export const loginViewStyle = makeStyles({
     root: {

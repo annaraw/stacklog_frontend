@@ -1,6 +1,4 @@
 import React from 'react';
-import MenuBar from '../components/MenuBar/MenuBar';
-import AddCalendarForm from '../components/CalendarForm/AddCalendarForm';
 import UserService from '../services/UserService';
 import Planner from '../components/Planner/Planner';
 import LandingPage from './LandingPage/LandingPage';

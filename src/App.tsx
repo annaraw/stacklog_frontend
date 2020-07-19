@@ -7,8 +7,6 @@ import LoginScreen from './views/Login/LoginView';
 import HomeScreen from './views/HomeScreenView';
 import NotFound from './views/NotFoundView';
 import ProjectScreen from './views/Projects/ProjectView/ProjectsView';
-import LandingPage from './views/LandingPage/LandingPage'
-import Planner from './components/Planner/Planner';
 import RegisterScreen from './views/Register/RegisterView';
 import { MuiThemeProvider, createMuiTheme, Theme, withStyles } from '@material-ui/core';
 import { Colors } from './util/constants';
