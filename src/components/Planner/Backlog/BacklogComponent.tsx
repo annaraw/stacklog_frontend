@@ -46,17 +46,19 @@ export const BacklogComponent: FunctionComponent<BoardColumnProps> = props => {
   const [selectedFilters, setSelectedFilters] = useState<string[]>([])
   const [isOpen, setIsOpen] = useState<boolean>(false)
 
+  const backlogItems = items.filter((item) => !item.startDate)
+
   const initCategories = () => {
     //initialize categories
     let temp: string[] = []
     let categories: Category[] = []
-    for (var i = 0; i < items.length; i++) {
-      if (temp.includes((items[i].category))) continue;
-      temp.push(items[i].category);
+    for (var i = 0; i < backlogItems.length; i++) {
+      if (temp.includes((backlogItems[i].category))) continue;
+      temp.push(backlogItems[i].category);
       var c: Category = {
-        key: items[i].category ? items[i].category : "<No Category>",
-        text: items[i].category ? items[i].category : "<No Category>",
-        color: items[i].category ? "#c0c0c0" : "#ffffff"
+        key: backlogItems[i].category ? backlogItems[i].category : "<No Category>",
+        text: backlogItems[i].category ? backlogItems[i].category : "<No Category>",
+        color: backlogItems[i].category ? "#c0c0c0" : "#ffffff"
       }
       categories.push(c)
     }
@@ -246,7 +248,7 @@ export const BacklogComponent: FunctionComponent<BoardColumnProps> = props => {
                   isDraggingOver={snapshot.isDraggingOver}
                   style={{minHeight:"400px"}}
                 >
-                  {onUpdateDisplayedItems(items).map((backlogItem: any, index: number) =>
+                  {onUpdateDisplayedItems(backlogItems).map((backlogItem: any, index: number) =>
 
                     <BacklogItem
                       key={backlogItem.id+"key"}
