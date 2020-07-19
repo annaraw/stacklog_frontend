@@ -3,6 +3,10 @@
 1. install dependencies with "npm install"
 2. run with "npm start"
 
+## Manually setup backend
+
+By default the online heroku backend is used. If you want to run the backend locally, please change the backendserverURL in the file src/util/constants.ts to http://localhost:8081.
+
 ## Available Scripts
 
 In the project directory, you can run:
