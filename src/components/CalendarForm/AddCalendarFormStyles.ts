@@ -43,7 +43,8 @@ export const addCalendarFormStyles = makeStyles({
     button: {
         fontWeight: "bold",
         width:"100%",
-        marginBottom:"5px"
+        marginBottom:"5px",
+        border: "none"
     },
     primaryButton: {
         margin: "5px",

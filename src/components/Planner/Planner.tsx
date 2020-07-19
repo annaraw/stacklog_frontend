@@ -95,6 +95,9 @@ export class Planner extends React.Component<{}, BacklogState> {
 			if (responseItems) {
 				//@ts-ignore
 				for (let cal of responseItems) {
+					if (!cal.color) {
+						cal.color= this.toColor(cal.name)
+					}
 					calendars.push(cal)
 				}
 
@@ -119,6 +122,20 @@ export class Planner extends React.Component<{}, BacklogState> {
 		})
 
 	}
+
+	toColor(s:string) : string {
+
+        let colors: string[] = ["#e51c23", "#e91e63", "#9c27b0", "#673ab7", "#3f51b5", "#5677fc", "#03a9f4", "#00bcd4", "#009688", "#259b24", "#8bc34a", "#ff9800","#afb42b", "#ff5722", "#795548", "#607d8b"]
+        
+        var hash = 0;
+        if (s.length === 0) return ""+hash;
+        for (var i = 0; i < s.length; i++) {
+            hash = s.charCodeAt(i) + ((hash << 5) - hash);
+            hash = hash & hash;
+        }
+        hash = ((hash % colors.length) + colors.length) % colors.length;
+        return colors[hash];
+    }
 
 	updateBacklogItem = (itemID: string, itemProps: IBacklogItemUpdateProps) => {
 		return BacklogItemService.updateBacklogItem(itemID, itemProps)
@@ -166,6 +183,13 @@ export class Planner extends React.Component<{}, BacklogState> {
 			items: items,
 			columns: columns
 		})
+	}
+
+	updateItems = (items: IBacklogItem[]) => {
+		let item;
+		for (item of items){
+			this.setItem(item)
+		}
 	}
 
 	setCalendars = (calendars: ICalendar[]) => {
@@ -391,7 +415,7 @@ export class Planner extends React.Component<{}, BacklogState> {
 										key={col}
 										column={this.getDayColumns(col)[0]}
 										items={this.state.items.filter((item) => !item.startDate)} //filter for backlog items only
-										setBacklogItems={this.setBacklogItems}
+										setBacklogItems={this.updateItems}
 									/>)
 							}
 							<div style={{ position: "relative", height: "calc(100vh - 120px)" }}>
@@ -400,7 +424,7 @@ export class Planner extends React.Component<{}, BacklogState> {
 									key='calendar'
 									columns={this.state.columns}
 									items={this.state.items}
-									setBacklogItems={this.setBacklogItems}
+									setBacklogItems={this.updateItems}
 									setCalendars={this.setCalendars}
 								/>
 							</div>

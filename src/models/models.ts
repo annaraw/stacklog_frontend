@@ -162,7 +162,8 @@ export interface ICalendarItem {
     url?: string,
     dtStart: Date,
     dtEnd: Date,
-    location?: string
+    location?: string,
+    color?: string
 }
 
 export interface ICalendar {
@@ -170,6 +171,8 @@ export interface ICalendar {
     owner: string,
     url?: string,
     items: ICalendarItem[]
+    id?: string,
+    color?: string
 }
 
 export enum Priority {

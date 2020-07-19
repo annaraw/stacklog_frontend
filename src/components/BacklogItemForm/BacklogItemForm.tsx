@@ -233,7 +233,6 @@ const BacklogItemForm: FunctionComponent<BacklogItemFormProps> = props => {
             if (itemIndex === 0 || itemIndex) {
                 //@ts-ignore
                 updatedItems[itemIndex] = response.item
-                debugger
                 setBacklogItems([...updatedItems])
             } else {
                 setFeedbackMessage("No item found to update")

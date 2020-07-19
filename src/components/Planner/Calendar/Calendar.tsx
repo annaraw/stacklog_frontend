@@ -4,6 +4,10 @@ import { CalendarDay } from './CalendarDay';
 import { calendarStyles } from './CalendarStyles';
 import Scrollbar from 'react-scrollbars-custom';
 import AddCalendarForm from '../../CalendarForm/AddCalendarForm';
+import ManageCalendarsForm from '../../CalendarForm/ManageCalendarsForm';
+import Button from '@material-ui/core/Button';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 
 interface BoardColumnProps {
   columns: Column[],
@@ -15,8 +19,18 @@ interface BoardColumnProps {
 
 export const Calendar: React.FC<BoardColumnProps> = (props) => {
 
-  const { columns, items, calendars, setBacklogItems, setCalendars } = props
+  const { columns, items, calendars, setBacklogItems,setCalendars } = props
   const classes = calendarStyles();
+
+  const handleClick = (event:any) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
 
   function getDayColumns(day: string) {
     return columns.filter((col) => col.id.split("-")[0] === day)
@@ -32,7 +46,10 @@ export const Calendar: React.FC<BoardColumnProps> = (props) => {
     return calendars
       .map((cal: ICalendar) => cal ? cal.items
         .filter((calItem: ICalendarItem) => sameDay(new Date(calItem.dtStart), new Date(day)))
-        .map((calItem: ICalendarItem) => calItem) : []
+        .map((calItem: ICalendarItem) => {
+          if (!calItem.color) {calItem.color = cal.color}
+            return calItem
+        }) : []
       )
   }
 
@@ -67,11 +84,20 @@ export const Calendar: React.FC<BoardColumnProps> = (props) => {
       <div className={classes.calendar}>
         <div className={classes.menubar}>
           <div className={classes.calendarTitle}>Calendar</div>
-          <div className={classes.importButton}>
-            <AddCalendarForm
-              calendars={calendars}
-              setCalendars={setCalendars}
-            />
+          <div>
+            <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
+              Calendar Settings
+            </Button>
+            <Menu
+              id="simple-menu"
+              anchorEl={anchorEl}
+              keepMounted
+              open={Boolean(anchorEl)}
+              onClose={handleClose}
+            >
+              <MenuItem onClick={handleClose}><AddCalendarForm calendars={calendars} setCalendars={setCalendars} /></MenuItem>
+              <MenuItem onClick={handleClose}><ManageCalendarsForm calendars={calendars}/></MenuItem>
+            </Menu>
           </div>
         </div>
         <div className={classes.calendarContent}>
