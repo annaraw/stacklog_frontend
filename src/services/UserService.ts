@@ -31,8 +31,9 @@ export default class UserService {
         });
     }
 
-    static logout(){
+    static logout() {
         window.localStorage.removeItem('jwtToken');
+        window.location.href = "/"
     }
 
     static getCurrentUser() {
@@ -42,14 +43,23 @@ export default class UserService {
         let base64Url = token.split('.')[1];
         let base64 = base64Url.replace('-', '+').replace('_', '/');
         return {
-            id : JSON.parse(window.atob(base64)).id,
+            id: JSON.parse(window.atob(base64)).id,
             username: JSON.parse(window.atob(base64)).username
         };
     }
 
+    static getColleagues() {
+        return new Promise((resolve, reject) => {
+            HttpService.get(`${UserService.baseURL()}/colleagues`,
+                function (data: any) {
+                    resolve(data);
+                }, function (textStatus: string) {
+                    reject(textStatus);
+                });
+        });
+    }
+
     static isAuthenticated() {
-        console.log(window.localStorage['jwtToken'])
-        console.log(!!window.localStorage['jwtToken'])
         return !!window.localStorage['jwtToken'];
     }
 }

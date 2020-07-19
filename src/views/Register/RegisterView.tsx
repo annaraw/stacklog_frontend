@@ -1,6 +1,5 @@
 import React from 'react';
-import RegisterForm from '../../components/RegisterForm/RegisterForm';
-import MenuBar from '../../components/MenuBar';
+import RegisterForm from '../../components/Forms/RegisterForm/RegisterForm';
 import { registerViewStyle } from './RegisterViewStyles';
 
 interface RegisterProps {
@@ -10,7 +9,6 @@ function RegisterScreen(props: RegisterProps) {
     const classes = registerViewStyle();
     return (
         <div className={classes.root}>
-            <MenuBar title="Sign up" />
             <RegisterForm />
         </div>
     )
