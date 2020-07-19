@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import { useState } from 'react'
 import {
     AppBar, Toolbar, Drawer,
-    IconButton, CssBaseline, ListItem, ListItemText, List, Divider, ListItemIcon, useTheme, Button
+    IconButton, CssBaseline, ListItem, ListItemText, List, Divider, ListItemIcon, useTheme, Button, Tooltip
 } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import HomeIcon from '@material-ui/icons/Home';
@@ -38,7 +38,7 @@ function MenuBar(props: MenuBarProps) {
         <div className={classes.root}>
             <CssBaseline />
             <AppBar
-                elevation={0} 
+                elevation={0}
                 position="fixed"
                 className={clsx(classes.appBar, {
                     [classes.appBarShift]: open,
@@ -100,22 +100,30 @@ function MenuBar(props: MenuBarProps) {
                 </div>
                 <Divider />
                 <List>
-                    <ListItem button key="home" onClick={() => { window.location.href = "/" }}>
-                        <ListItemIcon> <HomeIcon /></ListItemIcon>
-                        {UserService.getCurrentUser().id === undefined ? <ListItemText primary="Home" /> : <ListItemText primary="Planner Overview" />}
-                    </ListItem>
-                    {UserService.getCurrentUser().id !== undefined && <ListItem button key="projects" onClick={() => { window.location.href = "/projects" }}>
+                    <Tooltip title={UserService.getCurrentUser().id === undefined ? "Home" : "Planner"} placement="right">
+                        <ListItem button key="home" onClick={() => { window.location.href = "/" }}>
+                            <ListItemIcon> <HomeIcon /></ListItemIcon>
+                            {UserService.getCurrentUser().id === undefined ? <ListItemText primary="Home" /> : <ListItemText primary="Planner Overview" />}
+                        </ListItem>
+                    </Tooltip>
+                    {UserService.getCurrentUser().id !== undefined && <Tooltip title="My Projects" placement="right"><ListItem button key="projects" onClick={() => { window.location.href = "/projects" }}>
                         <ListItemIcon> <PeopleIcon /></ListItemIcon>
                         <ListItemText primary="My Projects" />
-                    </ListItem>}
-                    <ListItem button key="contact" onClick={() => { window.location.href = "#" }}>
-                        <ListItemIcon> <ChatIcon /></ListItemIcon>
-                        <ListItemText primary="Contact Us" />
                     </ListItem>
-                    {UserService.getCurrentUser().id !== undefined && <ListItem button key="settings" onClick={() => { window.location.href = "#" }}>
-                        <ListItemIcon> <SettingsIcon /></ListItemIcon>
-                        <ListItemText primary="Settings" />
-                    </ListItem>}
+                    </Tooltip>}
+                    <Tooltip title="Contact Us" placement="right">
+                        <ListItem button key="contact" onClick={() => { window.location.href = "#" }}>
+                            <ListItemIcon> <ChatIcon /></ListItemIcon>
+                            <ListItemText primary="Contact Us" />
+                        </ListItem>
+                    </Tooltip>
+                    {UserService.getCurrentUser().id !== undefined &&
+                        <Tooltip title="Settings" placement="right">
+                            <ListItem button key="settings" onClick={() => { window.location.href = "#" }}>
+                                <ListItemIcon> <SettingsIcon /></ListItemIcon>
+                                <ListItemText primary="Settings" />
+                            </ListItem>
+                        </Tooltip>}
                 </List>
             </Drawer>
         </div>
