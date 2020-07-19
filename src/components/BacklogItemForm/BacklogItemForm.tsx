@@ -31,7 +31,7 @@ interface BacklogItemFormProps {
     setIsOpen: (isOpen: boolean) => void
     formTitle: string
     items: IBacklogItem[]
-    setBacklogItems: (backlogItem: IBacklogItem[]) => void
+    setBacklogItems: (backlogItem: IBacklogItem[], update?: boolean) => void
     formType: string
     item?: IBacklogItem
     project?: Project
@@ -227,7 +227,7 @@ const BacklogItemForm: FunctionComponent<BacklogItemFormProps> = props => {
             if (itemIndex === 0 || itemIndex) {
                 //@ts-ignore
                 updatedItems[itemIndex] = response.item
-                setBacklogItems([...updatedItems])
+                setBacklogItems([...updatedItems], true)
             } else {
                 setFeedbackMessage("No item found to update")
                 setError(true)
